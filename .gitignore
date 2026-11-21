@@ -1,0 +1,19 @@
+# Never commit game files or game-derived assets
+*.fhm2d
+*.exe
+*.dll
+*.zip
+29/
+ui-en/
+backup/
+backups/
+logs/
+tmp/
+# Runtime files
+traffic.log
+check-report.txt
+exvs-online.json
+launcher.json
+*.part.*
+# Build output
+/dist/

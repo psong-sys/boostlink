@@ -1,0 +1,17 @@
+{
+  "mode": "proxy",
+  "proxy": {
+    "listen": "0.0.0.0:28090",
+    "upstream": "http://127.0.0.1:28080",
+    "matchServer": "http://HOST_IP_HERE:28090",
+    "matchPort": 28090,
+    "stun": {
+      "host": "stun.l.google.com",
+      "port": 19302
+    },
+    "logTraffic": true,
+    "turn": {
+      "host": "auto"
+    }
+  }
+}

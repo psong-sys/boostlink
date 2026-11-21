@@ -1,0 +1,4062 @@
+[
+{
+"offset": 20771224,
+"jp": "ALL.NET認証=%s",
+"en": "ALL.NET auth=%s"
+},
+{
+"offset": 20771336,
+"jp": "HTTP送信間隔=%d秒",
+"en": "HTTP send interval=%ds"
+},
+{
+"offset": 20771656,
+"jp": "カード利用時間帯=%s",
+"en": "Card usage hours=%s"
+},
+{
+"offset": 20771736,
+"jp": "HDD書き込み=%s",
+"en": "HDD write=%s"
+},
+{
+"offset": 20843888,
+"jp": "割当なし",
+"en": "Unassigned"
+},
+{
+"offset": 20843904,
+"jp": "射撃",
+"en": "Shoot"
+},
+{
+"offset": 20843912,
+"jp": "格闘",
+"en": "Melee"
+},
+{
+"offset": 20843920,
+"jp": "ジャンプ",
+"en": "Jump"
+},
+{
+"offset": 20843936,
+"jp": "ターゲット切替え",
+"en": "Target switch"
+},
+{
+"offset": 20843968,
+"jp": "指令/通信",
+"en": "Command/Comms"
+},
+{
+"offset": 20843984,
+"jp": "射撃＋格闘 (サブ射撃)",
+"en": "Shoot+Melee (Sub shot)"
+},
+{
+"offset": 20844016,
+"jp": "射撃＋ジャンプ (特殊射撃)",
+"en": "Shoot+Jump (Special shot)"
+},
+{
+"offset": 20844056,
+"jp": "格闘＋ジャンプ (特殊格闘)",
+"en": "Melee+Jump (Special melee)"
+},
+{
+"offset": 20844096,
+"jp": "射撃＋格闘＋ジャンプ (EXバースト)",
+"en": "Shoot+Melee+Jump (EX Burst)"
+},
+{
+"offset": 20974744,
+"jp": "起動リージョンが異なります",
+"en": "Boot region differs"
+},
+{
+"offset": 20974784,
+"jp": "ゲームバージョンが異なります",
+"en": "Game version differs"
+},
+{
+"offset": 20974832,
+"jp": "自分以外にLmMainが存在します。",
+"en": "Another LmMain exists."
+},
+{
+"offset": 20974880,
+"jp": "以前登録された情報から変化しました。以前の情報を破棄します",
+"en": "Info changed since last registration. Discarding old info"
+},
+{
+"offset": 20974968,
+"jp": "端末を登録しました。",
+"en": "Terminal registered."
+},
+{
+"offset": 20975000,
+"jp": "端末のバージョン情報を受信",
+"en": "Received terminal version info"
+},
+{
+"offset": 20975040,
+"jp": "リモートテストモード操作要求受信 %d",
+"en": "Remote test mode request received %d"
+},
+{
+"offset": 20975096,
+"jp": "LmMain以外からのパケットを受信しました。",
+"en": "Received a packet not from LmMain."
+},
+{
+"offset": 20975160,
+"jp": "LmMainを登録しました",
+"en": "LmMain registered"
+},
+{
+"offset": 21024072,
+"jp": "捨てゲー",
+"en": "Quit game"
+},
+{
+"offset": 21024120,
+"jp": "捨てゲー",
+"en": "Quit game"
+},
+{
+"offset": 21037664,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21042320,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21043240,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21046560,
+"jp": "ネットワークの初期化を実行します ",
+"en": "Initializing network "
+},
+{
+"offset": 21046656,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21055912,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21055920,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21055936,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21055944,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21121580,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21121592,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21121608,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21121616,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21129456,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21130352,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21130472,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21130992,
+"jp": "ネットワークの初期化を実行します ",
+"en": "Initializing network "
+},
+{
+"offset": 21131088,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21133928,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21133936,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21133952,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21133960,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21135640,
+"jp": "このリプレイはアップロードされます",
+"en": "This replay will be uploaded"
+},
+{
+"offset": 21135696,
+"jp": "このリプレイはアップロードされません",
+"en": "This replay will not be uploaded"
+},
+{
+"offset": 21135752,
+"jp": "送信対象数=%d",
+"en": "Send targets=%d"
+},
+{
+"offset": 21135776,
+"jp": "リプレイ件数=",
+"en": "Replays="
+},
+{
+"offset": 21135824,
+"jp": "保存対象数=%d",
+"en": "Save targets=%d"
+},
+{
+"offset": 21135848,
+"jp": "LmSub送信対象数=%d",
+"en": "LmSub send targets=%d"
+},
+{
+"offset": 21135872,
+"jp": "アップロード対象数=%d",
+"en": "Upload targets=%d"
+},
+{
+"offset": 21135904,
+"jp": "送信対象検索中",
+"en": "Finding send targets"
+},
+{
+"offset": 21135928,
+"jp": "送信対象=%s",
+"en": "Send target=%s"
+},
+{
+"offset": 21135944,
+"jp": "送信データ=%f(%zu/%zu)",
+"en": "Send data=%f(%zu/%zu)"
+},
+{
+"offset": 21135976,
+"jp": "[%d]受信対象=%s",
+"en": "[%d]Recv target=%s"
+},
+{
+"offset": 21136000,
+"jp": "[%d]受信データ=%f(%zu/%zu)",
+"en": "[%d]Recv data=%f(%zu/%zu)"
+},
+{
+"offset": 21136032,
+"jp": "LmSub検索中",
+"en": "Finding LmSub"
+},
+{
+"offset": 21136048,
+"jp": "送信対象=%s",
+"en": "Send target=%s"
+},
+{
+"offset": 21136064,
+"jp": "送信データ=%f(%zu/%zu)",
+"en": "Send data=%f(%zu/%zu)"
+},
+{
+"offset": 21136812,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21136824,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21136840,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21136848,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21138244,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21138256,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21138272,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21138280,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21138352,
+"jp": "中継受付中",
+"en": "Accepting relay"
+},
+{
+"offset": 21138368,
+"jp": "送信中",
+"en": "Sending"
+},
+{
+"offset": 21138400,
+"jp": "接続中",
+"en": "Linking"
+},
+{
+"offset": 21138432,
+"jp": "覚醒再選択データなし",
+"en": "No awaken reselect data"
+},
+{
+"offset": 21138480,
+"jp": "受信中",
+"en": "Receiving"
+},
+{
+"offset": 21138512,
+"jp": "接続中",
+"en": "Linking"
+},
+{
+"offset": 21138528,
+"jp": "(枯渇！)",
+"en": "(Empty!)"
+},
+{
+"offset": 21138560,
+"jp": "覚醒再選択データ未受信",
+"en": "Awaken reselect data not received"
+},
+{
+"offset": 21139104,
+"jp": "待機",
+"en": "Wait"
+},
+{
+"offset": 21139112,
+"jp": "選択中",
+"en": "Choosing"
+},
+{
+"offset": 21139124,
+"jp": "決定",
+"en": "Decide"
+},
+{
+"offset": 21139132,
+"jp": "確定",
+"en": "Locked"
+},
+{
+"offset": 21140632,
+"jp": "I/O基板の確認...",
+"en": "Checking I/O board..."
+},
+{
+"offset": 21140960,
+"jp": "コンテンツルーターの確認...",
+"en": "Checking contents router..."
+},
+{
+"offset": 21141048,
+"jp": "しばらくお待ち下さい ",
+"en": "Please wait "
+},
+{
+"offset": 21192960,
+"jp": "・ゲームを起動するにはソフトウェアのアップデートが必要です。",
+"en": "- A software update is required to start the game."
+},
+{
+"offset": 21193056,
+"jp": "・アップデートの適用許可日以降に電源を投入すると自動的にアップデートが実施されます。",
+"en": "- The update is applied automatically if powered on after its approval date."
+},
+{
+"offset": 21193184,
+"jp": "・テストモードに移ることができます。テストモードでは各種機能のチェックが行なえます。",
+"en": "- You can enter test mode. Test mode lets you check each function."
+},
+{
+"offset": 21193312,
+"jp": "【エラー】接続されているルーターが本機用ではありません。このルーターでは正常に動作しません。",
+"en": "[ERROR] The connected router is not for this machine. It will not work correctly with this router."
+},
+{
+"offset": 21244624,
+"jp": "アウトエフェクト情報",
+"en": "Out-effect info"
+},
+{
+"offset": 21244664,
+"jp": "ステート:%s",
+"en": "State:%s"
+},
+{
+"offset": 21244688,
+"jp": "リソース:%d",
+"en": "Resource:%d"
+},
+{
+"offset": 21244712,
+"jp": "再生中",
+"en": "Playing"
+},
+{
+"offset": 21250768,
+"jp": "LMアドレスリスト[自身:%s]",
+"en": "LM address list[self:%s]"
+},
+{
+"offset": 21250816,
+"jp": "受信データリスト",
+"en": "Received data list"
+},
+{
+"offset": 21349208,
+"jp": "リザルトキャプチャーステータス",
+"en": "Result capture status"
+},
+{
+"offset": 21349760,
+"jp": "アップロードシーケンスが起動していない",
+"en": "Upload sequence not started"
+},
+{
+"offset": 21349824,
+"jp": "SaveResultCaptureの初期化に失敗",
+"en": "SaveResultCapture init failed"
+},
+{
+"offset": 21349864,
+"jp": "サーバーから許可が降りていない",
+"en": "No permission from server"
+},
+{
+"offset": 21349912,
+"jp": "SaveResultCaptureのレスポンスを受け取れない",
+"en": "No SaveResultCapture response"
+},
+{
+"offset": 21349976,
+"jp": "SaveResultCaptureに失敗",
+"en": "SaveResultCapture failed"
+},
+{
+"offset": 21350008,
+"jp": "URLのレスポンスが返ってこない",
+"en": "No response from URL"
+},
+{
+"offset": 21350056,
+"jp": "ファイルがない",
+"en": "File missing"
+},
+{
+"offset": 21350080,
+"jp": "ファイルが開けない",
+"en": "Can't open file"
+},
+{
+"offset": 21350112,
+"jp": "末尾にシーク失敗",
+"en": "Seek to end failed"
+},
+{
+"offset": 21350144,
+"jp": "先頭にシーク失敗",
+"en": "Seek to start failed"
+},
+{
+"offset": 21350176,
+"jp": "バイナリを読み込めない",
+"en": "Can't read binary"
+},
+{
+"offset": 21350216,
+"jp": "アップロード失敗",
+"en": "Upload failed"
+},
+{
+"offset": 21350248,
+"jp": "アップロード完了",
+"en": "Upload done"
+},
+{
+"offset": 21350280,
+"jp": "ステータスが不正です",
+"en": "Invalid status"
+},
+{
+"offset": 21368108,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21368120,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21368136,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21368144,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21379712,
+"jp": "現シーケンス : ",
+"en": "Sequence : "
+},
+{
+"offset": 21379736,
+"jp": "アトラクト:",
+"en": "Attract:"
+},
+{
+"offset": 21379760,
+"jp": "モード選択",
+"en": "Mode select"
+},
+{
+"offset": 21379776,
+"jp": "不明",
+"en": "Unk."
+},
+{
+"offset": 21379784,
+"jp": "プラクティス:",
+"en": "Practice:"
+},
+{
+"offset": 21379808,
+"jp": "ルートバトル:",
+"en": "Route Battle:"
+},
+{
+"offset": 21379832,
+"jp": "トレーニング",
+"en": "Training"
+},
+{
+"offset": 21379856,
+"jp": "対人戦",
+"en": "Versus"
+},
+{
+"offset": 21379992,
+"jp": "チュートリアル",
+"en": "Tutorial"
+},
+{
+"offset": 21380168,
+"jp": "マッチング待ち",
+"en": "Waiting for match"
+},
+{
+"offset": 21447168,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21447176,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21447192,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21447200,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21524936,
+"jp": "シャッフル",
+"en": "Shuffle"
+},
+{
+"offset": 21524952,
+"jp": "チーム",
+"en": "Team"
+},
+{
+"offset": 21524968,
+"jp": "対戦デバッグシーケンス[%s]",
+"en": "Battle debug sequence[%s]"
+},
+{
+"offset": 21525008,
+"jp": "※元に戻す場合は テストモード>開発者設定>デバッグパラメータエディット から設定を解除してください",
+"en": "* To undo: Test mode > Dev settings > Debug parameter edit, then clear the setting"
+},
+{
+"offset": 21525152,
+"jp": "対戦するにはスタートボタンを押してください",
+"en": "Press START to battle"
+},
+{
+"offset": 21528428,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21528440,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21528456,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21528464,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21544536,
+"jp": "機体を選択してください",
+"en": "Select a unit"
+},
+{
+"offset": 21544576,
+"jp": "シリーズ(%d) > [ %s ]",
+"en": "Series(%d) > [ %s ]"
+},
+{
+"offset": 21544608,
+"jp": "機体(%d) > [ %s ]",
+"en": "Unit(%d) > [ %s ]"
+},
+{
+"offset": 21544648,
+"jp": "覚醒(%d) > [ %s ]",
+"en": "Awaken(%d) > [ %s ]"
+},
+{
+"offset": 21544776,
+"jp": "ステージを選択してください",
+"en": "Select a stage"
+},
+{
+"offset": 21544816,
+"jp": "ステージ(%d) > [ %s ]",
+"en": "Stage(%d) > [ %s ]"
+},
+{
+"offset": 21544904,
+"jp": "僚機選択待ち",
+"en": "Wait for partner"
+},
+{
+"offset": 21544928,
+"jp": "対戦開始までお待ちください",
+"en": "Please wait for battle start"
+},
+{
+"offset": 21547864,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21547872,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21547888,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21547896,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21548376,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21548384,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21548400,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21548408,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21549504,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21549512,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21549528,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21549536,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21550936,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21550944,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21550960,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21550968,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 21743496,
+"jp": "メンテナンス中。しばらくお待ち下さい",
+"en": "Under maintenance. Please wait"
+},
+{
+"offset": 21790752,
+"jp": "メンテナンス中。しばらくお待ち下さい(%d%%)",
+"en": "Maintenance. Please wait(%d%%)"
+},
+{
+"offset": 21838784,
+"jp": "開発用設定",
+"en": "Dev settings"
+},
+{
+"offset": 21838800,
+"jp": "メインのライブモニターからリモートコントロール中です。\n自動でゲームモードに復帰しますので、電源を切らないでお待ち下さい。\n\nテストスイッチ操作でテストモードに入ることは可能です。",
+"en": "Remote-controlled by the main live monitor.\nThe game will return to game mode automatically. Do not turn off power.\n\nYou can still enter test mode with the test switch."
+},
+{
+"offset": 21839440,
+"jp": "開発用設定",
+"en": "Dev settings"
+},
+{
+"offset": 21839456,
+"jp": "CLOSE TIME SETTING(閉店時刻設定)を適切に設定してください。\n未登録の場合はリプレイデータが19時以降保存されません。",
+"en": "Please set CLOSE TIME SETTING correctly.\nIf unset, replay data is not saved after 19:00."
+},
+{
+"offset": 21839616,
+"jp": "メインのライブモニターからリモートコントロール中です。\n自動でゲームモードに復帰しますので、電源を切らないでお待ち下さい。\n\nテストスイッチ操作でテストモードに入ることは可能です。",
+"en": "Remote-controlled by the main live monitor.\nThe game will return to game mode automatically. Do not turn off power.\n\nYou can still enter test mode with the test switch."
+},
+{
+"offset": 21839888,
+"jp": "設定切り替えの確認",
+"en": "Confirm settings switch"
+},
+{
+"offset": 21840272,
+"jp": "テストモードを抜けると設定切り替えのため、上記のゲーム基盤が再起動します。よろしいですか？",
+"en": "Leaving test mode will restart the boards above to switch settings. OK?"
+},
+{
+"offset": 21840576,
+"jp": "テストモードを抜けると設定切り替えのため、上記のゲーム基盤が再起動します。よろしいですか？",
+"en": "Leaving test mode will restart the boards above to switch settings. OK?"
+},
+{
+"offset": 21840712,
+"jp": "いいえ　( テストモードに戻る )",
+"en": "No  (Back to test mode)"
+},
+{
+"offset": 21840768,
+"jp": "いいえ　( テストモードを終了 : 設定は切り替えない )",
+"en": "No  (Exit test mode : do NOT switch settings)"
+},
+{
+"offset": 21840848,
+"jp": "はい　　( テストモードを終了 : 設定を切り替える )",
+"en": "Yes (Exit test mode : switch settings)"
+},
+{
+"offset": 21840928,
+"jp": "タイムレンタルが中断状態です。タイムレンタルを再開しますか？",
+"en": "Time rental is paused. Resume time rental?"
+},
+{
+"offset": 21841024,
+"jp": "はい　　( 中断時の残り時間からタイムレンタルを再開する )",
+"en": "Yes (Resume time rental from the remaining time)"
+},
+{
+"offset": 21841120,
+"jp": "いいえ　( タイムレンタルの情報を破棄して通常状態に戻る )",
+"en": "No  (Discard time rental info and return to normal)"
+},
+{
+"offset": 21841248,
+"jp": "この項目に入ると全ての筐体（基板）が強制的にリモートモードに切り替わります。よろしいですか？",
+"en": "Entering this forces all cabinets (boards) into remote mode. OK?"
+},
+{
+"offset": 21841392,
+"jp": "いいえ",
+"en": "No"
+},
+{
+"offset": 21841404,
+"jp": "はい",
+"en": "Yes"
+},
+{
+"offset": 21841584,
+"jp": "再起動",
+"en": "Reboot"
+},
+{
+"offset": 21841600,
+"jp": "(貸出)",
+"en": "(Rent)"
+},
+{
+"offset": 21841616,
+"jp": "(指定)",
+"en": "(Set)"
+},
+{
+"offset": 21907872,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 21907888,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 21907896,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 21907912,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 21907944,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 21907976,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 21908016,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 21941492,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 21941504,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 21941520,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 21941528,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 22237496,
+"jp": "自機情報",
+"en": "Own unit"
+},
+{
+"offset": 22237512,
+"jp": "機体[%lu/%lu/%lu] 覚醒[%lu/%lu] ステージ[%lu/%lu/%lu]",
+"en": "Unit[%lu/%lu/%lu] Awaken[%lu/%lu] Stage[%lu/%lu/%lu]"
+},
+{
+"offset": 22237576,
+"jp": "僚機情報",
+"en": "Partner info"
+},
+{
+"offset": 22237592,
+"jp": "機体[%lu/%lu/%lu] 覚醒[%lu/%lu] ステージ[%lu/%lu/%lu]",
+"en": "Unit[%lu/%lu/%lu] Awaken[%lu/%lu] Stage[%lu/%lu/%lu]"
+},
+{
+"offset": 22293144,
+"jp": "僚機のコンティニュー開始待ち",
+"en": "Waiting for partner to continue"
+},
+{
+"offset": 22293192,
+"jp": "コンティニュー処理へ遷移します。",
+"en": "Going to continue."
+},
+{
+"offset": 22293432,
+"jp": "コンティニューします。",
+"en": "Continuing."
+},
+{
+"offset": 22293536,
+"jp": "パートナーがコンティニューしなかっためゲームオーバー画面に進みます。",
+"en": "Partner did not continue, going to game over screen."
+},
+{
+"offset": 22295592,
+"jp": "汎用ウインドウのインスタンス破棄待ち",
+"en": "Waiting for window to close"
+},
+{
+"offset": 22336736,
+"jp": "タイムレンタルが終了したため、SaveResultを行います。",
+"en": "Time rental ended, doing SaveResult."
+},
+{
+"offset": 22336816,
+"jp": "SaveResultをできるタイミングではないため諦めます。",
+"en": "Not a time to SaveResult, giving up."
+},
+{
+"offset": 22341264,
+"jp": "トレーニング設定に正規の機体が設定されていません。",
+"en": "No valid unit set in training settings."
+},
+{
+"offset": 22342256,
+"jp": "タイムアップのためバトルを終了します。",
+"en": "Time up, ending battle."
+},
+{
+"offset": 22342416,
+"jp": "タイムアップのためバトルを終了します。",
+"en": "Time up, ending battle."
+},
+{
+"offset": 22342528,
+"jp": "タイムアップのためバトルを終了します。",
+"en": "Time up, ending battle."
+},
+{
+"offset": 22345628,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 22345640,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 22345656,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 22345664,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 22590016,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 22590024,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 22590040,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 22590048,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 22590224,
+"jp": "インゲーム起動準備中%s",
+"en": "Preparing in-game%s"
+},
+{
+"offset": 22685024,
+"jp": "インゲーム読み込み中%s",
+"en": "Loading in-game%s"
+},
+{
+"offset": 22786036,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 22786048,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 22786064,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 22786072,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 22889128,
+"jp": "いいえ",
+"en": "No"
+},
+{
+"offset": 22889140,
+"jp": "はい",
+"en": "Yes"
+},
+{
+"offset": 22889260,
+"jp": "台数",
+"en": "Units"
+},
+{
+"offset": 22889272,
+"jp": "対戦モード",
+"en": "Battle mode"
+},
+{
+"offset": 22889288,
+"jp": "タイムレンタル",
+"en": "Time rental"
+},
+{
+"offset": 22889316,
+"jp": "台数",
+"en": "Units"
+},
+{
+"offset": 22889328,
+"jp": "チェックコード",
+"en": "Check code"
+},
+{
+"offset": 22889464,
+"jp": "店舗指定マッチング設定",
+"en": "Store-specified matching"
+},
+{
+"offset": 22889504,
+"jp": "おすすめ設定をロードする",
+"en": "Load recommended settings"
+},
+{
+"offset": 22889544,
+"jp": "スケジュール切り替え:",
+"en": "Schedule switch:"
+},
+{
+"offset": 22889576,
+"jp": "開店時",
+"en": "Open"
+},
+{
+"offset": 22889592,
+"jp": "設定切替１",
+"en": "Switch 1"
+},
+{
+"offset": 22889608,
+"jp": "設定切替２",
+"en": "Switch 2"
+},
+{
+"offset": 22889688,
+"jp": "月曜",
+"en": "Mon"
+},
+{
+"offset": 22889696,
+"jp": "火曜",
+"en": "Tue"
+},
+{
+"offset": 22889704,
+"jp": "水曜",
+"en": "Wed"
+},
+{
+"offset": 22889712,
+"jp": "木曜",
+"en": "Thu"
+},
+{
+"offset": 22889720,
+"jp": "金曜",
+"en": "Fri"
+},
+{
+"offset": 22889728,
+"jp": "土曜",
+"en": "Sat"
+},
+{
+"offset": 22889736,
+"jp": "日曜",
+"en": "Sun"
+},
+{
+"offset": 22889744,
+"jp": "先頭に「*」がついているものが現在使用\nされている設定ファイルです。操作したい\n設定ファイルを選択してください。",
+"en": "The file marked \"*\" is the settings\nfile in use now. Choose the\nsettings file to work on."
+},
+{
+"offset": 22890096,
+"jp": "このファイルの設定を有効にする",
+"en": "Make this file's settings active"
+},
+{
+"offset": 22890144,
+"jp": "このファイルを編集する",
+"en": "Edit this file"
+},
+{
+"offset": 22890184,
+"jp": "このファイルを削除する",
+"en": "Delete this file"
+},
+{
+"offset": 22890224,
+"jp": "この設定ファイルを削除してもよろしいですか？",
+"en": "Delete this settings file?"
+},
+{
+"offset": 22890368,
+"jp": "%c設定ファイル%d",
+"en": "%cSettings file %d"
+},
+{
+"offset": 22890392,
+"jp": "(特設配信)",
+"en": "(Special)"
+},
+{
+"offset": 22890408,
+"jp": "(グループプレイ)",
+"en": "(Group play)"
+},
+{
+"offset": 22890432,
+"jp": "(大会モード)",
+"en": "(Tournament)"
+},
+{
+"offset": 22890456,
+"jp": "店外・ソロ/チーム",
+"en": "Online Solo/Team"
+},
+{
+"offset": 22890488,
+"jp": "店内・ソロ/チーム",
+"en": "Local Solo/Team"
+},
+{
+"offset": 22890520,
+"jp": "イベント・ソロ",
+"en": "Event Solo"
+},
+{
+"offset": 22890544,
+"jp": "イベント・チーム",
+"en": "Event Team"
+},
+{
+"offset": 22890576,
+"jp": "イベント・チームホールド",
+"en": "Event Team Hold"
+},
+{
+"offset": 22890616,
+"jp": "店内・セット貸し",
+"en": "Local Set Rental"
+},
+{
+"offset": 22890648,
+"jp": "大会モード",
+"en": "Tournament"
+},
+{
+"offset": 22890688,
+"jp": "ゲーム基板が何台接続のお勧めをロードしますか？",
+"en": "Load recommended settings for how many boards?"
+},
+{
+"offset": 22890760,
+"jp": "%d台",
+"en": "%dPCB"
+},
+{
+"offset": 22890768,
+"jp": "ファイル%d",
+"en": "File %d"
+},
+{
+"offset": 22890784,
+"jp": "なし",
+"en": "None"
+},
+{
+"offset": 22890792,
+"jp": "%d時",
+"en": "%d:00"
+},
+{
+"offset": 22895376,
+"jp": "ライブモニター・タイプ:",
+"en": "Live monitor type:"
+},
+{
+"offset": 22895416,
+"jp": "メニュー選択機能:",
+"en": "Menu select:"
+},
+{
+"offset": 22895448,
+"jp": "ライブ中継限定モード:",
+"en": "Live-relay-only mode:"
+},
+{
+"offset": 22895480,
+"jp": "大会開催予約:",
+"en": "Tournament booking:"
+},
+{
+"offset": 22895504,
+"jp": "==============大会開催予約詳細================",
+"en": "========= Tournament booking details ========="
+},
+{
+"offset": 22895560,
+"jp": "大会開催日:",
+"en": "Tournament date:"
+},
+{
+"offset": 22895592,
+"jp": "エントリー開始時刻:",
+"en": "Entry start time:"
+},
+{
+"offset": 22895632,
+"jp": "大会開始時刻:",
+"en": "Start time:"
+},
+{
+"offset": 22895656,
+"jp": "大会形式:",
+"en": "Format:"
+},
+{
+"offset": 22895672,
+"jp": "最大参加チーム数:",
+"en": "Max teams:"
+},
+{
+"offset": 22895704,
+"jp": "２本先取制:",
+"en": "Best of 3:"
+},
+{
+"offset": 22895728,
+"jp": "司会キャラクター:",
+"en": "Host character:"
+},
+{
+"offset": 22895760,
+"jp": "サウンド設定:",
+"en": "Sound settings:"
+},
+{
+"offset": 22895784,
+"jp": "ライブ中継設定:",
+"en": "Live relay settings:"
+},
+{
+"offset": 22895856,
+"jp": "自動再生時サウンド:",
+"en": "Auto-play sound:"
+},
+{
+"offset": 22895888,
+"jp": "手動再生時サウンド:",
+"en": "Manual-play sound:"
+},
+{
+"offset": 22895920,
+"jp": "デモムービーサウンド:",
+"en": "Demo movie sound:"
+},
+{
+"offset": 22895952,
+"jp": "ライブ/リプレイ視点切替:",
+"en": "Live/replay camera switch:"
+},
+{
+"offset": 22895992,
+"jp": "対戦ライブ中継:",
+"en": "Battle live relay:"
+},
+{
+"offset": 22896032,
+"jp": "対戦リプレイ再生:",
+"en": "Battle replay playback:"
+},
+{
+"offset": 22896064,
+"jp": "店舗対戦リプレイ:",
+"en": "Store battle replays:"
+},
+{
+"offset": 22896096,
+"jp": "グローバル対戦リプレイ:",
+"en": "Global battle replays:"
+},
+{
+"offset": 22896136,
+"jp": "デモムービー再生:",
+"en": "Demo movie playback:"
+},
+{
+"offset": 22896168,
+"jp": "店舗インフォメーション:",
+"en": "Store information:"
+},
+{
+"offset": 22896224,
+"jp": "公式インフォメーション:",
+"en": "Official information:"
+},
+{
+"offset": 22896272,
+"jp": "※ライブモニタのマスターボリュームはSOUND TESTで設定します。",
+"en": "* Set the live monitor master volume in SOUND TEST."
+},
+{
+"offset": 22896400,
+"jp": "店舗ランキング:",
+"en": "Store ranking:"
+},
+{
+"offset": 22896424,
+"jp": "店舗総合プレイヤーランキング:",
+"en": "Store overall player ranking:"
+},
+{
+"offset": 22896472,
+"jp": "グループランキング:",
+"en": "Group ranking:"
+},
+{
+"offset": 22896504,
+"jp": "グローバルランキング:",
+"en": "Global ranking:"
+},
+{
+"offset": 22896536,
+"jp": "クラスマッチG・プレイヤーランキング:",
+"en": "Class Match G player ranking:"
+},
+{
+"offset": 22896592,
+"jp": "クラスマッチG・タッグランキング:",
+"en": "Class Match G tag ranking:"
+},
+{
+"offset": 22896640,
+"jp": "Extreme∞・ソロランキング:",
+"en": "Extreme∞ solo ranking:"
+},
+{
+"offset": 22896680,
+"jp": "Extreme∞・チームランキング:",
+"en": "Extreme∞ team ranking:"
+},
+{
+"offset": 22896720,
+"jp": "グループランキング:",
+"en": "Group ranking:"
+},
+{
+"offset": 22896752,
+"jp": "機体使用率ランキング:",
+"en": "Unit usage ranking:"
+},
+{
+"offset": 22896784,
+"jp": "コスト別機体使用率ランキング:",
+"en": "Unit usage by cost ranking:"
+},
+{
+"offset": 22896832,
+"jp": "ルートバトルスコアランキング:",
+"en": "Route Battle score ranking:"
+},
+{
+"offset": 22896880,
+"jp": "ルートバトルタイムアタック:",
+"en": "Route Battle time attack:"
+},
+{
+"offset": 22897296,
+"jp": "ページ: %d/%d",
+"en": "Page: %d/%d"
+},
+{
+"offset": 22897328,
+"jp": "タイプをSUBに切り替えると全ての筐体（基板）が強制的にリモートモードに切り替わります。よろしいですか？",
+"en": "Switching type to SUB forces all cabinets (boards) into remote mode. OK?"
+},
+{
+"offset": 22897616,
+"jp": "チームホールド",
+"en": "Team hold"
+},
+{
+"offset": 22897640,
+"jp": "チームランダム",
+"en": "Team random"
+},
+{
+"offset": 22897664,
+"jp": "シャッフル",
+"en": "Shuffle"
+},
+{
+"offset": 22897688,
+"jp": "%d(%d人)",
+"en": "%d(%dp)"
+},
+{
+"offset": 22897704,
+"jp": "１回戦から",
+"en": "From round 1"
+},
+{
+"offset": 22897720,
+"jp": "準決勝以上",
+"en": "Semis+"
+},
+{
+"offset": 22897736,
+"jp": "決勝のみ",
+"en": "Final only"
+},
+{
+"offset": 22897752,
+"jp": "ストーカー",
+"en": "Stalker"
+},
+{
+"offset": 22897768,
+"jp": "ミオリネ",
+"en": "Miorine"
+},
+{
+"offset": 22897784,
+"jp": "メリーナ",
+"en": "Melina"
+},
+{
+"offset": 22897800,
+"jp": "カノ",
+"en": "Kano"
+},
+{
+"offset": 22897808,
+"jp": "ネイア",
+"en": "Neia"
+},
+{
+"offset": 22897824,
+"jp": "セシア",
+"en": "Secia"
+},
+{
+"offset": 22897840,
+"jp": "ランダム",
+"en": "Random"
+},
+{
+"offset": 22897856,
+"jp": "グループプレイの予約が入っているため、タイプをSUBに切り替えられません。",
+"en": "Group play is booked, so the type can't switch to SUB."
+},
+{
+"offset": 22897968,
+"jp": "サブライブモニターが接続されていないため、グループプレイサービスをONにできません。",
+"en": "No sub live monitor connected, so group play service can't be turned ON."
+},
+{
+"offset": 22898096,
+"jp": "GAME PCBs SETTINGでグループプレイ用の設定ファイル4が設定されていないため、グループプレイサービスをONにできません。",
+"en": "Settings file 4 for group play is not set in GAME PCBs SETTING, so group play service can't be turned ON."
+},
+{
+"offset": 22898272,
+"jp": "グループプレイの予約が入っているため、グループプレイサービスをOFFにできません。 ",
+"en": "Group play is booked, so group play service can't be turned OFF. "
+},
+{
+"offset": 22898400,
+"jp": "GAME PCBs SETTINGで大会モード用の設定ファイルが設定されていません。大会開催予約を行う場合は、先に大会モード用の設定ファイルを設定してください。",
+"en": "No tournament-mode settings file is set in GAME PCBs SETTING. To book a tournament, set a tournament-mode settings file first."
+},
+{
+"offset": 22898608,
+"jp": "ページ2の対戦ライブ中継がOFFになっているため、大会中に対戦の中継が行われません。",
+"en": "Battle live relay on page 2 is OFF, so battles won't be relayed during the tournament."
+},
+{
+"offset": 22898728,
+"jp": "俯瞰",
+"en": "Aerial"
+},
+{
+"offset": 22898736,
+"jp": "ダイナミック",
+"en": "Dynamic"
+},
+{
+"offset": 22898760,
+"jp": "チーム",
+"en": "Team"
+},
+{
+"offset": 22898776,
+"jp": "プレイヤー視点",
+"en": "Player view"
+},
+{
+"offset": 22941376,
+"jp": "◆店舗支援サイト",
+"en": "* Store support site"
+},
+{
+"offset": 22941408,
+"jp": "上記ALL.Net PCB IDを使用します",
+"en": "Use the ALL.Net PCB ID above"
+},
+{
+"offset": 22949216,
+"jp": "通信中",
+"en": "Linking"
+},
+{
+"offset": 22949256,
+"jp": "アドレスが取得できません",
+"en": "Can't get an address"
+},
+{
+"offset": 22949296,
+"jp": "現在ネットワークに接続出来ていません。\nオフライン状態が後",
+"en": "Not connected to the network now.\nIf offline for"
+},
+{
+"offset": 22949392,
+"jp": "時間続くと、ゲームの稼働は停止します。",
+"en": " more hours, the game will stop running."
+},
+{
+"offset": 22949456,
+"jp": "店内のネットワーク環境に問題があるため、オンライン対戦ができません。",
+"en": "Online battle unavailable: problem with the store network."
+},
+{
+"offset": 22949560,
+"jp": "パスワード再発行",
+"en": "Reissue password"
+},
+{
+"offset": 22949592,
+"jp": "仮パスワード",
+"en": "Temp password"
+},
+{
+"offset": 22949616,
+"jp": "UP & BUTTON1 (同時押し)",
+"en": "UP & BUTTON1 (together)"
+},
+{
+"offset": 22949648,
+"jp": "%s  ※24時間有効",
+"en": "%s  *valid 24h"
+},
+{
+"offset": 22974932,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 22974944,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 22974960,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 22974968,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23000880,
+"jp": "全ての筐体(基板)が強制的にリモートモードに切り替わります。よろしいですか？",
+"en": "All cabinets (boards) will be forced into remote mode. OK?"
+},
+{
+"offset": 23001660,
+"jp": "認証",
+"en": "Auth"
+},
+{
+"offset": 23001672,
+"jp": "起動Ver.",
+"en": "Boot Ver."
+},
+{
+"offset": 23001688,
+"jp": "適用Ver.",
+"en": "Apply Ver."
+},
+{
+"offset": 23001704,
+"jp": "DL進捗(%)",
+"en": "DL(%)"
+},
+{
+"offset": 23001716,
+"jp": "状況",
+"en": "Status"
+},
+{
+"offset": 23001880,
+"jp": "＊オンライン配信無し",
+"en": "* No online delivery"
+},
+{
+"offset": 23001912,
+"jp": "可能",
+"en": "OK"
+},
+{
+"offset": 23001920,
+"jp": "不能",
+"en": "NG"
+},
+{
+"offset": 23001928,
+"jp": "不要",
+"en": "N/A"
+},
+{
+"offset": 23001936,
+"jp": "DL中",
+"en": "DLing"
+},
+{
+"offset": 23001944,
+"jp": "DL完",
+"en": "Done"
+},
+{
+"offset": 23001968,
+"jp": "ソフトウェアの更新を行うことができます。更新を実行する場合はBUTTON1を押してください。\nなお、更新を実行すると、全ての筐体がゲームプレイ中であっても強制的に再起動します。",
+"en": "You can update the software. Press BUTTON1 to run the update.\nNote: running the update force-restarts all cabinets, even during play."
+},
+{
+"offset": 23002224,
+"jp": "アップデートを行います。本機は自動的に再起動します。電源を切らずに、そのままお待ちください",
+"en": "Updating. This unit restarts automatically. Do not turn off power, please wait"
+},
+{
+"offset": 23002368,
+"jp": "現在アップデートできるソフトウェアはありません",
+"en": "No software update available now"
+},
+{
+"offset": 23020716,
+"jp": "日本",
+"en": "Japan"
+},
+{
+"offset": 23020724,
+"jp": "海外",
+"en": "Intl"
+},
+{
+"offset": 23020800,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23020808,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23020824,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23020832,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23034248,
+"jp": "開発用設定",
+"en": "Dev settings"
+},
+{
+"offset": 23034304,
+"jp": "通常操作では表示されません。ドングルで有効化されると表示されます。",
+"en": "Not shown in normal use. Shown when enabled by dongle."
+},
+{
+"offset": 23034536,
+"jp": "各種パラメータの確認...",
+"en": "Check parameters..."
+},
+{
+"offset": 23034616,
+"jp": "各種ファイルチェック...",
+"en": "Check files..."
+},
+{
+"offset": 23034656,
+"jp": "ルーティングテーブルを表示...",
+"en": "Show routing table..."
+},
+{
+"offset": 23034704,
+"jp": "HTTPレスポンスを確認...",
+"en": "Check HTTP response..."
+},
+{
+"offset": 23034736,
+"jp": "------パラメータ変更",
+"en": "------Change parameters"
+},
+{
+"offset": 23034768,
+"jp": "リージョン(再起動で戻ります)",
+"en": "Region (reverts on reboot)"
+},
+{
+"offset": 23034816,
+"jp": "デバッグパラメータエディット...",
+"en": "Debug parameter edit..."
+},
+{
+"offset": 23034864,
+"jp": "ルートバトルのデバッグ用セーブデータを編集...",
+"en": "Edit Route Battle debug save..."
+},
+{
+"offset": 23034936,
+"jp": "------各種データの削除",
+"en": "------Delete data"
+},
+{
+"offset": 23034968,
+"jp": "リプレイデータ",
+"en": "Replay data"
+},
+{
+"offset": 23035024,
+"jp": "課金エリア未初期化にリセット",
+"en": "Reset billing area to uninit"
+},
+{
+"offset": 23035072,
+"jp": "リソースダウンロード進捗リセット",
+"en": "Reset resource DL progress"
+},
+{
+"offset": 23051536,
+"jp": "ワークメータ表示",
+"en": "Show work meter"
+},
+{
+"offset": 23051568,
+"jp": "パフォーマンスカウンタ表示",
+"en": "Show performance counter"
+},
+{
+"offset": 23051608,
+"jp": "便利モード",
+"en": "Handy mode"
+},
+{
+"offset": 23051624,
+"jp": "入力遅延固定化",
+"en": "Fix input delay"
+},
+{
+"offset": 23051648,
+"jp": "特設筐体扱いにする",
+"en": "Treat as special cabinet"
+},
+{
+"offset": 23051680,
+"jp": "HTTP通信を最速で行う",
+"en": "Fastest HTTP comms"
+},
+{
+"offset": 23051712,
+"jp": "ALLNETメンテナンス中でも接続を強行(JST 2-7)",
+"en": "Force connect during ALLNET maint.(JST 2-7)"
+},
+{
+"offset": 23051776,
+"jp": "常にオフライン扱いにする(AllNet認証もNG)",
+"en": "Always offline (AllNet auth NG too)"
+},
+{
+"offset": 23051832,
+"jp": "ストレージ書き込みを無効化",
+"en": "Disable storage writes"
+},
+{
+"offset": 23051872,
+"jp": "仮想カードタッチメニューを表示",
+"en": "Show virtual card-touch menu"
+},
+{
+"offset": 23051920,
+"jp": "オンライン時でも時刻変更可能",
+"en": "Allow clock change online"
+},
+{
+"offset": 23051968,
+"jp": "期限5分前の課金データを生成",
+"en": "Make billing data 5 min to expiry"
+},
+{
+"offset": 23052016,
+"jp": "次のプレイで最大数まで課金データを生成",
+"en": "Make max billing data on next play"
+},
+{
+"offset": 23052080,
+"jp": "バージョンが異なるリプレイを削除しない",
+"en": "Keep replays of other versions"
+},
+{
+"offset": 23052144,
+"jp": "サブLM未接続でもグループプレイ設定切り替え可",
+"en": "Allow group play switch w/o sub LM"
+},
+{
+"offset": 23052224,
+"jp": "常駐処理(ネットワーク等)の詳細な状態を常に表示",
+"en": "Always show resident task (network etc) details"
+},
+{
+"offset": 23052296,
+"jp": "リプレイの送受信状態を表示",
+"en": "Show replay send/recv status"
+},
+{
+"offset": 23052336,
+"jp": "中継の送受信状態を表示",
+"en": "Show relay send/recv status"
+},
+{
+"offset": 23052376,
+"jp": "店外マッチングログを表示",
+"en": "Show online matching log"
+},
+{
+"offset": 23052416,
+"jp": "クラッシュ時のランタイムハンドラ実行",
+"en": "Run runtime handler on crash"
+},
+{
+"offset": 23052480,
+"jp": "リプレイ読込時に最大件数まで既存データを複製する",
+"en": "Duplicate replays up to max count on load"
+},
+{
+"offset": 23052560,
+"jp": "リプレイリスト画面未入力でも自動で閉じない",
+"en": "Don't auto-close replay list without input"
+},
+{
+"offset": 23052624,
+"jp": "予約時間を過ぎたファイルを起動時に削除しない",
+"en": "Don't delete expired booked files at boot"
+},
+{
+"offset": 23052704,
+"jp": "子の時刻を親に合わせる(LmMain側で指定してください)",
+"en": "Sync child clock to parent (set on LmMain)"
+},
+{
+"offset": 23052776,
+"jp": "デバッグ対戦モード",
+"en": "Debug battle mode"
+},
+{
+"offset": 23052816,
+"jp": "毎回リザルトキャプチャシーケンスを起動する",
+"en": "Run result capture every time"
+},
+{
+"offset": 23052880,
+"jp": "リザルトキャプチャのアップロードステータスを表示",
+"en": "Show result capture upload status"
+},
+{
+"offset": 23052960,
+"jp": "PCB1,2がいない際のエラーを無効化",
+"en": "Disable error when PCB1,2 absent"
+},
+{
+"offset": 23053008,
+"jp": "戦績保存リクエストでエラーを発生させる",
+"en": "Make save-result requests error"
+},
+{
+"offset": 23053072,
+"jp": "リプレイ再生時に不正値検出で停止させる",
+"en": "Stop on bad value in replay playback"
+},
+{
+"offset": 23053136,
+"jp": "LMアドレスリスト表示",
+"en": "Show LM address list"
+},
+{
+"offset": 23053168,
+"jp": "ランクマッチボーナス情報表示",
+"en": "Show rank match bonus info"
+},
+{
+"offset": 23053216,
+"jp": "課金情報非送信時のタイムリミット短縮(1時間)",
+"en": "Shorter time limit w/o billing send (1h)"
+},
+{
+"offset": 23053280,
+"jp": "タイムレンタル時間短縮(5分)",
+"en": "Shorter time rental (5 min)"
+},
+{
+"offset": 23053328,
+"jp": "タイムレンタル終了コマンド(カウント開始後に↑+スタート)",
+"en": "Time rental end cmd (Up+Start after count starts)"
+},
+{
+"offset": 23053416,
+"jp": "トレーニング時間短縮(20秒)",
+"en": "Shorter training (20s)"
+},
+{
+"offset": 23053456,
+"jp": "チュートリアル隠しコマンド(タイトル画面で↑＋射撃を2秒入力)",
+"en": "Tutorial hidden cmd (Up+Shoot 2s on title screen)"
+},
+{
+"offset": 23053552,
+"jp": "機体選択中にターゲットボタン連打で機体スキンを変更する",
+"en": "Mash target button in unit select to change skin"
+},
+{
+"offset": 23053648,
+"jp": "機体選択画面の調整機体をランダムに設定する",
+"en": "Random tuned units in unit select"
+},
+{
+"offset": 23053712,
+"jp": "捨てゲー情報を表示",
+"en": "Show quit-game info"
+},
+{
+"offset": 23053744,
+"jp": "毎日15時以降はOVERクラス開放状態にする",
+"en": "Open OVER class daily after 15:00"
+},
+{
+"offset": 23053800,
+"jp": "基板情報表示",
+"en": "Show board info"
+},
+{
+"offset": 23053824,
+"jp": "アウトエフェクト停止",
+"en": "Stop out-effects"
+},
+{
+"offset": 23053856,
+"jp": "アウトエフェクト状態表示",
+"en": "Show out-effect state"
+},
+{
+"offset": 23053904,
+"jp": "戦績保存リクエストの疑似レスポンス遅延(1分)",
+"en": "Fake save-result response delay (1 min)"
+},
+{
+"offset": 23053968,
+"jp": "リターンマッチ回数制限解除",
+"en": "No return match limit"
+},
+{
+"offset": 23054008,
+"jp": "バトルFPSログ保存(Profileビルド以上限定)",
+"en": "Save battle FPS log (Profile build+)"
+},
+{
+"offset": 23054064,
+"jp": "進行不能確認",
+"en": "Softlock check"
+},
+{
+"offset": 23054096,
+"jp": "勝敗条件が時間制限のプラクティスバトルの制限時間を短縮する",
+"en": "Shorten time limit of timed practice battles"
+},
+{
+"offset": 23054184,
+"jp": "プラクティスバトルで全シーンSランク判定",
+"en": "S rank on all scenes in practice battle"
+},
+{
+"offset": 23054248,
+"jp": "機体選択画面のやり直しテスト",
+"en": "Unit select redo test"
+},
+{
+"offset": 23054304,
+"jp": "ルートバトルでデバッグ用セーブデータを使用する(カード未使用時限定)",
+"en": "Use Route Battle debug save (no card only)"
+},
+{
+"offset": 23054408,
+"jp": "ルートバトルの簡易勝利",
+"en": "Easy Route Battle win"
+},
+{
+"offset": 23054448,
+"jp": "カードタッチ画面で称号を表示する",
+"en": "Show titles on card-touch screen"
+},
+{
+"offset": 23054504,
+"jp": "ルートバトルの制限時間を無効にする",
+"en": "No Route Battle time limit"
+},
+{
+"offset": 23054560,
+"jp": "全てのタイマーを動作しなくする",
+"en": "Stop all timers"
+},
+{
+"offset": 23054608,
+"jp": "画面左下のUPDATE SERVER AUTH TOKENエラーを非表示にする",
+"en": "Hide UPDATE SERVER AUTH TOKEN error at bottom left"
+},
+{
+"offset": 23054680,
+"jp": "チーム情報ログ表示",
+"en": "Show team info log"
+},
+{
+"offset": 23054784,
+"jp": "プレイヤースコア・ソロ",
+"en": "Player score solo"
+},
+{
+"offset": 23054824,
+"jp": "クラスマッチ・プレイヤー",
+"en": "Class match player"
+},
+{
+"offset": 23054864,
+"jp": "クラスマッチ・タッグ",
+"en": "Class match tag"
+},
+{
+"offset": 23054896,
+"jp": "クラスマッチソロ",
+"en": "Class match solo"
+},
+{
+"offset": 23054928,
+"jp": "クラスマッチチーム",
+"en": "Class match team"
+},
+{
+"offset": 23054960,
+"jp": "機体使用率",
+"en": "Unit usage"
+},
+{
+"offset": 23054976,
+"jp": "機体使用率( 3000コスト )",
+"en": "Unit usage ( 3000 cost )"
+},
+{
+"offset": 23055016,
+"jp": "機体使用率( 2500コスト )",
+"en": "Unit usage ( 2500 cost )"
+},
+{
+"offset": 23055056,
+"jp": "機体使用率( 2000コスト )",
+"en": "Unit usage ( 2000 cost )"
+},
+{
+"offset": 23055096,
+"jp": "機体使用率( 1500コスト )",
+"en": "Unit usage ( 1500 cost )"
+},
+{
+"offset": 23055136,
+"jp": "グループ(店舗)",
+"en": "Group(store)"
+},
+{
+"offset": 23055160,
+"jp": "グループ(グローバル)",
+"en": "Group(global)"
+},
+{
+"offset": 23055192,
+"jp": "ルートバトルスコア",
+"en": "Route Battle score"
+},
+{
+"offset": 23055224,
+"jp": "ルートバトルタイムアタック",
+"en": "Route Battle time attack"
+},
+{
+"offset": 23055264,
+"jp": "今回",
+"en": "Now"
+},
+{
+"offset": 23055272,
+"jp": "前回",
+"en": "Prev"
+},
+{
+"offset": 23055280,
+"jp": "リプレイ",
+"en": "Replay"
+},
+{
+"offset": 23055296,
+"jp": "動画1",
+"en": "Movie1"
+},
+{
+"offset": 23055304,
+"jp": "動画2",
+"en": "Movie2"
+},
+{
+"offset": 23055312,
+"jp": "公式情報",
+"en": "Official"
+},
+{
+"offset": 23055328,
+"jp": "モバイル",
+"en": "Mobile"
+},
+{
+"offset": 23055344,
+"jp": "イベント",
+"en": "Event"
+},
+{
+"offset": 23055552,
+"jp": "パラメータチェック",
+"en": "Parameter check"
+},
+{
+"offset": 23055736,
+"jp": "課金データ--------",
+"en": "Billing data--------"
+},
+{
+"offset": 23055760,
+"jp": "OK(店舗:%s)",
+"en": "OK(store:%s)"
+},
+{
+"offset": 23055776,
+"jp": "初期化状態",
+"en": "Init state"
+},
+{
+"offset": 23055792,
+"jp": "残件数",
+"en": "Remaining"
+},
+{
+"offset": 23055840,
+"jp": "データなし",
+"en": "No data"
+},
+{
+"offset": 23055856,
+"jp": "一番古いデータの日時",
+"en": "Oldest data time"
+},
+{
+"offset": 23055888,
+"jp": "ネットワーク--------",
+"en": "Network--------"
+},
+{
+"offset": 23055920,
+"jp": "ブロードキャスト受信ポート",
+"en": "Broadcast recv port"
+},
+{
+"offset": 23055960,
+"jp": "ブロードキャスト送信ポートリスト",
+"en": "Broadcast send port list"
+},
+{
+"offset": 23056016,
+"jp": "配信リソース--------",
+"en": "Delivered res--------"
+},
+{
+"offset": 23056208,
+"jp": "設定無効(運営中の解放数を参照します)",
+"en": "Setting off (uses live release count)"
+},
+{
+"offset": 23056264,
+"jp": "デバッグパラメータエディット",
+"en": "Debug parameter edit"
+},
+{
+"offset": 23056312,
+"jp": "店内マッチングID",
+"en": "Local matching ID"
+},
+{
+"offset": 23056336,
+"jp": "店外マッチングID",
+"en": "Online matching ID"
+},
+{
+"offset": 23056360,
+"jp": "入力遅延",
+"en": "Input delay"
+},
+{
+"offset": 23056376,
+"jp": "実行IP種別",
+"en": "IP type used"
+},
+{
+"offset": 23056392,
+"jp": "クラスマッチ検索ID",
+"en": "Class match search ID"
+},
+{
+"offset": 23056424,
+"jp": "中継初期バッファサイズ(LM)",
+"en": "Relay init buffer size(LM)"
+},
+{
+"offset": 23056464,
+"jp": "ルートバトルステージ解放数",
+"en": "Route Battle stages unlocked"
+},
+{
+"offset": 23056656,
+"jp": "ルーティングテーブル",
+"en": "Routing table"
+},
+{
+"offset": 23056688,
+"jp": "エラー　GetIpForwardTable() ret =",
+"en": "Error GetIpForwardTable() ret ="
+},
+{
+"offset": 23056728,
+"jp": "エラー　GetIpAddrTable() ret =",
+"en": "Error GetIpAddrTable() ret ="
+},
+{
+"offset": 23056816,
+"jp": "マスク",
+"en": "Mask"
+},
+{
+"offset": 23056864,
+"jp": "ゲートウェイ",
+"en": "Gateway"
+},
+{
+"offset": 23056888,
+"jp": "インターフェース",
+"en": "Interface"
+},
+{
+"offset": 23056920,
+"jp": "メトリック",
+"en": "Metric"
+},
+{
+"offset": 23057064,
+"jp": "タイムスタンプ(Local)=",
+"en": "Timestamp(Local)="
+},
+{
+"offset": 23057144,
+"jp": "ネットワークデータチェック",
+"en": "Network data check"
+},
+{
+"offset": 23106448,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 23106464,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 23106472,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 23106488,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 23106520,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 23106552,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 23106592,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 23106960,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23106968,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23106984,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23106992,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23159200,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 23159216,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 23159224,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 23159240,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 23159272,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 23159304,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 23159344,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 23214708,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23214720,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23214736,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23214744,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23215292,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23215304,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23215320,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23215328,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23234076,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23234088,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23234232,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23234392,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 23266264,
+"jp": "[BTN4]カードタッチシミューレートメニュー",
+"en": "[BTN4]Card touch simulate menu"
+},
+{
+"offset": 23267360,
+"jp": "ダミーカード",
+"en": "Dummy card"
+},
+{
+"offset": 23402376,
+"jp": "僚機と足並みを揃えます",
+"en": "Syncing with partner"
+},
+{
+"offset": 23403952,
+"jp": "敗北したので一定時間待機します",
+"en": "Lost, waiting a while"
+},
+{
+"offset": 23405616,
+"jp": "STUN解決を行います",
+"en": "Resolving STUN"
+},
+{
+"offset": 23412248,
+"jp": "STUN解決に成功しました",
+"en": "STUN resolved"
+},
+{
+"offset": 23412320,
+"jp": "STUN解決に成功しました、お互いのSTUN結果を交換します[H:0/C:0]",
+"en": "STUN resolved, exchanging STUN results[H:0/C:0]"
+},
+{
+"offset": 23412464,
+"jp": "店外マッチングにエントリーします(遅延)",
+"en": "Entering online matching (delayed)"
+},
+{
+"offset": 23412592,
+"jp": "店外マッチングにエントリーします(偽装)",
+"en": "Entering online matching (fake)"
+},
+{
+"offset": 23412728,
+"jp": "店外マッチングにエントリーします",
+"en": "Entering online matching"
+},
+{
+"offset": 23412832,
+"jp": "マッチング結果を受け取りました、ホールパンチング確認を行います",
+"en": "Got match result, checking hole punching"
+},
+{
+"offset": 23413016,
+"jp": "ホールパンチングに失敗しました",
+"en": "Hole punching failed"
+},
+{
+"offset": 23413112,
+"jp": "RTTが閾値を超えました",
+"en": "RTT over threshold"
+},
+{
+"offset": 23413200,
+"jp": "ホールパンチングに成功しました、互いの結果を交換します",
+"en": "Hole punching OK, exchanging results"
+},
+{
+"offset": 23413552,
+"jp": "全員ホールパンチングに成功したので乱入に移ります",
+"en": "Everyone hole-punched OK, joining battle"
+},
+{
+"offset": 23413712,
+"jp": "誰かがホールパンチングに失敗したので再度エントリーをやり直します",
+"en": "Someone failed hole punching, re-entering"
+},
+{
+"offset": 23415016,
+"jp": "STUN解決を行います",
+"en": "Resolving STUN"
+},
+{
+"offset": 23415088,
+"jp": "STUN解決に失敗したのでリトライします",
+"en": "STUN failed, retrying"
+},
+{
+"offset": 23415184,
+"jp": "STUN解決に成功しました",
+"en": "STUN resolved"
+},
+{
+"offset": 23415256,
+"jp": "店外マッチングにエントリーします",
+"en": "Entering online matching"
+},
+{
+"offset": 23610024,
+"jp": "HTTP速度制限　開放中.",
+"en": "HTTP rate limit lifted."
+},
+{
+"offset": 23659336,
+"jp": "[BTN3+BTN4]カードタッチシミューレートメニュー",
+"en": "[BTN3+BTN4]Card touch simulate menu"
+},
+{
+"offset": 23660496,
+"jp": "ダミーカード",
+"en": "Dummy card"
+},
+{
+"offset": 23980396,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 23980408,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 23980424,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 23980432,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 24256680,
+"jp": "マイクロバージョンが0になっています.",
+"en": "Micro version is 0."
+},
+{
+"offset": 24256736,
+"jp": "バージョンを確認してください",
+"en": "Please check the version"
+},
+{
+"offset": 24256784,
+"jp": "クラスマッチ情報",
+"en": "Class match info"
+},
+{
+"offset": 24256816,
+"jp": "検索ID[%lu]",
+"en": "SearchID[%lu]"
+},
+{
+"offset": 24256832,
+"jp": "カード[%d] レベル[%d] 経験値[%d]",
+"en": "Card[%d] Level[%d] EXP[%d]"
+},
+{
+"offset": 24256880,
+"jp": "申請マッチングクラス[%I64u] Seq[%d]",
+"en": "Requested match class[%I64u] Seq[%d]"
+},
+{
+"offset": 24256928,
+"jp": "僚機[%d] [%lu]",
+"en": "Ally[%d] [%lu]"
+},
+{
+"offset": 24256992,
+"jp": "シリアル[%s] LocId[%s]",
+"en": "Serial[%s] LocId[%s]"
+},
+{
+"offset": 24257048,
+"jp": "待機中",
+"en": "Waiting"
+},
+{
+"offset": 24257088,
+"jp": "NAT無し",
+"en": "No NAT"
+},
+{
+"offset": 24257104,
+"jp": "エンドポイント非依存",
+"en": "Endpoint-indep."
+},
+{
+"offset": 24257136,
+"jp": "アドレス",
+"en": "Address"
+},
+{
+"offset": 24257152,
+"jp": "アドレス&ポート",
+"en": "Address&Port"
+},
+{
+"offset": 24257176,
+"jp": "無効",
+"en": "Inval."
+},
+{
+"offset": 24257184,
+"jp": "無し",
+"en": "None"
+},
+{
+"offset": 24257192,
+"jp": "オープン",
+"en": "Open"
+},
+{
+"offset": 24257208,
+"jp": "フルコーン",
+"en": "Full cone"
+},
+{
+"offset": 24257224,
+"jp": "制限コーン",
+"en": "Restricted cone"
+},
+{
+"offset": 24257240,
+"jp": "ポート制限コーン",
+"en": "Port restricted cone"
+},
+{
+"offset": 24257272,
+"jp": "シンメトリック",
+"en": "Symmetric"
+},
+{
+"offset": 24257296,
+"jp": "UDPファイアウォール",
+"en": "UDP firewall"
+},
+{
+"offset": 24257328,
+"jp": "UDPブロック",
+"en": "UDP blocked"
+},
+{
+"offset": 24257344,
+"jp": "無効",
+"en": "Inval."
+},
+{
+"offset": 24257360,
+"jp": "リレーサーバ",
+"en": "Relay server"
+},
+{
+"offset": 24257384,
+"jp": "オープン",
+"en": "Open"
+},
+{
+"offset": 24257400,
+"jp": "オフライン",
+"en": "Offline"
+},
+{
+"offset": 24257448,
+"jp": "コネクション接続",
+"en": "Connecting"
+},
+{
+"offset": 24257480,
+"jp": "コネクション接続成功",
+"en": "Connect OK"
+},
+{
+"offset": 24257512,
+"jp": "コネクション接続失敗",
+"en": "Connect failed"
+},
+{
+"offset": 24257544,
+"jp": "セッション接続成功",
+"en": "Session OK"
+},
+{
+"offset": 24257576,
+"jp": "セッション接続失敗",
+"en": "Session failed"
+},
+{
+"offset": 24257608,
+"jp": "Nxログ[%s]",
+"en": "Nx log[%s]"
+},
+{
+"offset": 24257624,
+"jp": "成功",
+"en": "OK"
+},
+{
+"offset": 24257632,
+"jp": "自分からキャンセル",
+"en": "Self cancel"
+},
+{
+"offset": 24257664,
+"jp": "キャンセル",
+"en": "Cancel"
+},
+{
+"offset": 24257680,
+"jp": "タイムアウト",
+"en": "Timeout"
+},
+{
+"offset": 24257704,
+"jp": "パケット受け取れず",
+"en": "No packets received"
+},
+{
+"offset": 24257736,
+"jp": "RTT閾値越え",
+"en": "RTT over limit"
+},
+{
+"offset": 24257752,
+"jp": "無効",
+"en": "Inval."
+},
+{
+"offset": 24257760,
+"jp": "ホールパンチング[%s]",
+"en": "Hole punch[%s]"
+},
+{
+"offset": 24257792,
+"jp": "チーム結成",
+"en": "Team formed"
+},
+{
+"offset": 24257808,
+"jp": "急募(カジュアル)",
+"en": "Quick (casual)"
+},
+{
+"offset": 24257832,
+"jp": "急募(ランク)",
+"en": "Quick (rank)"
+},
+{
+"offset": 24257856,
+"jp": "カスタムソロ",
+"en": "Custom solo"
+},
+{
+"offset": 24257880,
+"jp": "カスタムチーム",
+"en": "Custom team"
+},
+{
+"offset": 24257904,
+"jp": "カスタムミックス(ソロ)",
+"en": "Custom mix (solo)"
+},
+{
+"offset": 24257944,
+"jp": "カスタムミックス(チーム)",
+"en": "Custom mix (team)"
+},
+{
+"offset": 24257984,
+"jp": "カスタム1on1",
+"en": "Custom 1on1"
+},
+{
+"offset": 24258008,
+"jp": "イベントソロ",
+"en": "Event solo"
+},
+{
+"offset": 24258032,
+"jp": "イベントチーム",
+"en": "Event team"
+},
+{
+"offset": 24258056,
+"jp": "クラスソロ",
+"en": "Class solo"
+},
+{
+"offset": 24258072,
+"jp": "クラスチーム",
+"en": "Class team"
+},
+{
+"offset": 24258096,
+"jp": "店舗優先ソロ",
+"en": "Store-prio solo"
+},
+{
+"offset": 24258120,
+"jp": "店舗優先チーム",
+"en": "Store-prio team"
+},
+{
+"offset": 24258144,
+"jp": "店舗指定",
+"en": "Store"
+},
+{
+"offset": 24258160,
+"jp": "ミックス(ソロ)",
+"en": "Mix (solo)"
+},
+{
+"offset": 24258184,
+"jp": "ミックス(チーム)",
+"en": "Mix (team)"
+},
+{
+"offset": 24258208,
+"jp": "フェスソロ",
+"en": "Fes solo"
+},
+{
+"offset": 24258224,
+"jp": "フェスチーム",
+"en": "Fes team"
+},
+{
+"offset": 24258248,
+"jp": "フェス1on1",
+"en": "Fes 1on1"
+},
+{
+"offset": 24258264,
+"jp": "フェスミックス(ソロ)",
+"en": "Fes mix (solo)"
+},
+{
+"offset": 24258296,
+"jp": "フェスミックス(チーム)",
+"en": "Fes mix (team)"
+},
+{
+"offset": 24258336,
+"jp": "不正値",
+"en": "Bad value"
+},
+{
+"offset": 24258348,
+"jp": "なし",
+"en": "None"
+},
+{
+"offset": 24258360,
+"jp": "パブリック",
+"en": "Public"
+},
+{
+"offset": 24258376,
+"jp": "プライベート",
+"en": "Private"
+},
+{
+"offset": 24258400,
+"jp": "イベント",
+"en": "Event"
+},
+{
+"offset": 24258416,
+"jp": "マッチング種別[%s] カスタム種別[%s] 試行回数[%d]",
+"en": "Match type[%s] Custom type[%s] Tries[%d]"
+},
+{
+"offset": 24258488,
+"jp": "部屋[%llu]",
+"en": "Room[%llu]"
+},
+{
+"offset": 24258504,
+"jp": "ソロ",
+"en": "Solo"
+},
+{
+"offset": 24258512,
+"jp": "チーム",
+"en": "Team"
+},
+{
+"offset": 24258528,
+"jp": "%s : クラス[%lu] レート[%f] 変動後残数[%d]",
+"en": "%s : Class[%lu] Rate[%f] Left after change[%d]"
+},
+{
+"offset": 24258592,
+"jp": "店外マッチング情報[%lu] RTT閾値[%lu] 入力遅延閾値[%lu]",
+"en": "Online match info[%lu] RTT limit[%lu] Input delay limit[%lu]"
+},
+{
+"offset": 24456088,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 24456096,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 24456112,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 24456120,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 24458928,
+"jp": "設定ファイル%d",
+"en": "Settings file %d"
+},
+{
+"offset": 24458952,
+"jp": "ゲーム基板管理数",
+"en": "Game PCBs managed"
+},
+{
+"offset": 24458984,
+"jp": "リンクグループ数",
+"en": "Link groups"
+},
+{
+"offset": 24459012,
+"jp": "用途",
+"en": "Use"
+},
+{
+"offset": 24459024,
+"jp": "《グループ",
+"en": "<<Group"
+},
+{
+"offset": 24459048,
+"jp": "基板接続数:",
+"en": "Boards linked:"
+},
+{
+"offset": 24459072,
+"jp": "対戦モード:",
+"en": "Battle mode:"
+},
+{
+"offset": 24459096,
+"jp": "タイムレンタル",
+"en": "Time rental"
+},
+{
+"offset": 24459120,
+"jp": "時間設定(店内対戦):",
+"en": "Time (local battle):"
+},
+{
+"offset": 24459152,
+"jp": "対戦ルール(イベント)",
+"en": "Battle rule (event)"
+},
+{
+"offset": 24459184,
+"jp": "ステージ選択(イベント):",
+"en": "Stage select (event):"
+},
+{
+"offset": 24459224,
+"jp": "対戦待機(イベント・ソロ):",
+"en": "Battle wait (event solo):"
+},
+{
+"offset": 24459264,
+"jp": "フリープレイ:",
+"en": "Free play:"
+},
+{
+"offset": 24459288,
+"jp": "【全ゲーム基盤の共通設定】",
+"en": "[Shared by all game PCBs]"
+},
+{
+"offset": 24459328,
+"jp": "アトラクトサウンド:",
+"en": "Attract sound:"
+},
+{
+"offset": 24459360,
+"jp": "イベント系対戦BGM設定:",
+"en": "Event battle BGM:"
+},
+{
+"offset": 24459440,
+"jp": "基板接続数が4の倍数でなければ対戦モードを「イベント」に、また4でなければ「店内・セット貸し」に設定できません。",
+"en": "Event mode needs a board count that is a multiple of 4, and Local Set Rental needs exactly 4."
+},
+{
+"offset": 24459616,
+"jp": "基板接続数が4でなければ「店内・セット貸し」に設定できません。",
+"en": "Local Set Rental needs exactly 4 boards connected."
+},
+{
+"offset": 24459920,
+"jp": "フリー",
+"en": "Free"
+},
+{
+"offset": 24459932,
+"jp": "限定",
+"en": "Limit"
+},
+{
+"offset": 24460264,
+"jp": "標準",
+"en": "Normal"
+},
+{
+"offset": 24460272,
+"jp": "グループプレイ",
+"en": "Group play"
+},
+{
+"offset": 24460296,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 24460320,
+"jp": "クラスマッチと同じ",
+"en": "Same as class match"
+},
+{
+"offset": 24460352,
+"jp": "ノーマル",
+"en": "Normal"
+},
+{
+"offset": 24460368,
+"jp": "デュアルセレクト",
+"en": "Dual select"
+},
+{
+"offset": 24460408,
+"jp": "スコアバトル",
+"en": "Score battle"
+},
+{
+"offset": 24460432,
+"jp": "アタックスコアバトル",
+"en": "Attack score battle"
+},
+{
+"offset": 24460464,
+"jp": "アタックブースト",
+"en": "Attack boost"
+},
+{
+"offset": 24460496,
+"jp": "アンリミテッドEXB",
+"en": "Unlimited EXB"
+},
+{
+"offset": 24460528,
+"jp": "ムゲンシューティング",
+"en": "Mugen shooting"
+},
+{
+"offset": 24460576,
+"jp": "フリー",
+"en": "Free"
+},
+{
+"offset": 24460592,
+"jp": "ランダム限定",
+"en": "Random only"
+},
+{
+"offset": 24460620,
+"jp": "全員",
+"en": "All"
+},
+{
+"offset": 24463768,
+"jp": "店舗指定マッチング",
+"en": "Store-specified matching"
+},
+{
+"offset": 24463800,
+"jp": "マッチングID:",
+"en": "Matching ID:"
+},
+{
+"offset": 24463824,
+"jp": "店舗指定マッチングモード:",
+"en": "Store-specified matching mode:"
+},
+{
+"offset": 24463864,
+"jp": "[オプション]",
+"en": "[Options]"
+},
+{
+"offset": 24463888,
+"jp": "　　　フリープレイ:",
+"en": "   Free play:"
+},
+{
+"offset": 24463920,
+"jp": "　　　連勝:",
+"en": "   Win streak:"
+},
+{
+"offset": 24463944,
+"jp": "　　　CPU戦:",
+"en": "   CPU battle:"
+},
+{
+"offset": 24463968,
+"jp": "　　　対戦時間:",
+"en": "   Battle time:"
+},
+{
+"offset": 24463992,
+"jp": "　　　対戦ルール:",
+"en": "   Battle rule:"
+},
+{
+"offset": 24464024,
+"jp": "新規 ID 発行",
+"en": "New ID"
+},
+{
+"offset": 24464048,
+"jp": "ID 入力",
+"en": "Enter ID"
+},
+{
+"offset": 24464064,
+"jp": "現在の環境では店舗指定マッチングモードを有効にすることができません。",
+"en": "Store-specified matching mode can't be enabled in this environment."
+},
+{
+"offset": 24464176,
+"jp": "マッチングIDが正しくないため、受け入れられません。",
+"en": "Matching ID is invalid and was not accepted."
+},
+{
+"offset": 24464560,
+"jp": "不可",
+"en": "No"
+},
+{
+"offset": 24464576,
+"jp": "アタックスコア",
+"en": "Attack score"
+},
+{
+"offset": 24464600,
+"jp": "EXムゲンシューティング",
+"en": "EX Mugen shooting"
+},
+{
+"offset": 24464640,
+"jp": "マッチングID: ",
+"en": "Matching ID: "
+},
+{
+"offset": 24467240,
+"jp": "USBドングルを抜かないで下さい。",
+"en": "Do not remove the USB dongle."
+},
+{
+"offset": 24469496,
+"jp": "【ルートバトル】セーブデータ編集画面",
+"en": "[Route Battle] Save data editor"
+},
+{
+"offset": 24469552,
+"jp": "所持カスタムチップ＆オプション効果を編集  >>>>>>>>>>",
+"en": "Edit owned custom chips & option effects  >>>>>>>>>>"
+},
+{
+"offset": 24469632,
+"jp": "所持CP",
+"en": "Owned CP"
+},
+{
+"offset": 24469648,
+"jp": "チームコスト",
+"en": "Team cost"
+},
+{
+"offset": 24469672,
+"jp": "最大チームコスト",
+"en": "Max team cost"
+},
+{
+"offset": 24469704,
+"jp": "ステージ進捗度",
+"en": "Stage progress"
+},
+{
+"offset": 24469728,
+"jp": "難易度ID",
+"en": "Diff. ID"
+},
+{
+"offset": 24469744,
+"jp": "プレイ時間(秒)",
+"en": "Play time(s)"
+},
+{
+"offset": 24469768,
+"jp": "実行パターンID",
+"en": "Pattern ID"
+},
+{
+"offset": 24469792,
+"jp": "僚機CPUの残り出撃回数",
+"en": "CPU partner sorties left"
+},
+{
+"offset": 24469824,
+"jp": "//////////////デバッグ用//////////////",
+"en": "//////////////Debug//////////////"
+},
+{
+"offset": 24469872,
+"jp": "デバッグ用:シーンID（特定シーンのみ再生します）",
+"en": "Debug: scene ID (plays only that scene)"
+},
+{
+"offset": 24469952,
+"jp": "デバッグ用:イベントID（特定イベントのみ再生します）",
+"en": "Debug: event ID (plays only that event)"
+},
+{
+"offset": 24470032,
+"jp": "<<<<<<<<<<  設定画面へ戻る",
+"en": "<<<<<<<<<<  Back to settings"
+},
+{
+"offset": 24470072,
+"jp": "カスタムチップ%d",
+"en": "Custom chip %d"
+},
+{
+"offset": 24470096,
+"jp": "オプション効果%d",
+"en": "Option effect %d"
+},
+{
+"offset": 24470120,
+"jp": "編集したセーブデータを保存しますか？",
+"en": "Save the edited save data?"
+},
+{
+"offset": 24470176,
+"jp": "はい",
+"en": "Yes"
+},
+{
+"offset": 24470184,
+"jp": "いいえ",
+"en": "No"
+},
+{
+"offset": 24470200,
+"jp": "本当にセーブデータを消去しますか？",
+"en": "Really erase the save data?"
+},
+{
+"offset": 24470252,
+"jp": "はい",
+"en": "Yes"
+},
+{
+"offset": 24470264,
+"jp": "いいえ",
+"en": "No"
+},
+{
+"offset": 24520068,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 24520080,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 24520096,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 24520104,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 24574200,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 24574216,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 24574224,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 24574240,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 24574272,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 24574304,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 24574352,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 24658368,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 24658384,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 24658392,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 24658408,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 24658440,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 24658600,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 24658800,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 24700376,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 24700392,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 24700400,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 24700416,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 24700448,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 24700480,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 24700528,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 24717548,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 24717560,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 24717576,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 24717584,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 24941644,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 24941656,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 24941672,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 24941680,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 25033768,
+"jp": "HTTP速度制限　開放中.",
+"en": "HTTP rate limit lifted."
+},
+{
+"offset": 25052864,
+"jp": "両者のSTUN解決を受け取れたので完了をお知らせします[H:%d/C:%d]",
+"en": "Got both STUN results, announcing done[H:%d/C:%d]"
+},
+{
+"offset": 25052960,
+"jp": "両者のSTUN解決を受け取れたので完了をお知らせします[H:0/C:0]",
+"en": "Got both STUN results, announcing done[H:0/C:0]"
+},
+{
+"offset": 25053056,
+"jp": "STUN解決に成功しました、お互いのSTUN結果を交換します[H:%d/C:%d]",
+"en": "STUN resolved, exchanging STUN results[H:%d/C:%d]"
+},
+{
+"offset": 25302352,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 25302360,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 25302376,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 25302384,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 25305000,
+"jp": "バージョン [%d.%d.%d]\n\n",
+"en": "Version [%d.%d.%d]\n\n"
+},
+{
+"offset": 25305032,
+"jp": "参加機体\n",
+"en": "Units\n"
+},
+{
+"offset": 25305048,
+"jp": "処理落ち情報\n",
+"en": "Slowdown info\n"
+},
+{
+"offset": 25448852,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 25448864,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 25448880,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 25448888,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 25544008,
+"jp": "スポット",
+"en": "Spot"
+},
+{
+"offset": 25544024,
+"jp": "公式",
+"en": "Offic."
+},
+{
+"offset": 25544032,
+"jp": "VS.モバイル",
+"en": "VS.Mobile"
+},
+{
+"offset": 25544048,
+"jp": "ガンダムインフォ1",
+"en": "Gundam Info 1"
+},
+{
+"offset": 25544080,
+"jp": "ガンダムインフォ2",
+"en": "Gundam Info 2"
+},
+{
+"offset": 25544112,
+"jp": "ガンダムインフォ(RANDOM)",
+"en": "Gundam Info(RANDOM)"
+},
+{
+"offset": 25544160,
+"jp": "イベント (オンラインイベント杯、エクストリームマッチ)",
+"en": "Event (online event cup, Extreme Match)"
+},
+{
+"offset": 25724204,
+"jp": "店内",
+"en": "Local"
+},
+{
+"offset": 25724216,
+"jp": "グローバル",
+"en": "Global"
+},
+{
+"offset": 25724232,
+"jp": "特設",
+"en": "Spec."
+},
+{
+"offset": 25724240,
+"jp": "大会",
+"en": "Tourn."
+},
+{
+"offset": 27088648,
+"jp": "アーケードのレバー",
+"en": "Arcade lever"
+},
+{
+"offset": 27088728,
+"jp": "アーケードの射撃ボタン",
+"en": "Arcade shoot button"
+},
+{
+"offset": 27088768,
+"jp": "アーケードの格闘ボタン",
+"en": "Arcade melee button"
+},
+{
+"offset": 27088808,
+"jp": "アーケードのジャンプボタン",
+"en": "Arcade jump button"
+},
+{
+"offset": 27088848,
+"jp": "コントローラの左スティック",
+"en": "Controller left stick"
+},
+{
+"offset": 27088888,
+"jp": "コントローラの右スティック",
+"en": "Controller right stick"
+},
+{
+"offset": 27088928,
+"jp": "コントローラのAボタン",
+"en": "Controller A button"
+},
+{
+"offset": 27088960,
+"jp": "コントローラのBボタン",
+"en": "Controller B button"
+},
+{
+"offset": 27088992,
+"jp": "コントローラのYボタン",
+"en": "Controller Y button"
+},
+{
+"offset": 27089024,
+"jp": "コントローラのXボタン",
+"en": "Controller X button"
+},
+{
+"offset": 27089056,
+"jp": "コントローラのLBボタン",
+"en": "Controller LB button"
+},
+{
+"offset": 27089096,
+"jp": "コントローラのLTボタン",
+"en": "Controller LT button"
+},
+{
+"offset": 27089136,
+"jp": "コントローラのRBボタン",
+"en": "Controller RB button"
+},
+{
+"offset": 27089176,
+"jp": "コントローラのRTボタン",
+"en": "Controller RT button"
+},
+{
+"offset": 27089216,
+"jp": "サポートトリガー入力中のAボタン",
+"en": "A button during support trigger"
+},
+{
+"offset": 27089264,
+"jp": "サポートトリガー入力中のBボタン",
+"en": "B button during support trigger"
+},
+{
+"offset": 27089312,
+"jp": "サポートトリガー入力中のXボタン",
+"en": "X button during support trigger"
+},
+{
+"offset": 27089360,
+"jp": "サポートトリガー入力中のYボタン",
+"en": "Y button during support trigger"
+},
+{
+"offset": 27089408,
+"jp": "無入力",
+"en": "No input"
+},
+{
+"offset": 27089424,
+"jp": "デフォルト",
+"en": "Default"
+},
+{
+"offset": 27089440,
+"jp": "アーケードのレバー          ",
+"en": "Arcade lever          "
+},
+{
+"offset": 27240600,
+"jp": "クレジット選択画面",
+"en": "Credit select screen"
+},
+{
+"offset": 27240632,
+"jp": "【1クレジット】",
+"en": "[1 credit]"
+},
+{
+"offset": 27240656,
+"jp": "【2クレジット】",
+"en": "[2 credits]"
+},
+{
+"offset": 27240680,
+"jp": "【タイムレンタル】",
+"en": "[Time rental]"
+},
+{
+"offset": 27240712,
+"jp": "クイックスタート選択画面",
+"en": "Quick start select screen"
+},
+{
+"offset": 27240752,
+"jp": "【前回と同じ設定でプレイ】",
+"en": "[Play with last settings]"
+},
+{
+"offset": 27240792,
+"jp": "【機体を選び直してプレイ】",
+"en": "[Pick a new unit and play]"
+},
+{
+"offset": 27240832,
+"jp": "【最初からプレイ】",
+"en": "[Play from the start]"
+},
+{
+"offset": 27528392,
+"jp": "対戦モード",
+"en": "Battle mode"
+},
+{
+"offset": 27528408,
+"jp": "CPU戦/トレーニングモード",
+"en": "CPU battle/Training mode"
+},
+{
+"offset": 27528616,
+"jp": "ミックスマッチ",
+"en": "Mix match"
+},
+{
+"offset": 27528640,
+"jp": "エクバフェス",
+"en": "EXVS Fes"
+},
+{
+"offset": 27528664,
+"jp": "店内優先マッチ",
+"en": "Store-priority match"
+},
+{
+"offset": 27528688,
+"jp": "ソロ出撃(店内対戦)",
+"en": "Solo sortie (local battle)"
+},
+{
+"offset": 27528720,
+"jp": "チーム出撃(店内対戦)",
+"en": "Team sortie (local battle)"
+},
+{
+"offset": 27528752,
+"jp": "チームホールド(イベント)",
+"en": "Team hold (event)"
+},
+{
+"offset": 27528792,
+"jp": "チーム出撃(イベント)",
+"en": "Team sortie (event)"
+},
+{
+"offset": 27528824,
+"jp": "ソロ出撃(イベント)",
+"en": "Solo sortie (event)"
+},
+{
+"offset": 27528856,
+"jp": "VS.ルートバトル",
+"en": "VS. Route Battle"
+},
+{
+"offset": 27528880,
+"jp": "プラクティス",
+"en": "Practice"
+},
+{
+"offset": 27528904,
+"jp": "トレーニング",
+"en": "Training"
+},
+{
+"offset": 27528928,
+"jp": "チュートリアル",
+"en": "Tutorial"
+},
+{
+"offset": 27528952,
+"jp": "ソロ出撃",
+"en": "Solo sortie"
+},
+{
+"offset": 27528968,
+"jp": "チーム出撃",
+"en": "Team sortie"
+},
+{
+"offset": 30547616,
+"jp": "ダミーShopNickName",
+"en": "Dummy ShopNickName"
+},
+{
+"offset": 30547640,
+"jp": "ダミー店舗名",
+"en": "Dummy store name"
+},
+{
+"offset": 30573392,
+"jp": "指定されたBGMが許可されていないので差し替えました %08x -> %08x \n",
+"en": "BGM not allowed, replaced %08x -> %08x \n"
+},
+{
+"offset": 30573584,
+"jp": "指定されたBGMが有効でないので差し替えました %08x -> %08x \n",
+"en": "BGM not valid, replaced %08x -> %08x \n"
+},
+{
+"offset": 30573664,
+"jp": "バトル用BGMがひとつも設定されていません\n",
+"en": "No battle BGM set\n"
+},
+{
+"offset": 30573728,
+"jp": "これ以上VS用BGMリストに追加できません\n",
+"en": "VS BGM list is full\n"
+},
+{
+"offset": 30573784,
+"jp": "バンクに指定のBGMデータが存在しません",
+"en": "BGM data not in bank"
+},
+{
+"offset": 30573840,
+"jp": "BGMテーブルに指定のBGMが存在しません",
+"en": "BGM not in BGM table"
+},
+{
+"offset": 30573904,
+"jp": "指定されたBGMが有効でないので差し替えました %08x -> %08x \n",
+"en": "BGM not valid, replaced %08x -> %08x \n"
+},
+{
+"offset": 30573984,
+"jp": "指定されたBGMが許可されていないので差し替えました %08x -> %08x \n",
+"en": "BGM not allowed, replaced %08x -> %08x \n"
+},
+{
+"offset": 30576112,
+"jp": "未登録バンクの解放を試みました(nType(%d), nKeyId(%d))\n",
+"en": "Tried to free unregistered bank(nType(%d), nKeyId(%d))\n"
+},
+{
+"offset": 33262288,
+"jp": "未初期化のoptional型にアクセスしようとしています",
+"en": "Accessed an uninitialized optional"
+}
+]
