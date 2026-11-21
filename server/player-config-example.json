@@ -6,8 +6,8 @@
     "matchServer": "http://YOUR_SERVER_IP:28090",
     "matchPort": 28090,
     "stun": {
-      "host": "stun.l.google.com",
-      "port": 19302
+      "host": "match",
+      "port": 3478
     },
     "logTraffic": true,
     "turn": {

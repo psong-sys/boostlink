@@ -125,7 +125,9 @@ func TestDiscordPingOncePerQuietQueue(t *testing.T) {
 	}
 }
 
-func contains(s, sub string) bool { return len(sub) > 0 && len(s) >= len(sub) && (s == sub || indexOf(s, sub) >= 0) }
+func contains(s, sub string) bool {
+	return len(sub) > 0 && len(s) >= len(sub) && (s == sub || indexOf(s, sub) >= 0)
+}
 func indexOf(s, sub string) int {
 	for i := 0; i+len(sub) <= len(s); i++ {
 		if s[i:i+len(sub)] == sub {
@@ -133,4 +135,28 @@ func indexOf(s, sub string) int {
 		}
 	}
 	return -1
+}
+
+func TestStunMatchHostAdvertised(t *testing.T) {
+	up := fakeCardServer(t)
+	defer up.Close()
+	pc := defaultConfig().Proxy
+	pc.Upstream = up.URL
+	pc.MatchServer = "http://203.0.113.7:28090"
+	pc.Stun = &HostPort{Host: "match", Port: 3478}
+	pl, _ := NewProxy(pc, nil, &trafficLog{})
+	px := httptest.NewServer(pl)
+	defer px.Close()
+	resp := &exvs.Response{}
+	post(t, px.URL+"/", &exvs.Request{Type: exvs.MethodType_MTHD_REGISTER_PCB.Enum(), RequestId: proto.String("r"),
+		RegisterPcb: &exvs.Request_RegisterPcb{}}, resp)
+	ok := false
+	for _, s := range resp.GetRegisterPcb().GetServerInfo() {
+		if s.GetServerType() == exvs.ServerType_SRV_STUN && s.GetUri() == "203.0.113.7" && s.GetPort() == 3478 {
+			ok = true
+		}
+	}
+	if !ok {
+		t.Fatalf("no STUN entry for the match host: %v", resp.GetRegisterPcb().GetServerInfo())
+	}
 }

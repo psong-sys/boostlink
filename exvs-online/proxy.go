@@ -272,8 +272,12 @@ func (p *Proxy) patchRegisterPcb(r *http.Request, rp *exvs.Response_RegisterPcb)
 	}
 	if s := p.cfg.Stun; s != nil && s.Host != "" {
 		host := s.Host
-		if host == "auto" {
+		switch host {
+		case "auto":
 			host = firstLANIP()
+		case "match":
+			// The match server's own STUN (a public server runs one next to matchmaking).
+			host = p.matchHostIP()
 		}
 		keep = append(keep, &exvs.Response_RegisterPcb_ServerInfo{
 			ServerType: exvs.ServerType_SRV_STUN.Enum(), Uri: proto.String(host), Port: proto.Uint32(s.Port),
@@ -316,4 +320,23 @@ func localIPv4s() []string {
 		}
 	}
 	return out
+}
+
+// matchHostIP is the match server's address as an IPv4 string (the game wants an IP).
+func (p *Proxy) matchHostIP() string {
+	if p.match == nil {
+		return firstLANIP()
+	}
+	h := p.match.Hostname()
+	if ip := net.ParseIP(h); ip != nil {
+		return h
+	}
+	if ips, err := net.LookupIP(h); err == nil {
+		for _, ip := range ips {
+			if v4 := ip.To4(); v4 != nil {
+				return v4.String()
+			}
+		}
+	}
+	return h
 }

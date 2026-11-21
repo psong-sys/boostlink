@@ -57,7 +57,7 @@ type checker struct {
 	addrs       func(net.Interface) ([]net.Addr, error)
 	systemDir   string
 	firewall    func(programs []string) (map[string]string, error) // program -> "allow" | "block" | "none"
-	stunMapped  func(local, server string) (string, error)        // returns mapped ip:port
+	stunMapped  func(local, server string) (string, error)         // returns mapped ip:port
 	stunServers []string
 	httpGet     func(url string) (time.Duration, error)
 }
@@ -321,12 +321,14 @@ func (c *checker) Run() *CheckReport {
 	if fw, err := c.firewall(progs); err != nil {
 		r.add("firewall", "Windows Firewall", "info", "Couldn't read firewall rules: "+err.Error(), "")
 	} else if fw != nil {
-		var blocked, none []string
+		var blocked, none, priv []string
 		for _, p := range progs {
 			switch fw[p] {
 			case "block":
 				blocked = append(blocked, filepath.Base(p))
 			case "allow":
+			case "private":
+				priv = append(priv, filepath.Base(p))
 			default:
 				none = append(none, filepath.Base(p))
 			}
@@ -335,7 +337,11 @@ func (c *checker) Run() *CheckReport {
 		case len(blocked) > 0:
 			r.CanFixFirewall = true
 			r.add("firewall", "Windows Firewall", "fail", "Blocked: "+strings.Join(blocked, ", ")+". Matches will time out.", "Click Fix firewall (needs admin), or allow them in Windows Security > Firewall > Allow an app.")
-		case len(none) > 0:
+		case len(priv) > 0 && len(none) == 0:
+			r.CanFixFirewall = true
+			r.add("firewall", "Windows Firewall", "warn", "Allowed on private networks only: "+strings.Join(priv, ", ")+". ZeroTier and Radmin usually count as Public, so the other PC can't reach you.", "Click Fix firewall (needs admin).")
+		case len(none) > 0 || len(priv) > 0:
+			none = append(none, priv...)
 			r.CanFixFirewall = true
 			r.add("firewall", "Windows Firewall", "warn", "No allow rule yet for: "+strings.Join(none, ", ")+". Incoming connections may be dropped.", "Click Fix firewall (needs admin).")
 		default:
@@ -467,7 +473,9 @@ foreach($f in Get-NetFirewallApplicationFilter){
   foreach($w in $want){ if($p -ieq $w){
     $r=$f | Get-NetFirewallRule
     foreach($x in $r){ if("$($x.Direction)" -eq 'Inbound' -and "$($x.Enabled)" -eq 'True'){
-      if("$($x.Action)" -eq 'Block'){$out[$w]='block'} elseif($out[$w] -ne 'block'){$out[$w]='allow'} } }
+      $pub = ("$($x.Profile)" -match 'Any|Public')
+      if("$($x.Action)" -eq 'Block'){$out[$w]='block'}
+      elseif($out[$w] -ne 'block'){ if($pub){$out[$w]='allow'} elseif($out[$w] -ne 'allow'){$out[$w]='private'} } } }
   } }
 }
 $out | ConvertTo-Json -Compress`

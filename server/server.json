@@ -11,7 +11,11 @@
       "minPort": 49160,
       "maxPort": 49200
     },
-    "logTraffic": false
+    "logTraffic": false,
+    "localStun": {
+      "listen": "0.0.0.0:3478",
+      "altPort": 3479
+    }
   },
   "match": {
     "listen": "0.0.0.0:28090",

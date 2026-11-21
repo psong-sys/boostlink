@@ -48,6 +48,7 @@ UNIT
 # Open the ports if ufw is in use (most cloud images leave it off; provider firewalls need the same ports).
 if command -v ufw >/dev/null 2>&1 && ufw status | grep -q "Status: active"; then
   ufw allow 28090/tcp
+  ufw allow 3478:3479/udp
   ufw allow 3480/udp
   ufw allow 49160:49200/udp
 fi
