@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boost Link</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 4h9l5 9 5-9h9L19 22h-6z' fill='%23ffe600'/%3E%3Cpath d='M6 26h20l-2 4H4z' fill='%2319e3ff'/%3E%3C/svg%3E">
+<style>
+  @font-face { font-family: "Chakra"; src: url(fonts/cp-500.woff2) format("woff2"); font-weight: 500; }
+  @font-face { font-family: "Chakra"; src: url(fonts/cp-700.woff2) format("woff2"); font-weight: 700; }
+  @font-face { font-family: "Chakra"; src: url(fonts/cp-700i.woff2) format("woff2"); font-weight: 700; font-style: italic; }
+  :root {
+    --hot: #f0466a; --hot2: #ff2d55; --yel: #ffe600; --cyan: #19e3ff; --ink: #0b0b10; --panel: #121219;
+    --panel2: #1c1c26; --line: #2c2c3a; --text: #f4f4f8; --muted: #a3a3b8; --ok: #39f29a; --err: #ff5470;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font: 500 14px/1.45 "Chakra", "Segoe UI", system-ui, sans-serif; color: var(--text);
+    background-color: var(--hot);
+    background-image:
+      radial-gradient(rgba(0,0,0,.18) 1.2px, transparent 1.6px),
+      linear-gradient(115deg, transparent 0 58%, rgba(11,11,16,.92) 58% 74%, transparent 74%),
+      linear-gradient(115deg, transparent 0 78%, var(--yel) 78% 79.2%, transparent 79.2%),
+      linear-gradient(115deg, transparent 0 82%, var(--cyan) 82% 82.8%, transparent 82.8%),
+      linear-gradient(160deg, #ff5e7e 0%, var(--hot) 45%, #d62e57 100%);
+    background-size: 9px 9px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    background-attachment: fixed;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 18px 16px 40px; position: relative; }
+
+  /* header */
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  .logo { line-height: .9; transform: skewX(-8deg); }
+  .logo .t1 { font: 700 italic 15px "Chakra"; letter-spacing: 6px; color: var(--ink); background: var(--yel); display: inline-block; padding: 2px 10px; }
+  .logo .t2 { font: 700 italic 54px "Chakra"; color: var(--yel); letter-spacing: 1px;
+    text-shadow: 3px 3px 0 var(--ink), 6px 6px 0 var(--cyan); -webkit-text-stroke: 1px var(--ink); }
+  .logo .t2 b { color: #fff; }
+  .ver { font: 700 12px "Chakra"; color: var(--ink); margin-left: 8px; -webkit-text-stroke: 0; text-shadow: none; letter-spacing: 1px; vertical-align: top; }
+  nav { display: flex; gap: 6px; flex-wrap: wrap; }
+  @media (max-width: 560px) { nav button { padding: 8px 11px; font-size: 13px; } .wrap { overflow-x: hidden; } }
+  nav button { font: 700 italic 15px "Chakra"; letter-spacing: 1px; background: var(--ink); color: var(--muted);
+    border: 0; padding: 9px 18px; transform: skewX(-14deg); cursor: pointer; }
+  nav button span { display: inline-block; transform: skewX(14deg); }
+  nav button.on { background: var(--yel); color: var(--ink); box-shadow: 4px 4px 0 var(--cyan); }
+  nav button:hover:not(.on) { color: #fff; }
+
+  /* panels */
+  .panel { background: var(--panel); border: 1px solid #000; padding: 16px; position: relative; margin-bottom: 14px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.55); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); }
+  .panel::before { content: ""; position: absolute; left: 0; top: 0; width: 64px; height: 4px; background: var(--yel); }
+  h2 { font: 700 italic 13px "Chakra"; letter-spacing: 3px; text-transform: uppercase; color: var(--yel); margin: 0 0 12px; }
+  h2 small { color: var(--muted); letter-spacing: 1px; font-style: normal; font-weight: 500; text-transform: none; margin-left: 6px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } .logo .t2 { font-size: 40px; } }
+
+  /* mode tiles */
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .mode { position: relative; cursor: pointer; background: var(--panel2); padding: 14px 12px 12px; border: 2px solid transparent;
+    transform: skewX(-6deg); transition: transform .12s, border-color .12s; }
+  .mode > * { transform: skewX(6deg); }
+  .mode input { position: absolute; opacity: 0; pointer-events: none; }
+  .mode svg { width: 34px; height: 34px; display: block; margin-bottom: 6px; }
+  .mode b { display: block; font: 700 italic 19px "Chakra"; letter-spacing: .5px; }
+  .mode small { color: var(--muted); display: block; }
+  .mode:hover { transform: skewX(-6deg) translateY(-2px); }
+  .mode.on { border-color: var(--yel); background: linear-gradient(135deg, #2a2310, var(--panel2) 70%); box-shadow: 5px 5px 0 var(--hot2); }
+  .mode.on b { color: var(--yel); }
+  .mode:focus-within { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  @media (max-width: 560px) { .modes { grid-template-columns: 1fr; } }
+
+  .ctx { margin-top: 14px; min-height: 64px; }
+  .ipline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
+  .ip { font: 700 26px Consolas, "Chakra", monospace; color: var(--cyan); letter-spacing: 1px; }
+  .tag { font: 700 11px "Chakra"; letter-spacing: 1px; padding: 2px 7px; background: var(--cyan); color: var(--ink); }
+  input[type=text].big { font: 700 24px Consolas, "Chakra", monospace; letter-spacing: 1px; color: var(--cyan); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font: 500 12px Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); padding: 4px 9px; cursor: pointer; }
+  .chip:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* play */
+  .play { width: 100%; margin-top: 4px; font: 700 italic 44px "Chakra"; letter-spacing: 8px; color: var(--ink); background: var(--yel);
+    border: 0; padding: 14px 0 10px; cursor: pointer; transform: skewX(-10deg); box-shadow: 8px 8px 0 var(--ink), 8px 8px 0 3px var(--cyan);
+    transition: transform .08s, box-shadow .08s; position: relative; overflow: hidden; }
+  .play span { display: inline-block; transform: skewX(10deg); }
+  .play::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 45%, transparent 60%);
+    transform: translateX(-100%); }
+  .play:hover::after { animation: shine .7s; }
+  .play:active { transform: skewX(-10deg) translate(4px, 4px); box-shadow: 4px 4px 0 var(--ink); }
+  .play.stop { background: var(--ink); color: var(--err); box-shadow: 8px 8px 0 var(--err); }
+  .play:disabled { filter: grayscale(.7); opacity: .6; cursor: default; }
+  @keyframes shine { to { transform: translateX(100%); } }
+  .sub { margin-top: 16px; color: var(--ink); font-weight: 700; font-size: 12px; text-align: center; }
+
+  /* status */
+  .steps { list-style: none; margin: 0; padding: 0; }
+  .steps li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+  .steps li:last-child { border-bottom: 0; }
+  .dot { width: 22px; height: 22px; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    background: var(--panel2); color: var(--muted); transform: skewX(-12deg); }
+  .steps .running .dot { background: var(--yel); color: var(--ink); animation: pulse 1s infinite; }
+  .steps .done .dot { background: var(--ok); color: var(--ink); }
+  .steps .error .dot { background: var(--err); color: #fff; }
+  .steps .skipped .dot { background: #333; }
+  .steps .note { color: var(--muted); font-size: 12px; margin-left: auto; }
+  @keyframes pulse { 50% { opacity: .45; } }
+  #stage { font: 700 italic 17px "Chakra"; margin-bottom: 8px; }
+  #stage.err { color: var(--err); }
+  #stage.ok { color: var(--ok); }
+  details.log summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 10px; }
+  #log { font: 12px/1.4 Consolas, monospace; background: #07070a; padding: 8px; max-height: 220px; overflow: auto;
+    white-space: pre-wrap; color: var(--muted); margin-top: 6px; }
+
+  /* alerts */
+  .alert { background: var(--ink); border-left: 5px solid var(--yel); padding: 10px 12px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .alert.bad { border-left-color: var(--err); }
+  .alert p { margin: 0; flex: 1; min-width: 200px; }
+
+  /* forms */
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-top: 10px; }
+  .row:first-of-type { margin-top: 0; }
+  label.f { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 170px; color: var(--muted); font-size: 12px; letter-spacing: .5px; }
+  input[type=text], select { background: #08080c; color: var(--text); border: 1px solid var(--line); border-bottom: 2px solid #3a3a4c;
+    padding: 9px 10px; font: 500 14px "Chakra", system-ui, sans-serif; width: 100%; border-radius: 0; }
+  input[type=text]:focus, select:focus { outline: none; border-bottom-color: var(--yel); }
+  label.c { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; }
+  input[type=checkbox] { accent-color: var(--yel); width: 17px; height: 17px; }
+  .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .kv label.f { min-width: 0; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .warn { color: var(--yel); }
+  code { background: #000; padding: 1px 5px; color: var(--cyan); }
+  .btn { font: 700 italic 13px "Chakra"; letter-spacing: 1px; text-transform: uppercase; background: var(--panel2); color: var(--text);
+    border: 1px solid var(--line); padding: 9px 14px; cursor: pointer; transform: skewX(-10deg); }
+  .btn > span { display: inline-block; transform: skewX(10deg); }
+  .btn:hover { border-color: var(--yel); color: var(--yel); }
+  .btn.y { background: var(--yel); color: var(--ink); border-color: var(--yel); }
+  .btn.y:hover { color: var(--ink); box-shadow: 3px 3px 0 var(--cyan); }
+  .btn.sm { padding: 5px 10px; font-size: 11px; }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  #form.locked input:not([type=radio]), #form.locked select, #form.locked .btn, #form.locked .mode, #form.locked .chip { opacity: .5; pointer-events: none; }
+  #form.locked #statusBtn { opacity: 1; pointer-events: auto; }
+  .tab { display: none; }
+  .tab.on { display: block; }
+  .footer { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
+
+  /* toast + modal */
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) skewX(-8deg); background: var(--ink); border-left: 5px solid var(--yel);
+    padding: 10px 16px; display: none; max-width: 90%; z-index: 20; box-shadow: 5px 5px 0 rgba(0,0,0,.5); }
+  .toast.err { border-left-color: var(--err); }
+  .modal { position: fixed; inset: 0; background: rgba(5,5,8,.82); display: none; align-items: center; justify-content: center; z-index: 10; padding: 16px; }
+  .modal.on { display: flex; }
+  .modal .panel { width: 100%; max-width: 620px; margin: 0; max-height: 92vh; overflow: auto; }
+  .modal h1 { font: 700 italic 34px "Chakra"; color: var(--yel); margin: 0 0 4px; text-shadow: 3px 3px 0 var(--hot2); }
+  .wstep { display: flex; gap: 12px; margin-top: 16px; }
+  .wnum { font: 700 italic 28px "Chakra"; color: var(--cyan); width: 30px; flex: none; line-height: 1; }
+  .wstep > div:last-child { flex: 1; min-width: 0; }
+  .wstep b { display: block; font-size: 15px; margin-bottom: 4px; }
+  a { color: var(--cyan); }
+  .checks { list-style: none; padding: 0; margin: 12px 0 0; }
+  .checks li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px dashed var(--line); }
+  .checks li:last-child { border-bottom: 0; }
+  .checks .dot { margin-top: 1px; }
+  .checks .ok .dot { background: var(--ok); color: var(--ink); }
+  .checks .warn .dot { background: var(--yel); color: var(--ink); }
+  .checks .fail .dot { background: var(--err); color: #fff; }
+  .checks .info .dot { background: var(--cyan); color: var(--ink); }
+  .checks b { display: block; }
+  .checks .d { color: var(--muted); font-size: 12px; }
+  .checks .fx { color: var(--yel); font-size: 12px; margin-top: 3px; }
+  .checks .fx::before { content: "FIX: "; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="t1">EXVS2 LAUNCHER</div>
+      <div class="t2">BOOST <b>LINK</b><span class="ver" id="ver"></span></div>
+    </div>
+    <nav>
+      <button data-tab="play" class="on"><span>PLAY</span></button>
+      <button data-tab="player"><span>PILOT</span></button>
+      <button data-tab="settings"><span>SETTINGS</span></button>
+      <button data-tab="controls"><span>CONTROLS</span></button>
+    </nav>
+  </header>
+
+  <div id="alerts"></div>
+
+  <fieldset id="form">
+  <!-- PLAY -->
+  <section class="tab on" id="tab-play">
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <h2>Choose your sortie</h2>
+          <div class="modes">
+            <label class="mode" data-mode="offline"><input type="radio" name="mode" value="offline">
+              <svg viewBox="0 0 34 34"><path d="M5 27 17 5l12 22H21l-4-8-4 8z" fill="#ffe600"/></svg>
+              <b>OFFLINE</b><small>Solo, CPU or LAN</small></label>
+            <label class="mode" data-mode="host"><input type="radio" name="mode" value="host">
+              <svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="4" fill="#19e3ff"/><path d="M9 9a11 11 0 0 0 0 16M25 9a11 11 0 0 1 0 16M5 5a17 17 0 0 0 0 24M29 5a17 17 0 0 1 0 24" stroke="#19e3ff" stroke-width="2.6" fill="none"/></svg>
+              <b>HOST</b><small>Friends join you</small></label>
+            <label class="mode" data-mode="friend"><input type="radio" name="mode" value="friend">
+              <svg viewBox="0 0 34 34"><path d="M4 17h18M15 9l8 8-8 8" stroke="#ff5e7e" stroke-width="4" fill="none"/><path d="M26 5h4v24h-4" stroke="#ff5e7e" stroke-width="3" fill="none"/></svg>
+              <b>JOIN</b><small>Connect to a host</small></label>
+          </div>
+          <div class="ctx" id="ctx-offline">
+            <div class="note">Plays on your own card server only, the same as starting everything by hand.</div>
+          </div>
+          <div class="ctx" id="ctx-host" style="display:none">
+            <div class="note" style="margin-top:0">Give your friends this address. They pick <b>JOIN</b> and type it in.</div>
+            <div id="hostIps"></div>
+            <button class="btn sm" type="button" id="statusBtn" style="margin-top:8px"><span>Open match status page</span></button>
+          </div>
+          <div class="ctx" id="ctx-friend" style="display:none">
+            <label class="f">HOST'S IP OR SERVER ADDRESS (Radmin, ZeroTier or a server name)
+              <input type="text" class="big" id="hostIp" placeholder="26.x.x.x or play.example.com" spellcheck="false" autocomplete="off"></label>
+            <div class="chips" id="recent"></div>
+          </div>
+        </div>
+        <button id="playBtn" class="play"><span>PLAY</span></button>
+        <div class="sub" id="playSub"></div>
+        <div style="text-align:center;margin-top:12px"><button class="btn" type="button" id="checkBtn"><span>Check my PC</span></button></div>
+      </div>
+      <div class="panel">
+        <h2>Launch status</h2>
+        <div id="stage">Ready</div>
+        <ul class="steps" id="steps"></ul>
+        <details class="log"><summary>Details</summary><div id="log">Nothing yet.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT -->
+  <section class="tab" id="tab-player">
+    <div class="grid2">
+      <div class="panel">
+        <h2>Your card</h2>
+        <div class="row">
+          <label class="f">CARD CHIP ID <input type="text" id="chipId" spellcheck="false"></label>
+          <label class="f">CARD ACCESS CODE <input type="text" id="accessCode" spellcheck="false"></label>
+        </div>
+        <div class="row">
+          <label class="f">MACHINE SERIAL <input type="text" id="serial" spellcheck="false"></label>
+          <div style="flex:1;min-width:170px"><button class="btn" id="uniqueBtn" type="button"><span>Make my IDs unique</span></button></div>
+        </div>
+        <div class="note">Everyone in an online match needs different IDs. New card IDs give you a new, empty card. Your old card stays on your card server, and typing the old values back in brings it back.</div>
+      </div>
+      <div class="panel">
+        <h2>Pilot name &amp; customizing</h2>
+        <p style="margin-top:0">Your pilot name, favorite suits, stickers, BGM and titles are edited in the card server's own web page.</p>
+        <button class="btn y" id="cardEditBtn" type="button"><span>Edit card &amp; pilot name</span></button>
+        <div class="note">Opens the editor in your browser and starts the card server if it isn't running. Play once first so your card exists, then sign in there with the chip ID and access code on the left.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="tab" id="tab-settings">
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <h2>Network</h2>
+          <div class="row">
+            <label class="f">NETWORK ADAPTER (your real Ethernet or Wi-Fi)
+              <select id="interfaceName"></select></label>
+          </div>
+          <div class="note">The game and the Live Monitor both use this adapter, and it's written to <code>config.ini</code> and <code>lmnfig.ini</code>. Don't pick Radmin or ZeroTier here. Those are only for the host's IP.</div>
+        </div>
+        <div class="panel">
+          <h2>Display</h2>
+          <div class="row">
+            <label class="c"><input type="checkbox" id="windowed"> Windowed</label>
+            <label class="c"><input type="checkbox" id="borderless"> Borderless window</label>
+            <label class="c"><input type="checkbox" id="framerateLimit"> Frame rate limit</label>
+          </div>
+          <div class="row">
+            <label class="f">RESOLUTION <input type="text" id="resolution" list="resList" spellcheck="false"></label>
+            <datalist id="resList"><option value="720p"><option value="1080p"><option value="1440p"><option value="4K"></datalist>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h2>Live Monitor</h2>
+          <div class="row">
+            <label class="f">WINDOW
+              <select id="liveMonitor">
+                <option value="hide">Start it hidden</option>
+                <option value="minimize">Start it minimized</option>
+                <option value="show">Start it normally</option>
+                <option value="off">Don't start it</option>
+              </select></label>
+          </div>
+          <label class="c" style="margin-top:8px"><input type="checkbox" id="lmMute"> Mute the Live Monitor</label>
+          <div class="note">The game needs the Live Monitor running, or it stops at "LIVEMONITOR DISCONNECT". The launcher starts it before the game and closes it after.</div>
+        </div>
+        <div class="panel">
+          <h2>Shortcuts &amp; files</h2>
+          <button class="btn" id="shortcutBtn" type="button"><span>Add desktop shortcuts</span></button>
+          <div class="note">"Boost Link Play" starts straight into the game with your saved settings. "Boost Link" opens this window.</div>
+          <div class="note" id="folder"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTROLS -->
+  <section class="tab" id="tab-controls">
+    <div class="panel">
+      <h2>Keyboard <small>key names like <code>Z</code>, <code>UpArr</code>, <code>1 (NumPad)</code>. Separate several keys with commas.</small></h2>
+      <div id="keyboard" class="kv"></div>
+    </div>
+    <div class="panel">
+      <h2>Controller <small>controller button numbers. DeviceId 16 means every connected controller.</small></h2>
+      <div id="controller" class="kv"></div>
+    </div>
+  </section>
+  </fieldset>
+
+  <div class="footer">
+    <button class="btn y" id="saveBtn" type="button"><span>Save settings</span></button>
+    <span id="dirtyNote"></span>
+  </div>
+</div>
+
+<!-- first run -->
+<div class="modal" id="welcome">
+  <div class="panel">
+    <h1>WELCOME, PILOT</h1>
+    <div class="note" style="margin-top:0">Three quick things and you're ready to launch.</div>
+    <div class="wstep" id="wRuntime">
+      <div class="wnum">!</div>
+      <div><b>Install the Visual C++ 2010 runtime</b>
+        The Live Monitor needs it (msvcr100.dll is missing on this PC). Get <b>vcredist_x64.exe</b> for Visual C++ 2010 SP1 from Microsoft, install it, then reopen the launcher.
+        <div style="margin-top:6px"><a href="https://www.microsoft.com/en-us/download/details.aspx?id=26999" target="_blank" rel="noopener">Microsoft download page</a></div></div>
+    </div>
+    <div class="wstep">
+      <div class="wnum">1</div>
+      <div><b>Your network adapter</b>
+        <select id="wAdapter"></select>
+        <div class="note">Pick your real connection (Ethernet or Wi-Fi). We picked the one your PC uses for the internet.</div></div>
+    </div>
+    <div class="wstep">
+      <div class="wnum">2</div>
+      <div><b>Your own card</b>
+        <label class="c"><input type="checkbox" id="wUnique"> Give me my own card IDs (recommended for online)</label>
+        <div class="note" id="wCardNote"></div></div>
+    </div>
+    <div class="wstep">
+      <div class="wnum">3</div>
+      <div><b>How do you want to play?</b>
+        <select id="wMode"><option value="offline">Offline</option><option value="host">Host online</option><option value="friend">Join a friend</option></select></div>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end">
+      <button class="btn" id="wSkip" type="button"><span>Skip</span></button>
+      <button class="btn y" id="wGo" type="button"><span>Let's go</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="checkModal">
+  <div class="panel">
+    <h1 style="font-size:28px">PC CHECK</h1>
+    <div class="note" style="margin-top:0" id="checkSummary">Checking… this takes about 10 seconds.</div>
+    <ul class="checks" id="checkList"></ul>
+    <div style="margin-top:16px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap">
+      <button class="btn y" id="fwBtn" type="button" style="display:none"><span>Fix firewall</span></button>
+      <button class="btn" id="recheckBtn" type="button"><span>Check again</span></button>
+      <button class="btn" id="checkClose" type="button"><span>Close</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let data = null, busy = false, dirty = false;
+
+function toast(msg, isErr) {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast' + (isErr ? ' err' : '');
+  t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 4500);
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+async function api(method, path, body) {
+  const r = await fetch(path, { method, headers: body ? {'Content-Type': 'application/json'} : {}, body: body ? JSON.stringify(body) : undefined });
+  const j = r.status === 204 ? {} : await r.json();
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+function setDirty(v) { dirty = v; $('dirtyNote').textContent = v ? 'Unsaved changes. PLAY saves them too.' : ''; }
+
+// tabs
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + b.dataset.tab));
+});
+
+function mode() { return (document.querySelector('input[name=mode]:checked') || {}).value || 'offline'; }
+
+function kvGrid(el, list) {
+  el.innerHTML = '';
+  for (const kv of list || []) {
+    const l = document.createElement('label'); l.className = 'f'; l.textContent = kv.key;
+    const i = document.createElement('input'); i.type = 'text'; i.value = kv.value; i.dataset.key = kv.key; i.spellcheck = false;
+    l.appendChild(i); el.appendChild(l);
+  }
+}
+function readGrid(el) { return [...el.querySelectorAll('input')].map(i => ({key: i.dataset.key, value: i.value})); }
+
+function adapterOptions(sel, current, d) {
+  const names = [...(d.adapters || [])];
+  if (current && !names.some(n => n.toLowerCase() === current.toLowerCase())) names.unshift(current);
+  sel.innerHTML = names.map(n => {
+    let label = n;
+    if (current && n.toLowerCase() === current.toLowerCase() && !(d.adapters || []).some(a => a.toLowerCase() === n.toLowerCase())) label += '  (not found on this PC)';
+    else if (n === d.suggestedAdapter) label += '  (recommended)';
+    else if (/radmin|zerotier/i.test(n)) label += '  (VPN, not recommended)';
+    return '<option value="' + esc(n) + '">' + esc(label) + '</option>';
+  }).join('');
+  sel.value = current || d.suggestedAdapter || names[0] || '';
+}
+
+function render() {
+  const s = data.settings, d = data.detected;
+  $('ver').textContent = 'v' + d.version;
+  document.querySelectorAll('input[name=mode]').forEach(r => r.checked = r.value === s.launcher.mode);
+  $('hostIp').value = s.launcher.hostIp || '';
+  $('serial').value = s.game.serial || '';
+  $('chipId').value = s.card.chipId || '';
+  $('accessCode').value = s.card.accessCode || '';
+  $('windowed').checked = s.game.windowed;
+  $('borderless').checked = s.game.borderless;
+  $('framerateLimit').checked = s.game.framerateLimit;
+  $('resolution').value = s.game.resolution || '';
+  adapterOptions($('interfaceName'), s.game.interfaceName, d);
+  $('liveMonitor').value = s.launcher.liveMonitor || 'hide';
+  $('lmMute').checked = !s.launcher.lmSound;
+  kvGrid($('keyboard'), s.keyboard);
+  kvGrid($('controller'), s.controller);
+  $('folder').textContent = 'Game folder: ' + d.gameDir;
+  $('recent').innerHTML = (s.launcher.recentHosts || []).map(h => '<span class="chip" data-ip="' + esc(h) + '">' + esc(h) + '</span>').join('');
+  $('recent').querySelectorAll('.chip').forEach(c => c.onclick = () => { $('hostIp').value = c.dataset.ip; setDirty(true); });
+  updateMode(); renderAlerts(); setDirty(false);
+  if (d.firstRun && !busy) openWelcome();
+}
+
+function renderAlerts() {
+  const s = data.settings, d = data.detected, a = [];
+  const add = (txt, bad, btn) => a.push('<div class="alert' + (bad ? ' bad' : '') + '"><p>' + txt + '</p>' + (btn || '') + '</div>');
+  if (data.error) add(esc(data.error), true);
+  if (!d.gameFound) add('vsac29_Release.exe was not found. Put the <code>exvs-launcher</code> folder inside your game folder.', true);
+  if (!d.serverFound) add('The card server (Server\\Server-Infinite.exe) was not found in the game folder.', true);
+  if (!d.lmFound) add('vsac29_Release_LM.exe (the Live Monitor) was not found in the game folder.', true);
+  if (d.noVcrt2010) add('The Visual C++ 2010 x64 runtime is missing, so the Live Monitor won\'t start. Install <b>vcredist_x64.exe</b> (Visual C++ 2010 SP1) from <a href="https://www.microsoft.com/en-us/download/details.aspx?id=26999" target="_blank" rel="noopener">Microsoft</a>.', true);
+  const ad = d.adapters || [], cur = s.game.interfaceName || '';
+  if (ad.length && !ad.some(x => x.toLowerCase() === cur.toLowerCase()))
+    add('Your network adapter is set to "' + esc(cur) + '", which isn\'t on this PC. The game would stop with "failed to find interface".', true,
+      d.suggestedAdapter ? '<button class="btn sm y" type="button" id="fixAdapter"><span>Use ' + esc(d.suggestedAdapter) + '</span></button>' : '');
+  if (d.stockCard) add('You\'re still using the default card IDs that everyone has. Make them unique before playing online.', false,
+    '<button class="btn sm y" type="button" id="fixCard"><span>Make unique</span></button>');
+  $('alerts').innerHTML = a.join('');
+  if ($('fixAdapter')) $('fixAdapter').onclick = async () => { $('interfaceName').value = d.suggestedAdapter; await saveQuiet('Adapter set to ' + d.suggestedAdapter + '.'); };
+  if ($('fixCard')) $('fixCard').onclick = async () => { makeUnique(); await saveQuiet('New card IDs saved.'); };
+}
+
+function updateMode() {
+  const m = mode(), d = data.detected;
+  document.querySelectorAll('.mode').forEach(el => el.classList.toggle('on', el.dataset.mode === m));
+  ['offline', 'host', 'friend'].forEach(x => $('ctx-' + x).style.display = x === m ? 'block' : 'none');
+  const ips = d.vpnIps || [];
+  $('hostIps').innerHTML = ips.length ? ips.map(t => {
+    const ip = t.replace(/\s*\(.*\)$/, ''), kind = (t.match(/\((.*)\)/) || [])[1] || '';
+    return '<div class="ipline"><span class="ip">' + esc(ip) + '</span><span class="tag">' + esc(kind.toUpperCase()) + '</span>' +
+      '<button class="btn sm" type="button" data-copy="' + esc(ip) + '"><span>Copy</span></button></div>';
+  }).join('') : '<div class="note warn">No Radmin VPN or ZeroTier address found. Connect one of them, then reopen the launcher.</div>';
+  $('hostIps').querySelectorAll('[data-copy]').forEach(b => b.onclick = async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast('Copied ' + b.dataset.copy); } catch (e) { toast('Copy failed: select the IP and press Ctrl+C', true); }
+  });
+  $('playSub').innerHTML = m === 'host' ? 'Allow exvs-online through Windows Firewall when it asks. On ZeroTier, set its network to <b>Private</b>.'
+    : m === 'friend' ? 'The host starts first. Then press PLAY.' : '';
+}
+
+function collect() {
+  const s = JSON.parse(JSON.stringify(data.settings));
+  s.launcher.mode = mode();
+  s.launcher.hostIp = $('hostIp').value.trim();
+  s.game.serial = $('serial').value.trim();
+  s.card.chipId = $('chipId').value.trim();
+  s.card.accessCode = $('accessCode').value.trim();
+  s.game.windowed = $('windowed').checked;
+  s.game.borderless = $('borderless').checked;
+  s.game.framerateLimit = $('framerateLimit').checked;
+  s.game.resolution = $('resolution').value.trim();
+  s.game.interfaceName = $('interfaceName').value.trim();
+  s.launcher.liveMonitor = $('liveMonitor').value;
+  s.launcher.lmSound = !$('lmMute').checked;
+  s.keyboard = readGrid($('keyboard'));
+  s.controller = readGrid($('controller'));
+  return s;
+}
+
+async function load() { data = await api('GET', '/api/settings'); render(); }
+async function save(quiet, patch) {
+  const s = collect(); if (patch) patch(s);
+  await api('POST', '/api/settings', s);
+  await load();
+  if (!quiet) toast('Saved. Backups of the old files are in the launcher\'s backups folder.');
+}
+async function saveQuiet(msg) { try { await save(true); toast(msg); } catch (e) { toast(e.message, true); } }
+
+// Same shape as the current IDs (digits stay digits, letters stay letters)
+// so they stay in a format the game already accepts.
+function reshape(v) {
+  const rnd = s => s[Math.floor(Math.random() * s.length)];
+  return [...v].map(c => /[0-9]/.test(c) ? rnd('0123456789') : /[a-z]/.test(c) ? rnd('abcdefghijkmnpqrstuvwxyz')
+    : /[A-Z]/.test(c) ? rnd('ABCDEFGHJKLMNPQRSTUVWXYZ') : c).join('');
+}
+function makeUnique() {
+  const chip = $('chipId').value;
+  const m = chip.match(/^(.*?)(\d*)$/);
+  const prefix = m && m[1] && /[a-z]/i.test(m[1]) ? m[1] : '';
+  $('chipId').value = prefix + reshape(chip.slice(prefix.length) || '000000');
+  $('accessCode').value = reshape($('accessCode').value || '00000000');
+  $('serial').value = reshape($('serial').value || '0000');
+  setDirty(true);
+}
+$('uniqueBtn').onclick = () => { makeUnique(); toast('New IDs made. Save or PLAY to keep them.'); };
+
+document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => { setDirty(true); updateMode(); });
+$('form').addEventListener('input', () => setDirty(true));
+$('form').addEventListener('change', () => setDirty(true));
+$('saveBtn').onclick = () => save().catch(e => toast(e.message, true));
+$('shortcutBtn').onclick = async () => {
+  try { const r = await api('POST', '/api/shortcuts'); toast('Added "Boost Link Play" and "Boost Link" to ' + r.desktop); }
+  catch (e) { toast(e.message, true); }
+};
+$('statusBtn').onclick = async () => { try { await api('POST', '/api/match-status'); } catch (e) { toast(e.message, true); } };
+$('cardEditBtn').onclick = async () => {
+  const b = $('cardEditBtn'); b.disabled = true; toast('Opening the card editor. Starting the card server can take a few seconds…');
+  try { await api('POST', '/api/card-editor'); } catch (e) { toast(e.message, true); } finally { b.disabled = false; }
+};
+$('playBtn').onclick = async () => {
+  try {
+    if (busy) { await api('POST', '/api/stop'); return; }
+    if (mode() === 'friend' && !$('hostIp').value.trim()) { toast('Type the host\'s IP or server address first.', true); $('hostIp').focus(); return; }
+    await save(true);
+    await api('POST', '/api/play');
+    document.querySelector('nav button[data-tab=play]').click();
+    poll();
+  } catch (e) { toast(e.message, true); }
+};
+
+// PC check
+const checkIcons = { ok: '✓', warn: '!', fail: '✕', info: 'i' };
+async function runCheck() {
+  $('checkModal').classList.add('on'); $('checkList').innerHTML = ''; $('fwBtn').style.display = 'none';
+  $('checkSummary').textContent = 'Checking… this takes about 10 seconds.'; $('recheckBtn').disabled = true;
+  try {
+    const save1 = dirty ? save(true) : Promise.resolve(); await save1;
+    const r = await api('POST', '/api/check');
+    const order = { fail: 0, warn: 1, info: 2, ok: 3 };
+    const items = [...r.items].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9));
+    const n = s => items.filter(i => i.status === s).length;
+    $('checkSummary').textContent = n('fail') ? n('fail') + ' problem(s) to fix before playing online.' : n('warn') ? 'Looks OK, with ' + n('warn') + ' thing(s) worth a look.' : 'All good. Ready for online play.';
+    $('checkList').innerHTML = items.map(i => '<li class="' + esc(i.status) + '"><span class="dot">' + (checkIcons[i.status] || '?') + '</span><div><b>' + esc(i.title) + '</b>' +
+      (i.detail ? '<div class="d">' + esc(i.detail) + '</div>' : '') + ((i.status === 'warn' || i.status === 'fail') && i.fix ? '<div class="fx">' + esc(i.fix) + '</div>' : '') + '</div></li>').join('');
+    $('fwBtn').style.display = r.canFixFirewall ? 'inline-block' : 'none';
+  } catch (e) { $('checkSummary').textContent = e.message; }
+  finally { $('recheckBtn').disabled = false; }
+}
+$('checkBtn').onclick = runCheck;
+$('recheckBtn').onclick = runCheck;
+$('checkClose').onclick = () => $('checkModal').classList.remove('on');
+$('fwBtn').onclick = async () => {
+  toast('Windows will ask for permission. Click Yes.');
+  try { await api('POST', '/api/fix-firewall'); toast('Firewall rules added.'); runCheck(); } catch (e) { toast(e.message, true); }
+};
+
+// first run
+function openWelcome() {
+  const d = data.detected, s = data.settings;
+  $('wRuntime').style.display = d.noVcrt2010 ? 'flex' : 'none';
+  adapterOptions($('wAdapter'), (d.adapters || []).some(a => a.toLowerCase() === (s.game.interfaceName || '').toLowerCase()) ? s.game.interfaceName : d.suggestedAdapter, d);
+  $('wUnique').checked = d.stockCard;
+  $('wCardNote').textContent = d.stockCard ? 'You have the default IDs everyone starts with.' : 'Your card already has its own IDs. Leave this unticked to keep your current card.';
+  $('wMode').value = s.launcher.mode || 'offline';
+  $('welcome').classList.add('on');
+}
+async function finishWelcome(apply) {
+  try {
+    if (apply) {
+      $('interfaceName').value = $('wAdapter').value;
+      if ($('wUnique').checked) makeUnique();
+      document.querySelectorAll('input[name=mode]').forEach(r => r.checked = r.value === $('wMode').value);
+    }
+    await save(true, s => { s.launcher.setupDone = true; });
+    $('welcome').classList.remove('on');
+    if (apply) toast('All set. Press PLAY when you\'re ready.');
+  } catch (e) { toast(e.message, true); }
+}
+$('wGo').onclick = () => finishWelcome(true);
+$('wSkip').onclick = () => finishWelcome(false);
+
+// status
+const icons = { waiting: '', running: '…', done: '✓', skipped: '–', error: '!' };
+let lastLog = 0;
+async function poll() {
+  try {
+    const st = await api('GET', '/api/status');
+    const wasBusy = busy; busy = st.busy;
+    $('form').classList.toggle('locked', busy); $('saveBtn').disabled = busy;
+    document.querySelectorAll('#form input, #form select').forEach(e => e.disabled = busy);
+    $('playBtn').innerHTML = '<span>' + (busy ? 'STOP' : 'PLAY') + '</span>';
+    $('playBtn').classList.toggle('stop', busy);
+    $('stage').textContent = st.error || st.stage;
+    $('stage').className = st.error ? 'err' : busy ? 'ok' : '';
+    const m = mode(), lmOff = $('liveMonitor').value === 'off';
+    const planned = [{label:'Card server'}].concat(m === 'offline' ? [] : [{label: m === 'host' ? 'Online (host)' : 'Online (join)'}])
+      .concat(lmOff ? [] : [{label:'Live Monitor'}]).concat([{label:'Game'}]).map(x => ({...x, state:'waiting'}));
+    const steps = st.steps && st.steps.length ? st.steps : planned;
+    $('steps').innerHTML = steps.map(x => '<li class="' + x.state + '"><span class="dot">' + icons[x.state] + '</span>' + esc(x.label) +
+      (x.note ? '<span class="note">' + esc(x.note) + '</span>' : '') + '</li>').join('');
+    if (st.log && st.log.length !== lastLog) { $('log').textContent = st.log.join('\n'); $('log').scrollTop = 1e9; lastLog = st.log.length; }
+    if (wasBusy && !busy) load();
+  } catch (e) { $('stage').textContent = 'Lost contact with the launcher. Close this window and open it again.'; $('stage').className = 'err'; }
+}
+setInterval(poll, 1000);
+window.addEventListener('pagehide', () => navigator.sendBeacon('/api/bye'));
+
+load().then(poll).catch(e => { $('stage').textContent = e.message; $('stage').className = 'err'; });
+</script>
+</body>
+</html>

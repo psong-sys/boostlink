@@ -1,0 +1,29 @@
+{
+  "mode": "both",
+  "proxy": {
+    "listen": "0.0.0.0:28090",
+    "upstream": "http://127.0.0.1:28080",
+    "matchPort": 28090,
+    "stun": {
+      "host": "stun.l.google.com",
+      "port": 19302
+    },
+    "logTraffic": true
+  },
+  "match": {
+    "listen": "0.0.0.0:28100",
+    "roomSize": 2,
+    "fallbackRoomSize": 2,
+    "fallbackAfterSeconds": 0,
+    "groupIdBase": 0,
+    "waitCode": "SUCCESS",
+    "requireSameWorld": true,
+    "testBots": 0,
+    "rttLimitMs": 0,
+    "delayFrameLimit": 0,
+    "retryFailedPairAfterSeconds": 45,
+    "discordWebhook": "",
+    "discordCooldownMinutes": 10,
+    "publicStatusUrl": ""
+  }
+}

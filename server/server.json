@@ -1,0 +1,34 @@
+{
+  "mode": "match",
+  "proxy": {
+    "stun": {
+      "host": "stun.l.google.com",
+      "port": 19302
+    },
+    "localTurn": {
+      "listen": "0.0.0.0:3480",
+      "relayIP": "auto",
+      "minPort": 49160,
+      "maxPort": 49200
+    },
+    "logTraffic": false
+  },
+  "match": {
+    "listen": "0.0.0.0:28090",
+    "roomSize": 2,
+    "fallbackRoomSize": 2,
+    "fallbackAfterSeconds": 0,
+    "groupIdBase": 0,
+    "waitCode": "SUCCESS",
+    "requireSameWorld": true,
+    "testBots": 0,
+    "rttLimitMs": 0,
+    "delayFrameLimit": 0,
+    "retryFailedPairAfterSeconds": 45,
+    "discordWebhook": "",
+    "discordCooldownMinutes": 10,
+    "publicStatusUrl": "",
+    "discordInvite": "",
+    "siteTagline": ""
+  }
+}
