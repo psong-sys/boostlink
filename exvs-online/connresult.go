@@ -29,7 +29,6 @@ type ConnResult struct {
 	ApplyID   uint32    `json:"applyId,omitempty"` // ties a failure back to the pair (not personal)
 }
 
-
 type hpInfo struct{ meaning, fix string }
 
 var hpText = map[exvs.UdpHpResultType]hpInfo{

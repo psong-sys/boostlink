@@ -132,6 +132,9 @@ func main() {
 	switch cfg.Mode {
 	case "match":
 		log.Printf("match server listening on %s", cfg.Match.Listen)
+		if err := startStun(cfg.Proxy.LocalStun, tl); err != nil {
+			log.Fatal(err)
+		}
 		if err := startTurn(cfg.Proxy.LocalTurn, cfg.Proxy.Stun, tl); err != nil {
 			log.Printf("relay disabled: %v", err)
 		}

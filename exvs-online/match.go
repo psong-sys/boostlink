@@ -52,7 +52,7 @@ type Matcher struct {
 	applyRoom    map[uint32][]string  // apply id -> serials it was matched with
 	failedPairs  map[string]time.Time // serial pair -> when it last failed to connect
 	lastAnnounce time.Time            // last Discord post
-	started  time.Time
+	started      time.Time
 }
 
 type roomRecord struct {
