@@ -15,10 +15,10 @@ Both are written by nbamsavdat.dll ("svd1" container). Changing the setting in t
 To edit: parse JSON, change values, re-serialize, set the counter to old+1, set size = len(payload), recompute SHA-1 over the new 16-byte header + payload.
 
 ## The setting
-- Active file: `.TestModeParam.gameServerPcb.useSettingFile` (0 on Paul's PC = "設定ファイル1").
+- Active file: `.TestModeParam.gameServerPcb.useSettingFile` (0 on our test PC = "設定ファイル1").
 - Battle mode: `.TestModeParam.gameServerPcb.settingFile.[N].group.[G].battleMode` for G = 0..2.
 - Enum from the exe's option list (0x15d47d8): 0 店外・ソロ/チーム (ONLINE), 1 店内・ソロ/チーム (in-store), 2 event solo, 3 event team, 4 event team hold, 5 in-store set rental, 6 tournament.
-- Paul's switched PC: file [0] groups 0..2 battleMode = 0. File [4] = 6 (a tournament preset, leave it alone).
+- Test PC after switching: file [0] groups 0..2 battleMode = 0. File [4] = 6 (a tournament preset, leave it alone).
 - Assumption to verify: a fresh install has battleMode 1 there. Confirm with a friend's untouched file before relying on it.
 
 ## Plan for the launcher

@@ -1,5 +1,5 @@
 import struct, sys, json
-sys.path.insert(0, '/tmp/claude-0/-home-user/c2208f31-42f0-573b-b6cf-14a0fcad2a81/scratchpad')
+import os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ntxl import decrypt, encrypt
 from ntxlpack import load, repack
 from ntxlparse import parse

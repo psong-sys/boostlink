@@ -38,5 +38,5 @@ Style: short, clear arcade UI English. Sentence case for messages, Title Case fo
 Do not add explanations or notes. Do not skip any key.
 
 Validate before finishing: run
-  python3 /tmp/claude-0/-home-user/c2208f31-42f0-573b-b6cf-14a0fcad2a81/scratchpad/msg/validate.py <input chunk> <your output>
+  python3 validate.py <input chunk> <your output>
 and fix everything it reports until it prints OK.

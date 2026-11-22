@@ -12,12 +12,14 @@ The text that lives inside the exe: about 600 strings (812 spots), including
 
 Menu headings like TEST MENU and the error codes were already English.
 
-Not translated: in-game player screens (mode select banners, card prompts, results). Those live in the
-encrypted data\x64\dplcache_release\*.fhm2d assets, not in the exe.
+In-game player screens (mode select banners, card prompts, results) live in the encrypted
+data\x64\dplcache_release\*.fhm2d assets, not in the exe. `exvs-ui/` installs translated copies of those,
+and `repaint/` is the toolkit that builds them from your own game files. The translated files themselves
+are never committed here.
 
 ## Use
 
-Put exvs-english.exe in exv2\exvs-english\ and double-click it. Close the game and Live Monitor first.
+Put exvs-english.exe in an `exvs-english` folder inside the game folder and double-click it. Close the game and Live Monitor first.
 - `install`: backs up both exes to exvs-english\backup\ (first time only), then writes English into them in place. The launcher works unchanged.
 - `restore`: puts the Japanese originals back from the backup.
 - `copies`: leaves the originals alone and writes vsac29_Release_EN.exe / vsac29_Release_LM_EN.exe.
@@ -27,5 +29,5 @@ It checks every string before writing and refuses to touch a different build.
 
 ## Source
 
-src\ holds the Go source, patches.json (offset, Japanese, English) and translations.py (the translation table).
+This folder holds the Go source, patches.json (offset, Japanese, English) and translations.py (the translation table).
 Rebuild: `GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o exvs-english.exe .`
