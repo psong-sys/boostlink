@@ -128,9 +128,9 @@
   .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-top: 10px; }
   .row:first-of-type { margin-top: 0; }
   label.f { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 170px; color: var(--muted); font-size: 12px; letter-spacing: .5px; }
-  input[type=text], select { background: #08080c; color: var(--text); border: 1px solid var(--line); border-bottom: 2px solid #3a3a4c;
+  input[type=text], input[type=number], select { background: #08080c; color: var(--text); border: 1px solid var(--line); border-bottom: 2px solid #3a3a4c;
     padding: 9px 10px; font: 500 14px "Chakra", system-ui, sans-serif; width: 100%; border-radius: 0; }
-  input[type=text]:focus, select:focus { outline: none; border-bottom-color: var(--yel); }
+  input[type=text]:focus, input[type=number]:focus, select:focus { outline: none; border-bottom-color: var(--yel); }
   label.c { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; }
   input[type=checkbox] { accent-color: var(--yel); width: 17px; height: 17px; }
   .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
@@ -200,6 +200,33 @@
   #zoomPop { position: fixed; z-index: 90; display: none; pointer-events: none; background: #000; border: 3px solid var(--yel); box-shadow: 0 10px 40px rgba(0,0,0,.7); }
   #zoomPop img { display: block; width: 100%; height: auto; }
   #zoomPop div { font: 600 14px "Chakra"; color: #fff; background: var(--ink); padding: 6px 10px; }
+  .ctlhint { margin-left: auto; font: 500 12px "Chakra"; color: var(--text); background: var(--ink); padding: 3px 8px; }
+  .ksub { display: none; } .ksub.on { display: block; }
+  .panel h2 .kon { margin-left: auto; font: 600 13px "Chakra"; letter-spacing: 0; text-transform: none; color: var(--text); display: inline-flex; gap: 6px; align-items: center; }
+  .panel h2:has(.kon) { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .kbgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 16px; }
+  .kgrp { grid-column: 1 / -1; font: 700 italic 12px "Chakra"; letter-spacing: 2px; color: var(--yel); margin-top: 8px; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .kgrp small { font: 400 12px "Chakra"; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
+  .krow { display: flex; align-items: center; gap: 6px; min-height: 30px; }
+  .krow .kl { width: 74px; flex: none; font-size: 13px; color: var(--text); }
+  .krow .kl i { display: block; font-style: normal; font-size: 10px; color: var(--muted); }
+  .kkeys { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+  .kkey { font: 600 12px Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-bottom-width: 3px; padding: 2px 7px; cursor: pointer; border-radius: 3px; }
+  .kkey:hover { border-color: var(--hot); color: var(--hot); text-decoration: line-through; }
+  .kkey.dup { border-color: var(--hot); color: var(--hot); }
+  .kadd { font: 700 13px "Chakra"; width: 24px; height: 24px; background: none; color: var(--cyan); border: 1px dashed var(--cyan); cursor: pointer; border-radius: 3px; padding: 0; }
+  .kadd.wait { width: auto; padding: 0 8px; background: var(--cyan); color: var(--ink); border-style: solid; animation: kblink 1s infinite; }
+  @keyframes kblink { 50% { opacity: .6; } }
+  .kfoot { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .kfoot .note { margin: 0; flex: 1; }
+  .kv3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px 14px; }
+  .padgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px 14px; margin-top: 8px; }
+  .padgrid input { padding: 6px 8px; }
+  #k-pad .kgrp { margin-top: 14px; }
+  .padgrid label.f input { width: 100%; }
+  .kraw { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .kraw summary { cursor: pointer; margin-bottom: 8px; }
+  .muted { color: var(--muted); font-weight: 400; }
   .tab { display: none; }
   .tab.on { display: block; }
   .footer { flex: none; padding-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
@@ -513,14 +540,38 @@
 
   <!-- CONTROLS -->
   <section class="tab" id="tab-controls">
-    <div class="panel">
-      <h2>Keyboard <small>key names like <code>Z</code>, <code>UpArr</code>, <code>1 (NumPad)</code>. Separate several keys with commas.</small></h2>
-      <div id="keyboard" class="kv"></div>
+    <div class="subnav" id="ctlNav">
+      <button type="button" data-k="kb" class="on">KEYBOARD</button>
+      <button type="button" data-k="pad">CONTROLLER</button>
+      <span class="ctlhint">Changes apply the next time you press PLAY.</span>
     </div>
-    <div class="panel">
-      <h2>Controller <small>controller button numbers. DeviceId 16 means every connected controller.</small></h2>
-      <div id="controller" class="kv"></div>
+    <div class="ksub on" id="k-kb">
+      <div class="panel">
+        <h2>Keyboard <small>Click <b>+</b> and press a key to add it. Click a key to remove it.</small>
+          <label class="c kon"><input type="checkbox" id="kbOn"> Keyboard on</label></h2>
+        <div class="kbgrid" id="kbGrid"></div>
+        <div class="kfoot"><span id="kbCombos" class="note"></span>
+          <button class="btn sm" id="kbDefaults" type="button"><span>Restore default keys</span></button></div>
+      </div>
     </div>
+    <div class="ksub" id="k-pad">
+      <div class="panel">
+        <h2>Controller <small id="padSeen">Press any button on your controller to check it's connected.</small>
+          <label class="c kon"><input type="checkbox" id="padOn"> Controller on</label></h2>
+        <div class="kv3">
+          <label class="f">Controller type<select id="padMode">
+            <option value="xinput-native">Xbox-style (XInput), recommended</option>
+            <option value="xinput">XInput (emulated)</option>
+            <option value="directinput">Other controllers (DirectInput)</option></select></label>
+          <label class="f">Which controller<select id="padDev"></select></label>
+          <label class="f">Controller name (DirectInput)<input type="text" id="padName" spellcheck="false"></label>
+        </div>
+        <div class="kgrp">GAME PAD BUTTONS<small>the controller's button number for each game button</small></div>
+        <div class="padgrid" id="padGrid"></div>
+        <details class="kraw"><summary>Raw arcade button values</summary><div class="kv" id="padRaw"></div></details>
+      </div>
+    </div>
+  </section>
   </section>
   </fieldset>
 
@@ -605,15 +656,6 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 
 function mode() { return (document.querySelector('input[name=mode]:checked') || {}).value || 'offline'; }
 
-function kvGrid(el, list) {
-  el.innerHTML = '';
-  for (const kv of list || []) {
-    const l = document.createElement('label'); l.className = 'f'; l.textContent = kv.key;
-    const i = document.createElement('input'); i.type = 'text'; i.value = kv.value; i.dataset.key = kv.key; i.spellcheck = false;
-    l.appendChild(i); el.appendChild(l);
-  }
-}
-function readGrid(el) { return [...el.querySelectorAll('input')].map(i => ({key: i.dataset.key, value: i.value})); }
 
 const VIRTUAL = /radmin|zerotier|vethernet|virtualbox|vmware|hyper-v|tailscale|bluetooth|loopback|wsl|hamachi/i;
 function adapterOptions(sel, current, d) {
@@ -648,8 +690,8 @@ function render() {
   adapterOptions($('interfaceName'), s.game.interfaceName, d);
   $('liveMonitor').value = s.launcher.liveMonitor || 'hide';
   $('lmMute').checked = !s.launcher.lmSound;
-  kvGrid($('keyboard'), s.keyboard);
-  kvGrid($('controller'), s.controller);
+  drawKeyboard(s.keyboard);
+  drawPad(s.controller);
   $('folder').textContent = 'Game folder: ' + d.gameDir;
   $('recent').innerHTML = (s.launcher.recentHosts || []).map(h => '<span class="chip" data-ip="' + esc(h) + '">' + esc(h) + '</span>').join('');
   $('recent').querySelectorAll('.chip').forEach(c => c.onclick = () => { $('hostIp').value = c.dataset.ip; setDirty(true); });
@@ -716,8 +758,8 @@ function collect() {
   s.game.interfaceName = $('interfaceName').value.trim();
   s.launcher.liveMonitor = $('liveMonitor').value;
   s.launcher.lmSound = !$('lmMute').checked;
-  s.keyboard = readGrid($('keyboard'));
-  s.controller = readGrid($('controller'));
+  s.keyboard = readKeyboard();
+  s.controller = readPad();
   return s;
 }
 
@@ -1111,6 +1153,125 @@ function cardMode() {
   document.body.classList.toggle('cardmode', $('tab-player').classList.contains('on') && sub && sub.dataset.sub !== 'ids');
 }
 document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', cardMode));
+
+// ---- CONTROLS tab: friendly key binding editor over config.ini [keyboard]/[controller] ----
+const KB_GROUPS = [
+  ['MOVE', '', [['Up', 'Up'], ['Down', 'Down'], ['Left', 'Left'], ['Right', 'Right']]],
+  ['BATTLE BUTTONS', 'a key under several buttons presses them together', [['A', 'A', 'Shoot'], ['B', 'B', 'Melee'], ['C', 'C', 'Boost / jump'], ['D', 'D', 'Search']]],
+  ['GAME PAD BUTTONS', 'used when your card\'s button type is Normal or Lite', [['ButtonA', 'Pad A'], ['ButtonB', 'Pad B'], ['ButtonC', 'Pad C'], ['ButtonD', 'Pad D'], ['ButtonR1', 'Pad R1'], ['ButtonR2', 'Pad R2'], ['ButtonL2', 'Pad L2'], ['ButtonR3', 'Pad R3']]],
+  ['CABINET', '', [['Start', 'Start'], ['Coin', 'Coin', 'Add credit'], ['Card', 'Card', 'Insert card'], ['Test', 'Test', 'Test menu'], ['Service', 'Service'], ['Kill', 'Quit', 'Closes the game']]],
+];
+const KB_DEFAULTS = { Up: 'UpArr', Left: 'LeftArr', Down: 'DownArr', Right: 'RightArr', A: 'Z,A,S,F', B: 'X,A,D,F', C: 'C,D,S,F', D: 'V',
+  Start: '1', Coin: '5', Card: 'P', Service: 'F2', Kill: 'Esc', Test: 'F7',
+  ButtonA: '1 (NumPad)', ButtonB: '5 (NumPad)', ButtonC: '2 (NumPad)', ButtonD: '3 (NumPad)', ButtonR1: 'E', ButtonR2: '6 (NumPad)', ButtonL2: '4 (NumPad)', ButtonR3: '0 (NumPad)' };
+// Browser key codes to the key names the game's config.ini understands.
+function keyName(e) {
+  const c = e.code, m = /^Key([A-Z])$/.exec(c) || /^Digit([0-9])$/.exec(c);
+  if (m) return m[1];
+  let n = /^Numpad([0-9])$/.exec(c); if (n) return n[1] + ' (NumPad)';
+  n = /^F([1-9]|1[0-9]|2[0-4])$/.exec(c); if (n) return c;
+  return ({ ArrowUp: 'UpArr', ArrowDown: 'DownArr', ArrowLeft: 'LeftArr', ArrowRight: 'RightArr', Escape: 'Esc', Enter: 'Return', NumpadEnter: 'Return',
+    Space: 'Space', Tab: 'Tab', Backspace: 'Backspace', Delete: 'Delete', Insert: 'Insert', Home: 'Home', End: 'End', PageUp: 'PgUp', PageDown: 'PgDown', Pause: 'Pause',
+    NumpadMultiply: '* (NumPad)', NumpadAdd: '+ (NumPad)', NumpadSubtract: '- (NumPad)', NumpadDecimal: '. (NumPad)', NumpadDivide: '/ (NumPad)' })[c] || '';
+}
+const NICE = { UpArr: '↑ arrow', DownArr: '↓ arrow', LeftArr: '← arrow', RightArr: '→ arrow' };
+const niceKey = k => NICE[k] || k.replace(' (NumPad)', ' num');
+let kb = {}, kbOrder = [], kbOther = [], kbWait = null;
+const splitKeys = v => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
+function drawKeyboard(list) {
+  kb = {}; kbOrder = (list || []).map(x => x.key);
+  for (const x of list || []) kb[x.key] = x.key === 'Enabled' ? x.value : splitKeys(x.value);
+  $('kbOn').checked = String(kb.Enabled ?? 'True').trim().toLowerCase() === 'true';
+  paintKeyboard();
+}
+function paintKeyboard() {
+  const known = new Set(['Enabled']); let h = '';
+  const owner = {};   // key name -> labels using it, to flag clashes between groups
+  KB_GROUPS.forEach(([, , rows], gi) => rows.forEach(([k, lab]) => (Array.isArray(kb[k]) ? kb[k] : []).forEach(n => (owner[n] = owner[n] || []).push([gi, lab]))));
+  for (const [title, hint, rows] of KB_GROUPS) {
+    const present = rows.filter(r => r[0] in kb);
+    if (!present.length) continue;
+    h += '<div class="kgrp">' + title + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>';
+    for (const [k, lab, sub] of present) {
+      known.add(k);
+      const gi = KB_GROUPS.findIndex(g => g[0] === title);
+      h += '<div class="krow"><div class="kl">' + esc(lab) + (sub ? '<i>' + esc(sub) + '</i>' : '') + '</div><div class="kkeys">' +
+        kb[k].map((n, i) => {
+          const clash = (owner[n] || []).filter(o => o[0] !== gi).map(o => o[1]);
+          return '<span class="kkey' + (clash.length ? ' dup' : '') + '" data-k="' + esc(k) + '" data-i="' + i + '" title="' + esc(n + (clash.length ? '. Also used for ' + clash.join(', ') : '') + '. Click to remove') + '">' + esc(niceKey(n)) + '</span>';
+        }).join('') +
+        '<button type="button" class="kadd' + (kbWait === k ? ' wait' : '') + '" data-k="' + esc(k) + '">' + (kbWait === k ? 'press a key…' : '+') + '</button></div></div>';
+    }
+  }
+  kbOther = kbOrder.filter(k => !known.has(k));
+  if (kbOther.length) {
+    h += '<div class="kgrp">OTHER</div>';
+    for (const k of kbOther) h += '<label class="krow"><span class="kl">' + esc(k) + '</span><input type="text" data-other="' + esc(k) + '" value="' + esc(kb[k].join(',')) + '" spellcheck="false"></label>';
+  }
+  $('kbGrid').innerHTML = h;
+  const combos = [];
+  const btn = ['A', 'B', 'C', 'D'].filter(b => Array.isArray(kb[b]));
+  const keysAll = [...new Set(btn.flatMap(b => kb[b]))];
+  for (const n of keysAll) { const on = btn.filter(b => kb[b].includes(n)); if (on.length > 1) combos.push(niceKey(n) + ' = ' + on.join('+')); }
+  $('kbCombos').textContent = combos.length ? 'Combo keys: ' + combos.join(',  ') : '';
+}
+$('kbGrid').addEventListener('click', e => {
+  const t = e.target;
+  if (t.classList.contains('kkey')) { kb[t.dataset.k].splice(+t.dataset.i, 1); setDirty(true); paintKeyboard(); }
+  else if (t.classList.contains('kadd')) { kbWait = kbWait === t.dataset.k ? null : t.dataset.k; paintKeyboard(); }
+});
+$('kbGrid').addEventListener('input', e => { const k = e.target.dataset.other; if (k) kb[k] = splitKeys(e.target.value); });
+document.addEventListener('keydown', e => {
+  if (!kbWait) return;
+  e.preventDefault(); e.stopPropagation();
+  const n = keyName(e);
+  if (!n) { toast('The game can\'t use that key. Try a letter, number, arrow, F-key or number-pad key.', true); return; }
+  if (!kb[kbWait].includes(n)) kb[kbWait].push(n);
+  kbWait = null; setDirty(true); paintKeyboard();
+}, true);
+document.addEventListener('click', e => { if (kbWait && !e.target.closest('.kadd')) { kbWait = null; paintKeyboard(); } });
+$('kbOn').addEventListener('change', () => { kb.Enabled = $('kbOn').checked ? 'True' : 'False'; });
+$('kbDefaults').onclick = () => {
+  for (const k in KB_DEFAULTS) if (k in kb) kb[k] = splitKeys(KB_DEFAULTS[k]);
+  setDirty(true); paintKeyboard(); toast('Default keys restored. Press Save settings to keep them.');
+};
+function readKeyboard() {
+  return kbOrder.map(k => ({ key: k, value: k === 'Enabled' ? ($('kbOn').checked ? 'True' : 'False') : kb[k].join(',') }));
+}
+
+const PAD_BTNS = [['ButtonA', 'Pad A'], ['ButtonB', 'Pad B'], ['ButtonC', 'Pad C'], ['ButtonD', 'Pad D'], ['ButtonR1', 'Pad R1'], ['ButtonR2', 'Pad R2'], ['ButtonL2', 'Pad L2'], ['ButtonR3', 'Pad R3'],
+  ['Test', 'Test menu'], ['Service', 'Service'], ['Kill', 'Quit game'], ['Start', 'Start'], ['Coin', 'Coin'], ['Card', 'Insert card']];
+let padOrder = [], pad = {};
+function drawPad(list) {
+  pad = {}; padOrder = (list || []).map(x => x.key);
+  for (const x of list || []) pad[x.key] = String(x.value).trim();
+  $('padOn').checked = (pad.Enabled ?? 'True').toLowerCase() === 'true';
+  const modes = [...$('padMode').options].map(o => o.value);
+  if (pad.Mode && !modes.includes(pad.Mode)) $('padMode').insertAdjacentHTML('beforeend', '<option>' + esc(pad.Mode) + '</option>');
+  $('padMode').value = pad.Mode || 'xinput-native'; $('padMode').disabled = !('Mode' in pad);
+  $('padDev').innerHTML = '<option value="16">All connected controllers</option>' + Array.from({ length: 16 }, (_, i) => '<option value="' + i + '">Controller ' + (i + 1) + ' only</option>').join('');
+  $('padDev').value = pad.DeviceId || '16'; $('padDev').disabled = !('DeviceId' in pad);
+  $('padName').value = pad.Name || ''; $('padName').disabled = !('Name' in pad);
+  $('padGrid').innerHTML = PAD_BTNS.filter(b => b[0] in pad).map(([k, lab]) =>
+    '<label class="f">' + esc(lab) + '<input type="number" min="0" max="32" data-pk="' + k + '" value="' + esc(pad[k]) + '"></label>').join('');
+  const raw = padOrder.filter(k => !['Enabled', 'Mode', 'DeviceId', 'Name'].includes(k) && !PAD_BTNS.some(b => b[0] === k));
+  $('padRaw').innerHTML = raw.map(k => '<label class="f">' + esc(k) + '<input type="text" data-pk="' + esc(k) + '" value="' + esc(pad[k]) + '" spellcheck="false"></label>').join('');
+  $('padRaw').closest('details').style.display = raw.length ? '' : 'none';
+}
+function readPad() {
+  document.querySelectorAll('#k-pad [data-pk]').forEach(i => { pad[i.dataset.pk] = i.value.trim(); });
+  if ('Enabled' in pad) pad.Enabled = $('padOn').checked ? 'True' : 'False';
+  if ('Mode' in pad) pad.Mode = $('padMode').value;
+  if ('DeviceId' in pad) pad.DeviceId = $('padDev').value;
+  if ('Name' in pad) pad.Name = $('padName').value.trim();
+  return padOrder.map(k => ({ key: k, value: pad[k] }));
+}
+addEventListener('gamepadconnected', e => { $('padSeen').textContent = 'Connected: ' + e.gamepad.id.replace(/\s*\(.*$/, ''); });
+$('ctlNav').onclick = e => {
+  const k = e.target.dataset.k; if (!k) return;
+  document.querySelectorAll('#ctlNav button').forEach(b => b.classList.toggle('on', b === e.target));
+  document.querySelectorAll('#tab-controls .ksub').forEach(x => x.classList.toggle('on', x.id === 'k-' + k));
+};
 
 // The big card editor: the same page opened with ?card=1 in its own window.
 const CARDPAGE = new URLSearchParams(location.search).has('card');
