@@ -49,6 +49,9 @@ type ProxyConfig struct {
 	// CardMobileSuit is the mobile suit (mst_mobile_suit_id) drawn on the card on the
 	// "Use this card?" screen. 0 = the card's first favorite suit, if it has one.
 	CardMobileSuit uint32 `json:"cardMobileSuit,omitempty"`
+	// TeamCode: players who use the same code are put on the same side of a 2v2.
+	// With a code set, this PC only gets 2v2 rooms (never the 1v1 fallback).
+	TeamCode string `json:"teamCode,omitempty"`
 }
 
 type MatchConfig struct {

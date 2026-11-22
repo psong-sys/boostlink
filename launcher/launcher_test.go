@@ -174,6 +174,20 @@ func TestOnlineConfigFromTemplate(t *testing.T) {
 	if got["proxy"].(map[string]any)["cardMobileSuit"] != float64(135) {
 		t.Errorf("card picture not passed on: %s", b)
 	}
+	if strings.Contains(string(b), "teamCode") {
+		t.Errorf("team code written while unset: %s", b)
+	}
+	// the team code goes to exvs-online's proxy in Online mode
+	lc.TeamCode = " duo "
+	if err := writeOnlineConfig(lc, p); err != nil {
+		t.Fatal(err)
+	}
+	b, _ = os.ReadFile(p.OnlineCfg)
+	got = nil
+	json.Unmarshal(b, &got)
+	if got["proxy"].(map[string]any)["teamCode"] != "duo" {
+		t.Errorf("team code not passed on: %s", b)
+	}
 }
 
 func TestEnsureOnlineMode(t *testing.T) {

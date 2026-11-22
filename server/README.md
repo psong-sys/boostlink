@@ -84,7 +84,11 @@ Edit `/opt/boost-link/server.json` (`nano /opt/boost-link/server.json`), then
 - `discordWebhook`: paste a Discord webhook link to post when someone starts searching.
 - `publicStatusUrl`: e.g. `http://<server IP>:28090/status`, added to the Discord post.
 - `rttLimitMs`: raise the 300 ms ping limit (e.g. 450) to let far-apart players match.
-- `roomSize`: 2 now. 4 for 2v2 once we've tested it.
+- `roomSize` 4 with `fallbackRoomSize` 2 and `fallbackAfterSeconds` 15: the server waits up to
+  15 seconds for 4 players (a 2v2), then starts a 1v1 instead. Players who set a team code in the
+  launcher only get 2v2s, always on the same side as whoever uses the same code.
+  An older server.json (roomSize 2) keeps working as 1v1 only. To switch it to 2v2:
+  `sed -i 's/"roomSize": 2,/"roomSize": 4,/; s/"fallbackAfterSeconds": 0,/"fallbackAfterSeconds": 15,/' /opt/boost-link/server.json && systemctl restart boost-link`
 
 ## Handy commands
 

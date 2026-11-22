@@ -37,6 +37,24 @@ type entry struct {
 	roomID   uint32
 	room     []*mms.Response_CheckMatching_MatchedClient
 	bot      bool
+	team     string // Boost Link team code: entries sharing one play on the same side
+}
+
+// TeamHeader carries a player's Boost Link team code from their proxy to the match server.
+const TeamHeader = "X-Boost-Link-Team"
+
+// normTeam cleans a team code: trimmed, lower case, letters/digits/-/_ only, at most 24.
+func normTeam(s string) string {
+	var b strings.Builder
+	for _, r := range strings.ToLower(strings.TrimSpace(s)) {
+		if b.Len() >= 24 {
+			break
+		}
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '-' || r == '_' {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
 
 type Matcher struct {
@@ -91,7 +109,7 @@ func (m *Matcher) Handler(tl *trafficLog) http.Handler {
 			return
 		}
 		tl.Msg("MMS>", req)
-		resp := m.handle(req, clientIP(r))
+		resp := m.handleTeam(req, clientIP(r), r.Header.Get(TeamHeader))
 		tl.Msg("MMS<", resp)
 		b, err := proto.MarshalOptions{AllowPartial: true}.Marshal(resp)
 		if err != nil {
@@ -123,6 +141,10 @@ func clientIP(r *http.Request) string {
 }
 
 func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
+	return m.handleTeam(req, remoteIP, "")
+}
+
+func (m *Matcher) handleTeam(req *mms.Request, remoteIP, team string) *mms.Response {
 	resp := &mms.Response{Type: req.Type, RequestId: req.RequestId, Code: mms.ErrorCode_SUCCESS.Enum()}
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -166,7 +188,7 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 			m.nextApp++
 		}
 		e := &entry{nodeID: node, applyID: applyID, world: worldKey(em.World), ip: remoteIP,
-			entered: time.Now(), lastSeen: time.Now(),
+			entered: time.Now(), lastSeen: time.Now(), team: normTeam(team),
 			timeout: time.Duration(em.GetMatchingTimeout()) * time.Second}
 		if e.timeout <= 0 || e.timeout > 10*time.Minute {
 			e.timeout = 2 * time.Minute
@@ -190,7 +212,11 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 		m.queue = append(m.queue, e)
 		m.announceLocked(realBefore)
 		m.addBotsLocked(e)
-		log.Printf("entry: node %d apply %d players %d from %s (queue %d)", node, applyID, e.players, remoteIP, len(m.queue))
+		teamNote := ""
+		if e.team != "" {
+			teamNote = " with a team code"
+		}
+		log.Printf("entry: node %d apply %d players %d%s from %s (queue %d)", node, applyID, e.players, teamNote, remoteIP, len(m.queue))
 		m.tryMatchLocked()
 		resp.EntryMatching = &mms.Response_EntryMatching{
 			PolingInterval: proto.Uint32(uint32(mms.SystemConstant_PROCESS_WAIT_POLING_INTERVAL)),
@@ -272,8 +298,8 @@ func worldKey(w *mms.World) string {
 	return fmt.Sprintf("%s/%d/%d", w.GetMuchaGameId(), w.GetVersion(), w.GetWorldId())
 }
 
-// tryMatchLocked fills rooms from the queue, oldest entries first. Entries stay whole, so a
-// pair from one entry always lands on the same team.
+// tryMatchLocked fills rooms from the queue, oldest entries first. Units stay whole, so a
+// pair from one entry, or two players sharing a team code, always land on the same team.
 func (m *Matcher) tryMatchLocked() {
 	for {
 		room := m.pickLocked(m.cfg.RoomSize)
@@ -288,9 +314,39 @@ func (m *Matcher) tryMatchLocked() {
 	}
 }
 
-// pickLocked chooses entries whose player counts add up to exactly size and can be split
-// into two equal teams without breaking an entry up.
-func (m *Matcher) pickLocked(size int) []*entry {
+// unit is one or more queued entries that must play on the same side.
+type unit struct {
+	es      []*entry
+	players int
+}
+
+// unitsLocked groups the queue into units, in queue order. Entries with the same team code
+// (and the same game world) form one unit; a team code nobody else is using yet is a solo.
+func (m *Matcher) unitsLocked() []*unit {
+	var us []*unit
+	byTeam := map[string]*unit{}
+	for _, e := range m.queue {
+		key := ""
+		if e.team != "" {
+			key = e.world + "|" + e.team
+		}
+		if u, ok := byTeam[key]; ok && key != "" && u.players+e.players <= 2 {
+			u.es = append(u.es, e)
+			u.players += e.players
+			continue
+		}
+		u := &unit{es: []*entry{e}, players: e.players}
+		if key != "" {
+			byTeam[key] = u
+		}
+		us = append(us, u)
+	}
+	return us
+}
+
+// pickLocked chooses units whose player counts add up to exactly size and can be split
+// into two equal teams without breaking a unit up.
+func (m *Matcher) pickLocked(size int) []*unit {
 	if size <= 0 || len(m.queue) == 0 {
 		return nil
 	}
@@ -302,48 +358,68 @@ func (m *Matcher) pickLocked(size int) []*entry {
 	return m.pickWithLocked(size, false)
 }
 
-func (m *Matcher) pickWithLocked(size int, avoidFailed bool) []*entry {
+func flatten(us []*unit) []*entry {
+	var es []*entry
+	for _, u := range us {
+		es = append(es, u.es...)
+	}
+	return es
+}
+
+func (m *Matcher) pickWithLocked(size int, avoidFailed bool) []*unit {
 	head := m.queue[0]
-	var pick []*entry
+	var pick []*unit
 	total := 0
-	for _, e := range m.queue {
-		if m.cfg.RequireSameWorld && e.world != head.world {
+	for _, u := range m.unitsLocked() {
+		if m.cfg.RequireSameWorld && u.es[0].world != head.world {
 			continue
 		}
-		if total+e.players > size {
+		if total+u.players > size {
 			continue
 		}
-		if avoidFailed && len(pick) > 0 && time.Since(head.entered) < m.widenAfter() && m.recentlyFailedLocked(pick, e) {
+		// A team code means "2v2 only": never use it to fill a smaller fallback room.
+		if size < m.cfg.RoomSize && u.es[0].team != "" {
 			continue
 		}
-		pick = append(pick, e)
-		total += e.players
+		if avoidFailed && len(pick) > 0 && time.Since(head.entered) < m.widenAfter() && m.unitFailedLocked(pick, u) {
+			continue
+		}
+		pick = append(pick, u)
+		total += u.players
 		if total == size {
 			if _, ok := splitTeams(pick, size/2); ok {
 				return pick
 			}
-			pick, total = pick[:len(pick)-1], total-e.players
+			pick, total = pick[:len(pick)-1], total-u.players
 		}
 	}
 	return nil
 }
 
-// splitTeams assigns each entry to team 0 or 1 so both teams have half players.
-func splitTeams(es []*entry, half int) ([]int, bool) {
-	n := len(es)
+func (m *Matcher) unitFailedLocked(pick []*unit, u *unit) bool {
+	es := flatten(pick)
+	for _, e := range u.es {
+		if m.recentlyFailedLocked(es, e) {
+			return true
+		}
+	}
+	return false
+}
+
+// splitTeams assigns each unit to team 0 or 1 so both teams have half players.
+func splitTeams(us []*unit, half int) ([]int, bool) {
+	n := len(us)
 	for mask := 0; mask < 1<<n; mask++ {
 		c := 0
-		for i, e := range es {
+		for i, u := range us {
 			if mask&(1<<i) != 0 {
-				c += e.players
+				c += u.players
 			}
 		}
 		if c == half {
 			t := make([]int, n)
-			for i := range es {
-				if mask&(1<<i) == 0 {
-					t[i] = 0
-				} else {
+			for i := range us {
+				if mask&(1<<i) != 0 {
 					t[i] = 1
 				}
 			}
@@ -353,12 +429,20 @@ func splitTeams(es []*entry, half int) ([]int, bool) {
 	return nil, false
 }
 
-func (m *Matcher) makeRoomLocked(es []*entry) {
+func (m *Matcher) makeRoomLocked(us []*unit) {
 	total := 0
-	for _, e := range es {
-		total += e.players
+	for _, u := range us {
+		total += u.players
 	}
-	teams, _ := splitTeams(es, total/2)
+	uteams, _ := splitTeams(us, total/2)
+	var es []*entry
+	var teams []int
+	for i, u := range us {
+		for _, e := range u.es {
+			es = append(es, e)
+			teams = append(teams, uteams[i])
+		}
+	}
 	roomID := m.nextRoom
 	m.nextRoom++
 	var all []*mms.Response_CheckMatching_MatchedClient

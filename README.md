@@ -34,7 +34,7 @@ Each player needs their own copy of the game.
 | Launcher with self-update | Working (1.5.0 and later) |
 | English text for menus, card screens and the Live Monitor | Working |
 | English card editor in the launcher | Working |
-| 2v2 team matches | Not tested yet |
+| 2v2 matches, and team codes to play on the same side as a friend | Built, not tested yet (needs 4 players online) |
 
 ## How it works
 

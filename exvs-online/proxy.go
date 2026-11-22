@@ -84,6 +84,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodPost && isMatchPath(r.URL.Path) {
+		// Only our own setting decides the team code, never the caller.
+		r.Header.Del(TeamHeader)
+		if t := normTeam(p.cfg.TeamCode); t != "" {
+			r.Header.Set(TeamHeader, t)
+		}
 		if p.local != nil {
 			r.Body = io.NopCloser(bytes.NewReader(body))
 			p.local.Handler(p.tl).ServeHTTP(w, r)

@@ -43,6 +43,9 @@ type LauncherConfig struct {
 	// screen. Server-Infinite sends none ("NOT SET"), so exvs-online fills it in.
 	// Online modes only. 0 = the card's first favorite suit.
 	CardMobileSuit uint32 `json:"cardMobileSuit,omitempty"`
+	// TeamCode: two players who type the same code are put on the same side of
+	// a 2v2 by the match server. Empty = normal matching (1v1 or random 2v2).
+	TeamCode string `json:"teamCode,omitempty"`
 }
 
 type Paths struct {
@@ -355,6 +358,11 @@ func writeSettings(s Settings) error {
 		return err
 	}
 	s.Launcher.HostIP = normalizeHost(s.Launcher.HostIP)
+	if t := strings.TrimSpace(s.Launcher.TeamCode); len(t) > 24 {
+		s.Launcher.TeamCode = t[:24]
+	} else {
+		s.Launcher.TeamCode = t
+	}
 	if err := saveLauncherConfig(s.Launcher); err != nil {
 		return fmt.Errorf("saving launcher.json: %w", err)
 	}
@@ -463,6 +471,14 @@ func writeOnlineConfig(lc LauncherConfig, p Paths) error {
 		// Only this PC's game talks to the proxy in Join mode, so nobody else
 		// on the network can reach the card server through it.
 		proxy["listen"] = onlineServer
+	}
+	if lc.Mode == "friend" && strings.TrimSpace(lc.TeamCode) != "" {
+		proxy, _ := cfg["proxy"].(map[string]any)
+		if proxy == nil {
+			proxy = map[string]any{}
+			cfg["proxy"] = proxy
+		}
+		proxy["teamCode"] = strings.TrimSpace(lc.TeamCode)
 	}
 	if lc.CardMobileSuit > 0 {
 		proxy, _ := cfg["proxy"].(map[string]any)

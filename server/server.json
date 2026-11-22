@@ -19,9 +19,9 @@
   },
   "match": {
     "listen": "0.0.0.0:28090",
-    "roomSize": 2,
+    "roomSize": 4,
     "fallbackRoomSize": 2,
-    "fallbackAfterSeconds": 0,
+    "fallbackAfterSeconds": 15,
     "groupIdBase": 0,
     "waitCode": "SUCCESS",
     "requireSameWorld": true,

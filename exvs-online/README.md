@@ -56,7 +56,16 @@ To undo everything, change `Server=` back to `28080` and close `exvs-online.exe`
 | `groupIdBase` | 0 | Team ids might start at 1 instead. Try 1 if the match forms but teams come out wrong or it errors. |
 | `waitCode` | `SUCCESS` | The reply while still waiting for players. Ghidra shows the game treats any error code here as a failure, so leave this unless a log says otherwise. |
 | `testBots` | 0 | Solo testing only: adds this many fake players to each room. |
-| `fallbackAfterSeconds` | 0 (off) | Lets a smaller room (`fallbackRoomSize`) start after waiting this long. |
+| `fallbackAfterSeconds` | 0 (off) | Lets a smaller room (`fallbackRoomSize`) start after waiting this long. The public server uses 15. |
+
+## Team codes (2v2 with a friend)
+
+Two players in different houses can't use the game's own team option: that needs two cabinets
+on one shop network. Instead each player's proxy sends its `proxy.teamCode` (the launcher's
+"Team code" box) to the match server in the `X-Boost-Link-Team` header. Players with the same
+code are one unit: they always land in the same `group_id`, never face each other, and never get
+the smaller fallback room, so they only play 2v2 (`roomSize` 4). A code nobody else is using
+yet counts as a solo for 2v2 rooms. Both players still pick Mix Match and solo sortie in the game.
 
 ## Live status page
 

@@ -310,6 +310,9 @@
           <div class="ctx" id="ctx-friend" style="display:none">
             <div class="ipline"><span class="tag">SERVER</span><span class="ip" id="serverShow"></span></div>
             <div class="note" style="margin-top:0">Press PLAY, insert your card and pick a versus mode. You'll be matched with whoever else is online.</div>
+            <label class="f" style="margin-top:10px">TEAM CODE (optional, for 2v2 with a friend)
+              <input type="text" id="teamCode" maxlength="24" spellcheck="false" autocomplete="off" placeholder="leave empty for normal matches"></label>
+            <div class="note" style="margin-top:4px">You and your friend type the same code, then both pick Mix Match. You'll be teamed up once two other players are searching. Leave it empty for 1v1.</div>
           </div>
         </div>
         <button id="playBtn" class="play"><span>PLAY</span></button>
@@ -707,6 +710,7 @@ function render() {
   $('serverShow').textContent = s.launcher.hostIp || d.defaultServer;
   document.querySelectorAll('input[name=mode]').forEach(r => r.checked = r.value === s.launcher.mode);
   $('hostIp').value = s.launcher.hostIp || '';
+  $('teamCode').value = s.launcher.teamCode || '';
   $('serial').value = s.game.serial || '';
   $('chipId').value = s.card.chipId || '';
   $('accessCode').value = s.card.accessCode || '';
@@ -777,6 +781,7 @@ function collect() {
   s.launcher.mode = mode();
   s.launcher.hostIp = $('hostIp').value.trim() || data.detected.defaultServer;
   s.launcher.advanced = $('advanced').checked;
+  s.launcher.teamCode = $('teamCode').value.trim();
   s.game.serial = $('serial').value.trim();
   s.card.chipId = $('chipId').value.trim();
   s.card.accessCode = $('accessCode').value.trim();
