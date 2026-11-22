@@ -196,6 +196,10 @@
   body.cardpage .suit img { width: 150px; height: 68px; }
   body.cardpage .suit .sn { font-size: 14px; }
   body.cardpage .stprev { max-height: none; }
+  body.cardpage .wrap { max-width: 1800px; }
+  #zoomPop { position: fixed; z-index: 90; display: none; pointer-events: none; background: #000; border: 3px solid var(--yel); box-shadow: 0 10px 40px rgba(0,0,0,.7); }
+  #zoomPop img { display: block; width: 100%; height: auto; }
+  #zoomPop div { font: 600 14px "Chakra"; color: #fff; background: var(--ink); padding: 6px 10px; }
   .tab { display: none; }
   .tab.on { display: block; }
   .footer { flex: none; padding-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
@@ -1116,6 +1120,28 @@ if (CARDPAGE) {
   document.querySelector('nav button[data-tab=player]').click();
   document.querySelector('#cardNav button[data-sub=profile]').click();
 }
+// Hovering a gauge or suit picture pops it up large on the far side of the window.
+(() => {
+  const pop = document.body.appendChild(document.createElement('div'));
+  pop.id = 'zoomPop'; pop.innerHTML = '<img alt=""><div></div>';
+  const pimg = pop.querySelector('img'), cap = pop.querySelector('div');
+  const zoomable = t => t.tagName === 'IMG' && t.closest('#cGauge, #cSuits');
+  document.addEventListener('mouseover', e => {
+    const t = e.target;
+    if (!zoomable(t) || !t.naturalWidth) { if (!pop.contains(t)) pop.style.display = 'none'; return; }
+    const r = t.getBoundingClientRect(), vw = innerWidth, vh = innerHeight;
+    const w = Math.min(t.naturalWidth * 2, vw * 0.48, (vh - 60) * t.naturalWidth / t.naturalHeight);
+    const h = w * t.naturalHeight / t.naturalWidth + 34;
+    pimg.src = t.src;
+    cap.textContent = t.title || (t.closest('.suit') && t.closest('.suit').querySelector('b') || {}).textContent || '';
+    pop.style.width = w + 'px';
+    const left = r.left + r.width / 2 > vw / 2 ? Math.max(10, r.left - w - 20) : Math.min(vw - w - 10, r.right + 20);
+    pop.style.left = left + 'px';
+    pop.style.top = Math.max(10, Math.min(vh - h - 10, r.top + r.height / 2 - h / 2)) + 'px';
+    pop.style.display = 'block';
+  });
+  addEventListener('scroll', () => { pop.style.display = 'none'; }, true);
+})();
 $('bigEditor').onclick = async () => { try { await api('POST', '/api/card/window'); } catch (e) { toast(e.message, true); } };
 
 // Keep the window at one size that fits every tab. Edge remembers the last
