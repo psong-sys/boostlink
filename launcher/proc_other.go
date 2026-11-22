@@ -35,6 +35,7 @@ func tameProcess(pid int, how string, mute bool, exited <-chan struct{}, logf fu
 
 func portOwner(port int) string { return "" }
 
-func openURL(url string)    { fmt.Println("open", url) }
-func missingVCRT2010() bool { return false }
-func fitUIWindow()          {}
+func openURL(url string)                 { fmt.Println("open", url) }
+func missingVCRT2010() bool              { return false }
+func fitUIWindow()                       {}
+func openAppWindow(url string, w, h int) { fmt.Println("open", url, w, h) }
