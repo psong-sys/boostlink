@@ -1,0 +1,75 @@
+# Builds the launcher and exvs-online and publishes an update that every
+# launcher picks up on its own.
+#
+# To release: bump `version` in launcher/main.go, then push a tag that matches,
+# e.g.  git tag v1.5.0 && git push origin v1.5.0
+#
+# The repo must be public so launchers can download the release without a
+# login. Releases hold only the built exes and json, never game files.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  RELEASES_REPO: ${{ github.repository }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Check the tag matches the launcher version
+        run: |
+          v=$(grep -oP 'const version = "\K[^"]+' launcher/main.go)
+          if [ "v$v" != "$GITHUB_REF_NAME" ]; then
+            echo "launcher/main.go says $v but the tag is $GITHUB_REF_NAME" >&2; exit 1
+          fi
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          mkdir -p dist
+          (cd launcher && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o ../dist/exvs-launcher.exe .)
+          (cd exvs-online && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../dist/exvs-online.exe .)
+          cp exvs-online/exvs-online.friend.json exvs-online/exvs-online.host.json dist/
+
+      - name: Write latest.json
+        run: |
+          base="https://github.com/$RELEASES_REPO/releases/download/$GITHUB_REF_NAME"
+          python3 - "$base" <<'PY'
+          import hashlib, json, os, subprocess, sys
+          base = sys.argv[1]
+          where = {
+              "exvs-launcher.exe": "exvs-launcher/exvs-launcher.exe",
+              "exvs-online.exe": "exvs-online/exvs-online.exe",
+              "exvs-online.friend.json": "exvs-online/exvs-online.friend.json",
+              "exvs-online.host.json": "exvs-online/exvs-online.host.json",
+          }
+          files = []
+          for name, path in where.items():
+              b = open("dist/" + name, "rb").read()
+              files.append({"path": path, "url": base + "/" + name,
+                            "sha256": hashlib.sha256(b).hexdigest(), "size": len(b)})
+          notes = subprocess.run(["git", "tag", "-l", "--format=%(contents:subject)", os.environ["GITHUB_REF_NAME"]],
+                                 capture_output=True, text=True).stdout.strip()
+          json.dump({"version": os.environ["VERSION"], "notes": notes, "files": files},
+                    open("dist/latest.json", "w"), indent=1)
+          PY
+          cat dist/latest.json
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* -R "$RELEASES_REPO" \
+            --title "Boost Link $VERSION" --notes "Boost Link $VERSION. The launcher updates itself; you don't need to download anything here."
