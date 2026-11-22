@@ -14,7 +14,7 @@
     --panel2: #1c1c26; --line: #2c2c3a; --text: #f4f4f8; --muted: #a3a3b8; --ok: #39f29a; --err: #ff5470;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
   body {
     font: 500 14px/1.45 "Chakra", "Segoe UI", system-ui, sans-serif; color: var(--text);
     background-color: var(--hot);
@@ -27,13 +27,20 @@
     background-size: 9px 9px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     background-attachment: fixed;
   }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 18px 16px 40px; position: relative; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 12px 16px 12px; position: relative; height: 100vh; display: flex; flex-direction: column; }
+  #alerts:empty { display: none; }
+  #form { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .tab.on { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 0 8px 8px 0; }
+  .tab.on::-webkit-scrollbar { display: none; }
+  .modal .panel { scrollbar-width: none; }
+  .modal .panel::-webkit-scrollbar { display: none; }
+  #log { scrollbar-width: thin; }
 
   /* header */
-  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; flex: none; }
   .logo { line-height: .9; transform: skewX(-8deg); }
   .logo .t1 { font: 700 italic 15px "Chakra"; letter-spacing: 6px; color: var(--ink); background: var(--yel); display: inline-block; padding: 2px 10px; }
-  .logo .t2 { font: 700 italic 54px "Chakra"; color: var(--yel); letter-spacing: 1px;
+  .logo .t2 { font: 700 italic 46px "Chakra"; color: var(--yel); letter-spacing: 1px;
     text-shadow: 3px 3px 0 var(--ink), 6px 6px 0 var(--cyan); -webkit-text-stroke: 1px var(--ink); }
   .logo .t2 b { color: #fff; }
   .ver { font: 700 12px "Chakra"; color: var(--ink); margin-left: 8px; -webkit-text-stroke: 0; text-shadow: none; letter-spacing: 1px; vertical-align: top; }
@@ -46,7 +53,7 @@
   nav button:hover:not(.on) { color: #fff; }
 
   /* panels */
-  .panel { background: var(--panel); border: 1px solid #000; padding: 16px; position: relative; margin-bottom: 14px;
+  .panel { background: var(--panel); border: 1px solid #000; padding: 14px 16px; position: relative; margin-bottom: 12px;
     box-shadow: 6px 6px 0 rgba(0,0,0,.55); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); }
   .panel::before { content: ""; position: absolute; left: 0; top: 0; width: 64px; height: 4px; background: var(--yel); }
   h2 { font: 700 italic 13px "Chakra"; letter-spacing: 3px; text-transform: uppercase; color: var(--yel); margin: 0 0 12px; }
@@ -55,7 +62,8 @@
   @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } .logo .t2 { font-size: 40px; } }
 
   /* mode tiles */
-  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  body:not(.advanced) .adv { display: none !important; }
   .mode { position: relative; cursor: pointer; background: var(--panel2); padding: 14px 12px 12px; border: 2px solid transparent;
     transform: skewX(-6deg); transition: transform .12s, border-color .12s; }
   .mode > * { transform: skewX(6deg); }
@@ -112,7 +120,7 @@
     white-space: pre-wrap; color: var(--muted); margin-top: 6px; }
 
   /* alerts */
-  .alert { background: var(--ink); border-left: 5px solid var(--yel); padding: 10px 12px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .alert { background: var(--ink); border-left: 5px solid var(--yel); padding: 7px 12px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .alert.bad { border-left-color: var(--err); }
   .alert p { margin: 0; flex: 1; min-width: 200px; }
 
@@ -125,8 +133,10 @@
   input[type=text]:focus, select:focus { outline: none; border-bottom-color: var(--yel); }
   label.c { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; }
   input[type=checkbox] { accent-color: var(--yel); width: 17px; height: 17px; }
-  .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
   .kv label.f { min-width: 0; }
+  .kv input[type=text] { padding: 6px 8px; font-size: 13px; }
+  .kv label.f { font-size: 11px; gap: 3px; }
   .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
   .warn { color: var(--yel); }
   code { background: #000; padding: 1px 5px; color: var(--cyan); }
@@ -140,9 +150,42 @@
   fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   #form.locked input:not([type=radio]), #form.locked select, #form.locked .btn, #form.locked .mode, #form.locked .chip { opacity: .5; pointer-events: none; }
   #form.locked #statusBtn { opacity: 1; pointer-events: auto; }
+  .subnav { display: flex; gap: 6px; margin: 0 0 10px; align-items: center; flex-wrap: wrap; }
+  .subnav button, .seg button { font: 700 italic 12px "Chakra"; letter-spacing: 1px; background: var(--ink); color: var(--muted); border: 1px solid #000;
+    padding: 6px 12px; transform: skewX(-10deg); cursor: pointer; }
+  .subnav button:hover, .seg button:hover { color: var(--yel); }
+  .subnav button.on, .seg button.on { background: var(--cyan); color: var(--ink); }
+  .subnav .cstat { margin-left: auto; font: 500 12px Consolas, monospace; color: var(--cyan); background: var(--ink); padding: 3px 8px; }
+  .subnav .cstat:empty { display: none; }
+  body.cardmode .footer { visibility: hidden; }
+  .csub { display: none; } .csub.on { display: block; }
+  .csub.card.off .panel { opacity: .35; pointer-events: none; }
+  .cfoot { display: flex; justify-content: flex-end; margin-top: -2px; }
+  .seg { display: flex; gap: 6px; margin-bottom: 10px; }
+  .gpick { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+  .gpick img { width: 100%; height: 36px; font-size: 0; color: transparent; object-fit: cover; border: 2px solid transparent; cursor: pointer; background: #000; display: block; }
+  .gpick img:hover { border-color: var(--cyan); }
+  .gpick img.on { border-color: var(--yel); box-shadow: 0 0 0 1px var(--yel); }
+  .suits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .suit { background: var(--panel2); border: 1px solid var(--line); padding: 6px; display: flex; gap: 8px; align-items: center; min-width: 0; }
+  .suit img { width: 84px; height: 38px; object-fit: contain; flex: none; background: #000; }
+  .suit .sn { flex: 1; min-width: 0; font-size: 12px; }
+  .suit .sn b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .suit .sn span { color: var(--muted); font-size: 11px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .suit select { padding: 2px 4px; font-size: 11px; margin-top: 3px; width: 100%; }
+  .suit .sb { display: flex; flex-direction: column; gap: 2px; }
+  .suit .sb button { background: none; border: 1px solid var(--line); color: var(--muted); font-size: 11px; width: 22px; height: 18px; padding: 0; cursor: pointer; }
+  .suit .sb button:hover { color: var(--yel); border-color: var(--yel); }
+  .kv2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+  .kv2 label.f, .kv5 label.f { min-width: 0; }
+  .kv5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px 12px; margin-top: 10px; }
+  .stprev { position: relative; margin-top: 10px; aspect-ratio: 1516 / 793; background: #000; max-height: 230px; }
+  .stprev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .stprev img[src=""] { display: none; }
+  .panel h2 small { font: 400 12px "Chakra"; color: var(--muted); letter-spacing: 0; text-transform: none; }
   .tab { display: none; }
   .tab.on { display: block; }
-  .footer { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
+  .footer { flex: none; padding-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
 
   /* toast + modal */
   .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) skewX(-8deg); background: var(--ink); border-left: 5px solid var(--yel);
@@ -186,11 +229,11 @@
     </nav>
   </header>
 
-  <div id="alerts"></div>
 
   <fieldset id="form">
   <!-- PLAY -->
   <section class="tab on" id="tab-play">
+    <div id="alerts"></div>
     <div class="grid2">
       <div>
         <div class="panel">
@@ -198,26 +241,25 @@
           <div class="modes">
             <label class="mode" data-mode="offline"><input type="radio" name="mode" value="offline">
               <svg viewBox="0 0 34 34"><path d="M5 27 17 5l12 22H21l-4-8-4 8z" fill="#ffe600"/></svg>
-              <b>OFFLINE</b><small>Solo, CPU or LAN</small></label>
-            <label class="mode" data-mode="host"><input type="radio" name="mode" value="host">
-              <svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="4" fill="#19e3ff"/><path d="M9 9a11 11 0 0 0 0 16M25 9a11 11 0 0 1 0 16M5 5a17 17 0 0 0 0 24M29 5a17 17 0 0 1 0 24" stroke="#19e3ff" stroke-width="2.6" fill="none"/></svg>
-              <b>HOST</b><small>Friends join you</small></label>
+              <b>OFFLINE</b><small>Practice and CPU on your PC</small></label>
             <label class="mode" data-mode="friend"><input type="radio" name="mode" value="friend">
+              <svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="4" fill="#19e3ff"/><path d="M9 9a11 11 0 0 0 0 16M25 9a11 11 0 0 1 0 16M5 5a17 17 0 0 0 0 24M29 5a17 17 0 0 1 0 24" stroke="#19e3ff" stroke-width="2.6" fill="none"/></svg>
+              <b>ONLINE</b><small>Get matched on the Boost Link server</small></label>
+            <label class="mode adv" data-mode="host"><input type="radio" name="mode" value="host">
               <svg viewBox="0 0 34 34"><path d="M4 17h18M15 9l8 8-8 8" stroke="#ff5e7e" stroke-width="4" fill="none"/><path d="M26 5h4v24h-4" stroke="#ff5e7e" stroke-width="3" fill="none"/></svg>
-              <b>JOIN</b><small>Connect to a host</small></label>
+              <b>HOST</b><small>Advanced: be the match server</small></label>
           </div>
           <div class="ctx" id="ctx-offline">
-            <div class="note">Plays on your own card server only, the same as starting everything by hand.</div>
+            <div class="note">Plays on your own PC only: practice, CPU battles and your card. No internet needed.</div>
           </div>
           <div class="ctx" id="ctx-host" style="display:none">
-            <div class="note" style="margin-top:0">Give your friends this address. They pick <b>JOIN</b> and type it in.</div>
+            <div class="note" style="margin-top:0">For testing without the server: friends set this address as their server in Settings → Advanced.</div>
             <div id="hostIps"></div>
             <button class="btn sm" type="button" id="statusBtn" style="margin-top:8px"><span>Open match status page</span></button>
           </div>
           <div class="ctx" id="ctx-friend" style="display:none">
-            <label class="f">HOST'S IP OR SERVER ADDRESS (Radmin, ZeroTier or a server name)
-              <input type="text" class="big" id="hostIp" placeholder="26.x.x.x or play.example.com" spellcheck="false" autocomplete="off"></label>
-            <div class="chips" id="recent"></div>
+            <div class="ipline"><span class="tag">SERVER</span><span class="ip" id="serverShow"></span></div>
+            <div class="note" style="margin-top:0">Press PLAY, insert your card and pick a versus mode. You'll be matched with whoever else is online.</div>
           </div>
         </div>
         <button id="playBtn" class="play"><span>PLAY</span></button>
@@ -235,25 +277,153 @@
 
   <!-- PILOT -->
   <section class="tab" id="tab-player">
-    <div class="grid2">
-      <div class="panel">
-        <h2>Your card</h2>
-        <div class="row">
-          <label class="f">CARD CHIP ID <input type="text" id="chipId" spellcheck="false"></label>
-          <label class="f">CARD ACCESS CODE <input type="text" id="accessCode" spellcheck="false"></label>
+    <div class="subnav" id="cardNav">
+      <button type="button" data-sub="ids" class="on">CARD IDS</button>
+      <button type="button" data-sub="profile">PROFILE</button>
+      <button type="button" data-sub="suits">FAVORITE SUITS</button>
+      <button type="button" data-sub="comms">COMMS</button>
+      <button type="button" data-sub="sticker">STICKER</button>
+      <button type="button" data-sub="buttons">BUTTONS</button>
+      <span class="cstat" id="cardStat"></span>
+    </div>
+
+    <div class="csub on" id="sub-ids">
+      <div class="grid2">
+        <div class="panel">
+          <h2>Your card</h2>
+          <div class="row">
+            <label class="f">CARD CHIP ID <input type="text" id="chipId" spellcheck="false"></label>
+            <label class="f">CARD ACCESS CODE <input type="text" id="accessCode" spellcheck="false"></label>
+          </div>
+          <div class="row">
+            <label class="f">MACHINE SERIAL <input type="text" id="serial" spellcheck="false"></label>
+            <div style="flex:1;min-width:170px"><button class="btn" id="uniqueBtn" type="button"><span>Make my IDs unique</span></button></div>
+          </div>
+          <div class="note">Everyone in an online match needs different IDs. New card IDs give you a new, empty card. Your old card stays on your card server, and typing the old values back in brings it back.</div>
         </div>
-        <div class="row">
-          <label class="f">MACHINE SERIAL <input type="text" id="serial" spellcheck="false"></label>
-          <div style="flex:1;min-width:170px"><button class="btn" id="uniqueBtn" type="button"><span>Make my IDs unique</span></button></div>
+        <div class="panel">
+          <h2>Customize your card</h2>
+          <p style="margin-top:0">Use the tabs above to change your pilot name, favorite suits, comms, sticker and buttons. Changes are saved to your card on the card server, and show up the next time you insert your card.</p>
+          <div class="note">Play once first so your card exists. Before every change the launcher backs up your card to <code>exvs-launcher\backups\card</code>.</div>
+          <button class="btn sm" id="cardEditBtn" type="button" style="margin-top:10px"><span>Open the card server's own page</span></button>
         </div>
-        <div class="note">Everyone in an online match needs different IDs. New card IDs give you a new, empty card. Your old card stays on your card server, and typing the old values back in brings it back.</div>
       </div>
+    </div>
+
+    <div class="csub card" id="sub-profile">
+      <div class="grid2">
+        <div class="panel">
+          <h2>Pilot</h2>
+          <div class="row">
+            <label class="f">PILOT NAME (up to 12) <input type="text" id="cName" maxlength="12" spellcheck="false"></label>
+            <label class="f">CUSTOM TITLE TEXT (up to 12) <input type="text" id="cTitleText" maxlength="12" spellcheck="false"></label>
+          </div>
+          <div class="row">
+            <label class="c"><input type="checkbox" id="cQuick"> Quick Start</label>
+            <label class="c"><input type="checkbox" id="cSafe"> BGM safe mode</label>
+            <label class="c"><input type="checkbox" id="cRadar"> Fixed radar</label>
+          </div>
+          <div class="row">
+            <label class="f" style="flex:0 0 150px;min-width:0">BGM
+              <select id="cBgmMode"><option value="0">Suit's own</option><option value="1">My list, in order</option><option value="2">My list, shuffled</option></select></label>
+            <label class="f">ADD A SONG <select id="cBgmAdd"></select></label>
+          </div>
+          <div class="chips" id="cBgmList"></div>
+          <div class="note">Letters, numbers, spaces and Japanese work. Symbols like ! ? &amp; are changed to the game's full-width versions.</div>
+        </div>
+        <div class="panel">
+          <h2>Gauge design</h2>
+          <div class="gpick" id="cGauge"></div>
+          <div class="note" id="cGaugeName"></div>
+        </div>
+      </div>
+      <div class="cfoot"><button class="btn y" type="button" data-save="profile"><span>Save to card</span></button></div>
+    </div>
+
+    <div class="csub card" id="sub-suits">
       <div class="panel">
-        <h2>Pilot name &amp; customizing</h2>
-        <p style="margin-top:0">Your pilot name, favorite suits, stickers, BGM and titles are edited in the card server's own web page.</p>
-        <button class="btn y" id="cardEditBtn" type="button"><span>Edit card &amp; pilot name</span></button>
-        <div class="note">Opens the editor in your browser and starts the card server if it isn't running. Play once first so your card exists, then sign in there with the chip ID and access code on the left.</div>
+        <h2>Favorite suits <small id="cSuitCount"></small></h2>
+        <div class="row" style="margin-top:0">
+          <label class="f">ADD A SUIT (type to search) <input type="text" id="cSuitAdd" list="cSuitList" spellcheck="false" placeholder="e.g. Gundam, Amuro, Wing Zero"></label>
+          <datalist id="cSuitList"></datalist>
+          <button class="btn" type="button" id="cSuitAddBtn" style="flex:none"><span>Add</span></button>
+        </div>
+        <div class="suits" id="cSuits"></div>
+        <div class="note">Up to 12. These show first on the suit select screen. New suits use your default gauge and BGM.</div>
       </div>
+      <div class="cfoot"><button class="btn y" type="button" data-save="suits"><span>Save to card</span></button></div>
+    </div>
+
+    <div class="csub card" id="sub-comms">
+      <div class="grid2">
+        <div class="panel">
+          <h2>Comms messages</h2>
+          <div class="seg" id="cCommMode">
+            <button type="button" data-g="soloGroup" class="on">Solo queue</button>
+            <button type="button" data-g="teamGroup">Team</button>
+            <button type="button" data-g="instantTeamGroup">Quick team</button>
+          </div>
+          <div class="kv2">
+            <label class="f">MATCH START <input type="text" data-m="startMessage" maxlength="13"></label>
+            <label class="f">MATCH END <input type="text" data-m="endMessage" maxlength="13"></label>
+            <label class="f">UP <input type="text" data-m="upMessage" maxlength="13"></label>
+            <label class="f">DOWN <input type="text" data-m="downMessage" maxlength="13"></label>
+            <label class="f">LEFT <input type="text" data-m="leftMessage" maxlength="13"></label>
+            <label class="f">RIGHT <input type="text" data-m="rightMessage" maxlength="13"></label>
+          </div>
+          <div class="note">Up to 13 characters each. Up, down, left and right are the comms button plus a direction in battle. The losing side always sends "ありがとうございます" at the end.</div>
+        </div>
+        <div class="panel">
+          <h2>Comms options</h2>
+          <label class="c"><input type="checkbox" id="cRecv"> Show messages from teammates</label>
+          <label class="c"><input type="checkbox" id="cAuto"> Send messages automatically</label>
+          <div class="row">
+            <label class="f">WHERE MESSAGES SHOW
+              <select id="cPos"><option value="0">Center</option><option value="1">Bottom left</option></select></label>
+          </div>
+          <div class="note">Sending automatically skips the four direction messages in battle. Start and end messages still send.</div>
+        </div>
+      </div>
+      <div class="cfoot"><button class="btn y" type="button" data-save="comms"><span>Save to card</span></button></div>
+    </div>
+
+    <div class="csub card" id="sub-sticker">
+      <div class="grid2">
+        <div class="panel">
+          <h2>Opening sticker</h2>
+          <div class="row" style="margin-top:0">
+            <label class="f">BACKGROUND <select id="cStBg"></select></label>
+            <label class="f">EFFECT <select id="cStFx"></select></label>
+          </div>
+          <div class="stprev"><img id="cStBgImg" alt=""><img id="cStFxImg" alt=""></div>
+          <div class="row">
+            <label class="c"><input type="checkbox" id="cStPilot"> Show the pilot picture</label>
+            <label class="c"><input type="checkbox" id="cStCutin"> Use the awakening cut-in</label>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Sticker text</h2>
+          <label class="f">STAT 1 <select id="cTr1" class="tr"></select></label>
+          <label class="f" style="margin-top:6px">STAT 2 <select id="cTr2" class="tr"></select></label>
+          <label class="f" style="margin-top:6px">STAT 3 <select id="cTr3" class="tr"></select></label>
+          <label class="f" style="margin-top:6px">COMMENT <select id="cComA"></select></label>
+          <label class="f" style="margin-top:6px">COMMENT WORD <select id="cComB"></select></label>
+        </div>
+      </div>
+      <div class="cfoot"><button class="btn y" type="button" data-save="sticker"><span>Save to card</span></button></div>
+    </div>
+
+    <div class="csub card" id="sub-buttons">
+      <div class="panel">
+        <h2>Controller buttons in game <small>(Normal Type (Custom) only)</small></h2>
+        <div class="row" style="margin-top:0">
+          <label class="f" style="flex:0 0 260px">CONTROL TYPE
+            <select id="cPadStyle"><option value="0">No controller</option><option value="1">Lite Type (fixed buttons)</option><option value="2">Normal Type (Default)</option><option value="3">Normal Type (Custom)</option></select></label>
+        </div>
+        <div class="kv5" id="cPad"></div>
+        <div class="note">Pick "Normal Type (Custom)" for the buttons below to apply. These are the game's own button settings on your card. Keyboard and controller numbers for the PC are on the CONTROLS tab.</div>
+      </div>
+      <div class="cfoot"><button class="btn y" type="button" data-save="buttons"><span>Save to card</span></button></div>
     </div>
   </section>
 
@@ -267,22 +437,37 @@
             <label class="f">NETWORK ADAPTER (your real Ethernet or Wi-Fi)
               <select id="interfaceName"></select></label>
           </div>
-          <div class="note">The game and the Live Monitor both use this adapter, and it's written to <code>config.ini</code> and <code>lmnfig.ini</code>. Don't pick Radmin or ZeroTier here. Those are only for the host's IP.</div>
+          <div class="note">Picked automatically. The game and the Live Monitor both use this adapter (it's written to <code>config.ini</code> and <code>lmnfig.ini</code>). VPN and virtual adapters are hidden because they break the game.</div>
+          <label class="c adv"><input type="checkbox" id="showAllAdapters"> Show all adapters, including VPN and virtual ones</label>
         </div>
+        <div class="panel">
+          <h2>Advanced</h2>
+          <label class="c"><input type="checkbox" id="advanced"> Show advanced options (for testing, or if the server is down)</label>
+          <div class="adv">
+            <div class="row" style="margin-top:10px">
+              <label class="f">MATCH SERVER ADDRESS (IP or name)
+                <input type="text" id="hostIp" spellcheck="false" autocomplete="off"></label>
+            </div>
+            <div class="chips" id="recent"><span></span></div>
+            <div style="margin-top:8px"><button class="btn sm" type="button" id="resetServer"><span>Use the Boost Link server</span></button></div>
+            <div class="note">With advanced options on, <b>HOST</b> appears on the PLAY tab so one PC can be the match server for a group.</div>
+          </div>
+          <div class="note" id="folder"></div>
+        </div>
+      </div>
+      <div>
         <div class="panel">
           <h2>Display</h2>
           <div class="row">
             <label class="c"><input type="checkbox" id="windowed"> Windowed</label>
-            <label class="c"><input type="checkbox" id="borderless"> Borderless window</label>
-            <label class="c"><input type="checkbox" id="framerateLimit"> Frame rate limit</label>
+            <label class="c"><input type="checkbox" id="borderless"> Borderless</label>
+            <label class="c"><input type="checkbox" id="framerateLimit"> Frame limit</label>
           </div>
           <div class="row">
             <label class="f">RESOLUTION <input type="text" id="resolution" list="resList" spellcheck="false"></label>
             <datalist id="resList"><option value="720p"><option value="1080p"><option value="1440p"><option value="4K"></datalist>
           </div>
         </div>
-      </div>
-      <div>
         <div class="panel">
           <h2>Live Monitor</h2>
           <div class="row">
@@ -295,13 +480,14 @@
               </select></label>
           </div>
           <label class="c" style="margin-top:8px"><input type="checkbox" id="lmMute"> Mute the Live Monitor</label>
-          <div class="note">The game needs the Live Monitor running, or it stops at "LIVEMONITOR DISCONNECT". The launcher starts it before the game and closes it after.</div>
+          <div class="note">The game needs it running (or it stops at "LIVEMONITOR DISCONNECT"). The launcher opens and closes it for you.</div>
         </div>
         <div class="panel">
-          <h2>Shortcuts &amp; files</h2>
-          <button class="btn" id="shortcutBtn" type="button"><span>Add desktop shortcuts</span></button>
-          <div class="note">"Boost Link Play" starts straight into the game with your saved settings. "Boost Link" opens this window.</div>
-          <div class="note" id="folder"></div>
+          <h2>Desktop shortcuts</h2>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button class="btn" id="shortcutBtn" type="button" style="flex:none"><span>Add desktop shortcuts</span></button>
+            <div class="note" style="margin:0">"Boost Link Play" starts straight into the game. "Boost Link" opens this window.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -352,7 +538,7 @@
     <div class="wstep">
       <div class="wnum">3</div>
       <div><b>How do you want to play?</b>
-        <select id="wMode"><option value="offline">Offline</option><option value="host">Host online</option><option value="friend">Join a friend</option></select></div>
+        <select id="wMode"><option value="friend">Online (Boost Link server)</option><option value="offline">Offline (practice and CPU)</option></select></div>
     </div>
     <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end">
       <button class="btn" id="wSkip" type="button"><span>Skip</span></button>
@@ -411,14 +597,16 @@ function kvGrid(el, list) {
 }
 function readGrid(el) { return [...el.querySelectorAll('input')].map(i => ({key: i.dataset.key, value: i.value})); }
 
+const VIRTUAL = /radmin|zerotier|vethernet|virtualbox|vmware|hyper-v|tailscale|bluetooth|loopback|wsl|hamachi/i;
 function adapterOptions(sel, current, d) {
-  const names = [...(d.adapters || [])];
+  const showAll = $('showAllAdapters') && $('showAllAdapters').checked;
+  const names = (d.adapters || []).filter(n => showAll || !VIRTUAL.test(n));
   if (current && !names.some(n => n.toLowerCase() === current.toLowerCase())) names.unshift(current);
   sel.innerHTML = names.map(n => {
     let label = n;
     if (current && n.toLowerCase() === current.toLowerCase() && !(d.adapters || []).some(a => a.toLowerCase() === n.toLowerCase())) label += '  (not found on this PC)';
     else if (n === d.suggestedAdapter) label += '  (recommended)';
-    else if (/radmin|zerotier/i.test(n)) label += '  (VPN, not recommended)';
+    else if (VIRTUAL.test(n)) label += '  (VPN/virtual: breaks the game)';
     return '<option value="' + esc(n) + '">' + esc(label) + '</option>';
   }).join('');
   sel.value = current || d.suggestedAdapter || names[0] || '';
@@ -427,6 +615,9 @@ function adapterOptions(sel, current, d) {
 function render() {
   const s = data.settings, d = data.detected;
   $('ver').textContent = 'v' + d.version;
+  $('advanced').checked = !!s.launcher.advanced;
+  document.body.classList.toggle('advanced', !!s.launcher.advanced);
+  $('serverShow').textContent = s.launcher.hostIp || d.defaultServer;
   document.querySelectorAll('input[name=mode]').forEach(r => r.checked = r.value === s.launcher.mode);
   $('hostIp').value = s.launcher.hostIp || '';
   $('serial').value = s.game.serial || '';
@@ -460,9 +651,16 @@ function renderAlerts() {
   if (ad.length && !ad.some(x => x.toLowerCase() === cur.toLowerCase()))
     add('Your network adapter is set to "' + esc(cur) + '", which isn\'t on this PC. The game would stop with "failed to find interface".', true,
       d.suggestedAdapter ? '<button class="btn sm y" type="button" id="fixAdapter"><span>Use ' + esc(d.suggestedAdapter) + '</span></button>' : '');
+  if (VIRTUAL.test(cur) && d.suggestedAdapter && ad.some(x => x.toLowerCase() === cur.toLowerCase()))
+    add('Your network adapter is "' + esc(cur) + '", a VPN or virtual adapter. The game needs your real connection.', true,
+      '<button class="btn sm y" type="button" id="fixAdapter"><span>Use ' + esc(d.suggestedAdapter) + '</span></button>');
   if (d.stockCard) add('You\'re still using the default card IDs that everyone has. Make them unique before playing online.', false,
     '<button class="btn sm y" type="button" id="fixCard"><span>Make unique</span></button>');
+  const up = window.updateInfo;
+  if (up && up.available) add('<b>Boost Link ' + esc(up.version) + ' is out.</b> ' + esc(up.notes || 'Update to get the latest fixes.'), false,
+    '<button class="btn sm y" type="button" id="updateBtn"><span>Update now</span></button>');
   $('alerts').innerHTML = a.join('');
+  if ($('updateBtn')) $('updateBtn').onclick = runUpdate;
   if ($('fixAdapter')) $('fixAdapter').onclick = async () => { $('interfaceName').value = d.suggestedAdapter; await saveQuiet('Adapter set to ' + d.suggestedAdapter + '.'); };
   if ($('fixCard')) $('fixCard').onclick = async () => { makeUnique(); await saveQuiet('New card IDs saved.'); };
 }
@@ -472,22 +670,24 @@ function updateMode() {
   document.querySelectorAll('.mode').forEach(el => el.classList.toggle('on', el.dataset.mode === m));
   ['offline', 'host', 'friend'].forEach(x => $('ctx-' + x).style.display = x === m ? 'block' : 'none');
   const ips = d.vpnIps || [];
+  $('serverShow').textContent = $('hostIp').value.trim() || d.defaultServer;
   $('hostIps').innerHTML = ips.length ? ips.map(t => {
     const ip = t.replace(/\s*\(.*\)$/, ''), kind = (t.match(/\((.*)\)/) || [])[1] || '';
     return '<div class="ipline"><span class="ip">' + esc(ip) + '</span><span class="tag">' + esc(kind.toUpperCase()) + '</span>' +
       '<button class="btn sm" type="button" data-copy="' + esc(ip) + '"><span>Copy</span></button></div>';
-  }).join('') : '<div class="note warn">No Radmin VPN or ZeroTier address found. Connect one of them, then reopen the launcher.</div>';
+  }).join('') : '<div class="note warn">No VPN address (Radmin or ZeroTier) found. Friends on the same VPN need one to reach you.</div>';
   $('hostIps').querySelectorAll('[data-copy]').forEach(b => b.onclick = async () => {
     try { await navigator.clipboard.writeText(b.dataset.copy); toast('Copied ' + b.dataset.copy); } catch (e) { toast('Copy failed: select the IP and press Ctrl+C', true); }
   });
-  $('playSub').innerHTML = m === 'host' ? 'Allow exvs-online through Windows Firewall when it asks. On ZeroTier, set its network to <b>Private</b>.'
-    : m === 'friend' ? 'The host starts first. Then press PLAY.' : '';
+  $('playSub').innerHTML = m === 'host' ? 'Allow exvs-online through Windows Firewall when it asks.'
+    : m === 'friend' ? 'First time online? Press <b>Check my PC</b> below.' : '';
 }
 
 function collect() {
   const s = JSON.parse(JSON.stringify(data.settings));
   s.launcher.mode = mode();
-  s.launcher.hostIp = $('hostIp').value.trim();
+  s.launcher.hostIp = $('hostIp').value.trim() || data.detected.defaultServer;
+  s.launcher.advanced = $('advanced').checked;
   s.game.serial = $('serial').value.trim();
   s.card.chipId = $('chipId').value.trim();
   s.card.accessCode = $('accessCode').value.trim();
@@ -503,7 +703,23 @@ function collect() {
   return s;
 }
 
-async function load() { data = await api('GET', '/api/settings'); render(); }
+async function load() { data = await api('GET', '/api/settings'); render(); checkUpdate(); }
+async function checkUpdate() {
+  try { window.updateInfo = await api('GET', '/api/update'); if (window.updateInfo.available) renderAlerts(); } catch (e) {}
+}
+async function runUpdate() {
+  const b = $('updateBtn'); b.disabled = true; toast('Downloading the update…');
+  try {
+    const old = (window.updateInfo || {}).current, r = await api('POST', '/api/update');
+    if (!r.restart) { window.updateInfo = null; renderAlerts(); toast('Updated.'); return; }
+    toast('Restarting the launcher…');
+    for (let i = 0; i < 60; i++) {
+      await new Promise(res => setTimeout(res, 500));
+      try { const u = await api('GET', '/api/update'); if (u.current !== old) { location.reload(); return; } } catch (e) {}
+    }
+    toast('The update is installed. Close this window and open the launcher again.', true);
+  } catch (e) { toast(e.message, true); b.disabled = false; }
+}
 async function save(quiet, patch) {
   const s = collect(); if (patch) patch(s);
   await api('POST', '/api/settings', s);
@@ -528,6 +744,13 @@ function makeUnique() {
   $('serial').value = reshape($('serial').value || '0000');
   setDirty(true);
 }
+$('advanced').onchange = () => {
+  document.body.classList.toggle('advanced', $('advanced').checked);
+  if (!$('advanced').checked && mode() === 'host') { document.querySelector('input[name=mode][value=friend]').checked = true; updateMode(); }
+};
+$('showAllAdapters').onchange = () => adapterOptions($('interfaceName'), $('interfaceName').value, data.detected);
+$('resetServer').onclick = () => { $('hostIp').value = data.detected.defaultServer; setDirty(true); updateMode(); };
+$('hostIp').addEventListener('input', updateMode);
 $('uniqueBtn').onclick = () => { makeUnique(); toast('New IDs made. Save or PLAY to keep them.'); };
 
 document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => { setDirty(true); updateMode(); });
@@ -546,7 +769,6 @@ $('cardEditBtn').onclick = async () => {
 $('playBtn').onclick = async () => {
   try {
     if (busy) { await api('POST', '/api/stop'); return; }
-    if (mode() === 'friend' && !$('hostIp').value.trim()) { toast('Type the host\'s IP or server address first.', true); $('hostIp').focus(); return; }
     await save(true);
     await api('POST', '/api/play');
     document.querySelector('nav button[data-tab=play]').click();
@@ -587,7 +809,7 @@ function openWelcome() {
   adapterOptions($('wAdapter'), (d.adapters || []).some(a => a.toLowerCase() === (s.game.interfaceName || '').toLowerCase()) ? s.game.interfaceName : d.suggestedAdapter, d);
   $('wUnique').checked = d.stockCard;
   $('wCardNote').textContent = d.stockCard ? 'You have the default IDs everyone starts with.' : 'Your card already has its own IDs. Leave this unticked to keep your current card.';
-  $('wMode').value = s.launcher.mode || 'offline';
+  $('wMode').value = s.launcher.mode === 'offline' ? 'offline' : 'friend';
   $('welcome').classList.add('on');
 }
 async function finishWelcome(apply) {
@@ -619,7 +841,7 @@ async function poll() {
     $('stage').textContent = st.error || st.stage;
     $('stage').className = st.error ? 'err' : busy ? 'ok' : '';
     const m = mode(), lmOff = $('liveMonitor').value === 'off';
-    const planned = [{label:'Card server'}].concat(m === 'offline' ? [] : [{label: m === 'host' ? 'Online (host)' : 'Online (join)'}])
+    const planned = [{label:'Card server'}].concat(m === 'offline' ? [] : [{label: m === 'host' ? 'Online (host)' : 'Online (Boost Link)'}])
       .concat(lmOff ? [] : [{label:'Live Monitor'}]).concat([{label:'Game'}]).map(x => ({...x, state:'waiting'}));
     const steps = st.steps && st.steps.length ? st.steps : planned;
     $('steps').innerHTML = steps.map(x => '<li class="' + x.state + '"><span class="dot">' + icons[x.state] + '</span>' + esc(x.label) +
@@ -632,6 +854,259 @@ setInterval(poll, 1000);
 window.addEventListener('pagehide', () => navigator.sendBeacon('/api/bye'));
 
 load().then(poll).catch(e => { $('stage').textContent = e.message; $('stage').className = 'err'; });
+// ---- Card editor (talks to the card server through the launcher) ----
+const card = { sec: null, cat: {}, loading: null, group: 'soloGroup' };
+const camel = v => Array.isArray(v) ? v.map(camel) : (v && typeof v === 'object')
+  ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k.charAt(0).toLowerCase() + k.slice(1), camel(x)])) : v;
+const ENUMS = { burst: ['Extend', 'Fighting', 'Shooting'], bgm: ['None', 'Sequential', 'Random'], pos: ['Center', 'LeftBottom'] };
+// Read an enum the server may send as a number or a name; write it back the same way.
+const enumIdx = (v, names) => typeof v === 'string' ? Math.max(0, names.indexOf(v)) : (v | 0);
+const enumOut = (orig, i, names) => typeof orig === 'string' ? names[i] : i;
+const FW = { '!':'！','?':'？','&':'＆','(':'（',')':'）','+':'＋','*':'＊','=':'＝',';':'；',':':'：','@':'＠','%':'％','<':'＜','>':'＞','^':'＾','|':'｜','\\':'＼' };
+const SPECIAL = '×÷Ξνω†※ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ←↑→↓∀∞◆◇★☆♪♭';
+function gameText(s, slash) {
+  return [...String(s || '')].map(c => (c === '/' && !slash) ? '／' : (FW[c] || c)).join('');
+}
+function badChars(s, slash) {
+  return [...s].filter(c => !(/[ a-zA-Z0-9\-_#\[\]]/.test(c) || (slash && c === '/') || c.charCodeAt(0) >= 0x3000 || SPECIAL.includes(c))).join('');
+}
+const catName = (list, id) => { const x = (card.cat[list] || []).find(o => (o.id ?? o.iD) === id); return x ? (x.value || '') : ''; };
+async function catalog(name) {
+  if (!card.cat[name]) card.cat[name] = camel(await api('GET', '/api/card/catalog/' + name)).map(o => ({ ...o, id: o.id ?? o.iD }));
+  return card.cat[name];
+}
+function setCardStat(t) { $('cardStat').textContent = t; }
+
+async function loadCard(force) {
+  if (card.sec && !force) return;
+  if (card.loading) return card.loading;
+  setCardStat('Loading your card…');
+  document.querySelectorAll('.csub.card').forEach(x => x.classList.add('off'));
+  card.loading = (async () => {
+    try {
+      const [r] = await Promise.all([api('GET', '/api/card/load'),
+        ...['suits', 'bgms', 'gauges', 'buttons', 'trackers', 'stbg', 'steffect', 'comments', 'phrases'].map(catalog)]);
+      card.sec = camel(r.sections); card.errors = r.errors || {};
+      if (card.sec.suits && !Array.isArray(card.sec.suits)) card.sec.suits = Object.values(card.sec.suits).find(Array.isArray) || [];
+      card.ids = r.chipId;
+      fillCard();
+      document.querySelectorAll('.csub.card').forEach(x => x.classList.remove('off'));
+      setCardStat('Card ' + r.chipId);
+    } catch (e) {
+      card.sec = null; setCardStat(''); toast(e.message, true);
+    } finally { card.loading = null; }
+  })();
+  return card.loading;
+}
+
+function opts(list, label) {
+  return list.map(o => '<option value="' + o.id + '">' + esc(label ? label(o) : (o.id + '  ' + (o.value || ''))) + '</option>').join('');
+}
+
+function fillCard() {
+  const S = card.sec, p = S.profile;
+  // profile
+  $('cName').value = p.userName || '';
+  $('cTitleText').value = (p.defaultTitle && p.defaultTitle.customText) || '';
+  $('cQuick').checked = !!p.enableQuickStart; $('cSafe').checked = !!p.bgmSafeMode; $('cRadar').checked = !!p.isFixedRadar;
+  $('cBgmMode').value = enumIdx(p.defaultBgmPlayingMethod, ENUMS.bgm);
+  $('cBgmAdd').innerHTML = '<option value="">Pick a song to add…</option>' + opts(card.cat.bgms.filter(b => b.id > 0), b => b.value + (b.series && b.series !== '-' ? '  (' + b.series + ')' : ''));
+  card.bgm = [...(p.defaultBgmList || [])];
+  drawBgm();
+  card.gauge = p.defaultGaugeDesignId | 0;
+  $('cGauge').innerHTML = card.cat.gauges.map(g => '<img alt="" loading="lazy" data-id="' + g.id + '" title="' + esc(g.id + '  ' + g.value) + '" src="/cardimg/gauges/' + g.id + '.webp">').join('');
+  drawGauge();
+  // suits
+  $('cSuitList').innerHTML = card.cat.suits.filter(m => m.id > 0).map(m => '<option value="' + esc(suitLabel(m)) + '">').join('');
+  card.suits = (S.suits || []).map(x => ({ ...x }));
+  drawSuits();
+  // comms
+  if (S.comms) {
+    $('cRecv').checked = !!S.comms.allowReceiveMessage; $('cAuto').checked = !!S.comms.commandMessageAutoFlag;
+    $('cPos').value = enumIdx(S.comms.messagePosition, ENUMS.pos);
+    showGroup(card.group);
+  }
+  // sticker
+  const st = S.sticker || {};
+  $('cStBg').innerHTML = opts(card.cat.stbg); $('cStBg').value = st.stickerBackgroundId | 0;
+  $('cStFx').innerHTML = opts(card.cat.steffect); $('cStFx').value = st.stickerEffectId | 0;
+  const tr = opts(card.cat.trackers, t => t.id === 0 ? 'None' : (t.value && t.value !== '?' ? t.value : t.valueJP));
+  ['cTr1', 'cTr2', 'cTr3'].forEach((id, i) => { $(id).innerHTML = tr; $(id).value = st['tracker' + (i + 1)] | 0; });
+  $('cComA').innerHTML = opts(card.cat.comments, c => c.id + '  ' + (c.value || '').replace(/<br>/g, ' '));
+  $('cComA').value = st.commentPartsAId | 0;
+  $('cComB').innerHTML = opts(card.cat.phrases); $('cComB').value = st.commentPartsBId | 0;
+  $('cStPilot').checked = !!st.pilotImageDispFlag; $('cStCutin').checked = !!st.cutinImageUseFlag;
+  stickerPreview();
+  // buttons
+  const g = S.buttons || {};
+  $('cPadStyle').value = g.gamePadStyle | 0;
+  const keys = [['xKey', 'Square / X'], ['yKey', 'Triangle / Y'], ['aKey', 'Cross / A'], ['bKey', 'Circle / B'], ['lbKey', 'L1 / LB'],
+    ['rbKey', 'R1 / RB'], ['ltKey', 'L2 / LT'], ['rtKey', 'R2 / RT'], ['lsbKey', 'L3 (left stick)'], ['rsbKey', 'R3 (right stick)']];
+  const bo = opts(card.cat.buttons, b => b.value);
+  $('cPad').innerHTML = keys.map(([k, l]) => '<label class="f">' + esc(l.toUpperCase()) + ' <select data-k="' + k + '">' + bo + '</select></label>').join('');
+  $('cPad').querySelectorAll('select').forEach(sel => sel.value = g[sel.dataset.k] | 0);
+}
+
+function drawBgm() {
+  $('cBgmList').innerHTML = card.bgm.length ? card.bgm.map((id, i) => '<span class="chip" data-i="' + i + '" title="Remove">' + esc(catName('bgms', id) || ('BGM ' + id)) + ' ✕</span>').join('')
+    : '<span class="note" style="margin:0">No songs in your list.</span>';
+  $('cBgmList').querySelectorAll('.chip').forEach(c => c.onclick = () => { card.bgm.splice(+c.dataset.i, 1); drawBgm(); });
+}
+$('cBgmAdd').onchange = () => { const v = +$('cBgmAdd').value; if (v && !card.bgm.includes(v)) card.bgm.push(v); $('cBgmAdd').value = ''; drawBgm(); };
+function drawGauge() {
+  $('cGauge').querySelectorAll('img').forEach(i => i.classList.toggle('on', +i.dataset.id === card.gauge));
+  $('cGaugeName').textContent = 'Selected: ' + card.gauge + '  ' + catName('gauges', card.gauge);
+}
+$('cGauge').onclick = e => { if (e.target.dataset.id) { card.gauge = +e.target.dataset.id; drawGauge(); } };
+
+const suitLabel = m => m.value + ' / ' + m.pilot + ' (' + m.cost + ')';
+function drawSuits() {
+  $('cSuitCount').textContent = card.suits.length + ' of 12';
+  const bo = ENUMS.burst.map((b, i) => '<option value="' + i + '">' + b + ' burst</option>').join('');
+  $('cSuits').innerHTML = card.suits.map((s, i) => {
+    const m = card.cat.suits.find(x => x.id === s.msId) || { value: 'Suit ' + s.msId, pilot: '', cost: '' };
+    return '<div class="suit" data-i="' + i + '"><img src="/cardimg/mobile_suits/' + s.msId + '.webp" alt=""><div class="sn"><b title="' + esc(m.value) + '">' + esc(m.value) +
+      '</b><span>' + esc(m.pilot + (m.cost ? '  ' + m.cost : '')) + '</span><select>' + bo + '</select></div>' +
+      '<div class="sb"><button type="button" data-a="up" title="Move up">▲</button><button type="button" data-a="down" title="Move down">▼</button><button type="button" data-a="del" title="Remove">✕</button></div></div>';
+  }).join('') || '<div class="note">No favorite suits yet.</div>';
+  $('cSuits').querySelectorAll('.suit').forEach(el => {
+    const i = +el.dataset.i, sel = el.querySelector('select');
+    sel.value = enumIdx(card.suits[i].burstType, ENUMS.burst);
+    sel.onchange = () => card.suits[i].burstType = enumOut(card.suits[i].burstType, +sel.value, ENUMS.burst);
+  });
+}
+$('cSuits').onclick = e => {
+  const a = e.target.dataset.a; if (!a) return;
+  const i = +e.target.closest('.suit').dataset.i, L = card.suits;
+  if (a === 'del') L.splice(i, 1);
+  if (a === 'up' && i > 0) [L[i - 1], L[i]] = [L[i], L[i - 1]];
+  if (a === 'down' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
+  drawSuits();
+};
+function addSuit() {
+  const q = $('cSuitAdd').value.trim().toLowerCase(); if (!q) return;
+  const all = card.cat.suits.filter(m => m.id > 0);
+  const m = all.find(x => suitLabel(x).toLowerCase() === q) || all.find(x => x.value.toLowerCase() === q) ||
+    all.find(x => suitLabel(x).toLowerCase().includes(q));
+  if (!m) return toast('No suit matches "' + $('cSuitAdd').value + '".', true);
+  if (card.suits.some(s => s.msId === m.id)) return toast(m.value + ' is already in your list.', true);
+  if (card.suits.length >= 12) return toast('You can have up to 12 favorite suits. Remove one first.', true);
+  const p = card.sec.profile, base = card.suits[0];
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const n = base ? clone(base) : { burstType: 0, battleNaviId: (card.sec.navi && card.sec.navi.defaultBattleNaviId) || 0,
+    defaultTitle: clone(p.defaultTitle), triadTitle: clone(p.triadTitle), classMatchTitle: clone(p.classMatchTitle) };
+  Object.assign(n, { msId: m.id, gaugeDesignId: card.gauge, bgmPlayingMethod: p.defaultBgmPlayingMethod, bgmList: [...card.bgm] });
+  card.suits.push(n); $('cSuitAdd').value = ''; drawSuits();
+}
+$('cSuitAddBtn').onclick = addSuit;
+$('cSuitAdd').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addSuit(); } };
+
+function readGroup() {
+  const g = card.sec.comms && card.sec.comms[card.group]; if (!g) return;
+  document.querySelectorAll('#sub-comms [data-m]').forEach(inp => {
+    const k = inp.dataset.m, t = gameText(inp.value, true);
+    if (!g[k]) { if (!t) return; g[k] = { command: 0, messageText: '', uniqueMessageId: 0 }; }
+    g[k].messageText = t;
+  });
+}
+function showGroup(name) {
+  card.group = name;
+  document.querySelectorAll('#cCommMode button').forEach(b => b.classList.toggle('on', b.dataset.g === name));
+  const g = (card.sec.comms && card.sec.comms[name]) || {};
+  document.querySelectorAll('#sub-comms [data-m]').forEach(inp => inp.value = (g[inp.dataset.m] && g[inp.dataset.m].messageText) || '');
+}
+$('cCommMode').onclick = e => { if (e.target.dataset.g) { readGroup(); showGroup(e.target.dataset.g); } };
+
+function stickerPreview() {
+  const bg = +$('cStBg').value, fx = +$('cStFx').value;
+  $('cStBgImg').src = '/cardimg/sticker/background/' + bg + '.webp';
+  $('cStFxImg').src = fx ? '/cardimg/sticker/effect/' + fx + '.webp' : '';
+}
+$('cStBg').onchange = $('cStFx').onchange = stickerPreview;
+$('cStBgImg').onerror = $('cStFxImg').onerror = function () { this.removeAttribute('src'); };
+
+function collectCard(section) {
+  const S = card.sec;
+  if (section === 'profile') {
+    const p = S.profile, name = gameText($('cName').value.trim()), tt = gameText($('cTitleText').value.trim());
+    if (!name) throw new Error('Type a pilot name.');
+    if ([...name].length > 12) throw new Error('The pilot name can be up to 12 characters.');
+    const bad = badChars(name) + badChars(tt);
+    if (bad) throw new Error('The game can\'t show these characters: ' + bad);
+    p.userName = name; $('cName').value = name;
+    if (p.defaultTitle) { p.defaultTitle.customText = tt; $('cTitleText').value = tt; }
+    p.enableQuickStart = $('cQuick').checked; p.bgmSafeMode = $('cSafe').checked; p.isFixedRadar = $('cRadar').checked;
+    p.defaultBgmPlayingMethod = enumOut(p.defaultBgmPlayingMethod, +$('cBgmMode').value, ENUMS.bgm);
+    p.defaultBgmList = [...card.bgm]; p.defaultGaugeDesignId = card.gauge;
+    return p;
+  }
+  if (section === 'suits') return card.suits;
+  if (section === 'comms') {
+    readGroup();
+    const c = S.comms;
+    for (const g of ['soloGroup', 'teamGroup', 'instantTeamGroup']) for (const m of Object.values(c[g] || {})) {
+      const t = (m && m.messageText) || '';
+      if ([...t].length > 13) throw new Error('"' + t + '" is longer than 13 characters.');
+      const bad = badChars(t, true); if (bad) throw new Error('The game can\'t show these characters: ' + bad);
+    }
+    showGroup(card.group);
+    c.allowReceiveMessage = $('cRecv').checked; c.commandMessageAutoFlag = $('cAuto').checked;
+    c.messagePosition = enumOut(c.messagePosition, +$('cPos').value, ENUMS.pos);
+    return c;
+  }
+  if (section === 'sticker') {
+    const st = S.sticker;
+    st.stickerBackgroundId = +$('cStBg').value; st.stickerEffectId = +$('cStFx').value;
+    st.tracker1 = +$('cTr1').value; st.tracker2 = +$('cTr2').value; st.tracker3 = +$('cTr3').value;
+    st.commentPartsAId = +$('cComA').value; st.commentPartsBId = +$('cComB').value;
+    st.pilotImageDispFlag = $('cStPilot').checked; st.cutinImageUseFlag = $('cStCutin').checked;
+    return st;
+  }
+  if (section === 'buttons') {
+    const g = S.buttons; g.gamePadStyle = +$('cPadStyle').value;
+    $('cPad').querySelectorAll('select').forEach(sel => g[sel.dataset.k] = +sel.value);
+    return g;
+  }
+}
+document.querySelectorAll('[data-save]').forEach(b => b.onclick = async () => {
+  const section = b.dataset.save;
+  try {
+    if (!card.sec) throw new Error('Your card isn\'t loaded.');
+    if (section !== 'suits' && !card.sec[section]) throw new Error('This part of your card couldn\'t be loaded: ' + (card.errors[section] || 'no data'));
+    const v = collectCard(section);
+    b.disabled = true;
+    await api('POST', '/api/card/save?section=' + section, v);
+    toast('Saved to your card. It shows up next time you insert your card.');
+  } catch (e) { toast(e.message, true); } finally { b.disabled = false; }
+});
+// Card fields aren't launcher settings: keep them from marking the settings unsaved.
+document.querySelectorAll('.csub.card').forEach(el => { el.addEventListener('input', e => e.stopPropagation()); el.addEventListener('change', e => e.stopPropagation()); });
+$('cardNav').onclick = e => {
+  const s = e.target.dataset && e.target.dataset.sub; if (!s) return;
+  document.querySelectorAll('#cardNav button').forEach(b => b.classList.toggle('on', b === e.target));
+  document.querySelectorAll('#tab-player .csub').forEach(x => x.classList.toggle('on', x.id === 'sub-' + s));
+  if (s !== 'ids') loadCard();
+  cardMode();
+};
+function cardMode() {
+  const sub = document.querySelector('#cardNav button.on');
+  document.body.classList.toggle('cardmode', $('tab-player').classList.contains('on') && sub && sub.dataset.sub !== 'ids');
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', cardMode));
+
+// Keep the window at one size that fits every tab. Edge remembers the last
+// app window size, so snap back to it on open and after a resize.
+const FIT_W = 1104, FIT_H = 721;
+function fitWindow() {
+  try {
+    if (outerWidth >= screen.availWidth && outerHeight >= screen.availHeight) return; // maximized: leave it
+    const w = FIT_W + (outerWidth - innerWidth), h = FIT_H + (outerHeight - innerHeight);
+    if (Math.abs(outerWidth - w) > 2 || Math.abs(outerHeight - h) > 2) resizeTo(w, h);
+  } catch (e) {}
+}
+let fitTimer;
+window.addEventListener('load', () => { fitWindow(); setTimeout(fitWindow, 300); });
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitWindow, 600); });
 </script>
 </body>
 </html>

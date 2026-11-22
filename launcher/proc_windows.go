@@ -99,7 +99,8 @@ func findEdge() string {
 // bar), falling back to the default browser.
 func openUI(url string) {
 	if edge := findEdge(); edge != "" {
-		if exec.Command(edge, "--app="+url, "--window-size=1120,800").Start() == nil {
+		if exec.Command(edge, "--app="+url, "--window-size=1120,760").Start() == nil {
+			go fitUIWindow()
 			return
 		}
 	}

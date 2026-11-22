@@ -20,6 +20,7 @@ const (
 	proxyPort     = 28090
 	uiAddr        = "127.0.0.1:28077"
 	offlineServer = "127.0.0.1:28080"
+	defaultServer = "149.28.115.108" // the public Boost Link match server
 	onlineServer  = "127.0.0.1:28090"
 )
 
@@ -35,7 +36,9 @@ type LauncherConfig struct {
 	LiveMonitor string   `json:"liveMonitor"`
 	LMSound     bool     `json:"lmSound"`               // false = mute the Live Monitor
 	RecentHosts []string `json:"recentHosts,omitempty"` // last host IPs joined, newest first
-	SetupDone   bool     `json:"setupDone"`             // first-run setup finished
+	SetupDone   bool     `json:"setupDone"`
+	Advanced    bool     `json:"advanced"`       // show Host mode and the server address
+	ServerSet   bool     `json:"serverMigrated"` // switched to the public server once             // first-run setup finished
 }
 
 type Paths struct {
@@ -88,6 +91,22 @@ func loadLauncherConfig() LauncherConfig {
 	}
 	if c.LiveMonitor == "" {
 		c.LiveMonitor = "hide"
+	}
+	// One-time move to the public server: online play now means joining it,
+	// so old VPN host IPs and Host mode are dropped unless Advanced is on.
+	if !c.ServerSet {
+		if !c.Advanced {
+			if net.ParseIP(c.HostIP) != nil || c.HostIP == "" {
+				c.HostIP = defaultServer
+			}
+			if c.Mode == "host" {
+				c.Mode = "friend"
+			}
+		}
+		c.ServerSet = true
+	}
+	if c.HostIP == "" {
+		c.HostIP = defaultServer
 	}
 	return c
 }
@@ -159,6 +178,7 @@ type Detected struct {
 	Suggested   string   `json:"suggestedAdapter"`
 	NoVCRT2010  bool     `json:"noVcrt2010"`
 	Version     string   `json:"version"`
+	Server      string   `json:"defaultServer"`
 }
 
 func truthy(s string) bool {
@@ -223,6 +243,7 @@ func readSettings() (Settings, Detected, error) {
 	d.FirstRun = !lc.SetupDone
 	d.NoVCRT2010 = missingVCRT2010()
 	d.Version = version
+	d.Server = defaultServer
 	return s, d, nil
 }
 
