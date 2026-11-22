@@ -378,6 +378,11 @@ func (r *Runner) run() error {
 	if err := game.Start(); err != nil {
 		return fmt.Errorf("starting the game: %w", err)
 	}
+	if s.Game.Windowed && s.Game.Borderless {
+		fillDone := make(chan struct{})
+		defer close(fillDone)
+		go fillScreen(fillDone, r.logf)
+	}
 	_ = game.Wait()
 	// The game may hand off to another copy of itself; wait for all of them.
 	for i := 0; ; i++ {
