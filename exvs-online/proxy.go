@@ -210,6 +210,16 @@ func (p *Proxy) patchGameResponse(r *http.Request, req *exvs.Request, b []byte) 
 			resp = orig.(*exvs.Response)
 		}
 	}
+	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && p.patchCardMobileSuit(resp.PreLoadCard) {
+		fillRequired(resp)
+		if nb, err := (proto.MarshalOptions{AllowPartial: true}).Marshal(resp); err == nil {
+			p.tl.Msg("GAME< (patched card mobile suit)", resp)
+			return nb
+		} else {
+			log.Printf("re-encode PreLoadCard: %v", err)
+			return b
+		}
+	}
 	if req.GetType() == exvs.MethodType_MTHD_LOAD_GAME_DATA && resp.LoadGameData != nil && resp.LoadGameData.OnVsInfo == nil {
 		t, d := p.cfg.OnlineTimeLimitSeconds, p.cfg.OnlineDamageLevel
 		if t == 0 {
@@ -371,4 +381,24 @@ func (p *Proxy) logMMS(dir string, b []byte, m proto.Message) {
 		return
 	}
 	p.tl.Msg(dir, m)
+}
+
+// patchCardMobileSuit puts the chosen mobile suit on the card shown on the
+// "Use this card?" screen (PreLoadCard user.customize_group.mst_mobile_suit_id).
+// The game looks the id up in its mobile suit table and shows "NOT SET" for 0.
+func (p *Proxy) patchCardMobileSuit(pl *exvs.Response_PreLoadCard) bool {
+	ms := p.cfg.CardMobileSuit
+	if ms == 0 || pl == nil || pl.User == nil {
+		return false
+	}
+	cg := pl.User.CustomizeGroup
+	if cg == nil {
+		cg = &exvs.Response_PreLoadCard_MobileUserGroup_CustomizeGroup{}
+		pl.User.CustomizeGroup = cg
+	}
+	if cg.GetMstMobileSuitId() == ms {
+		return false
+	}
+	cg.MstMobileSuitId = proto.Uint32(ms)
+	return true
 }

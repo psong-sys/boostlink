@@ -46,6 +46,10 @@ type ProxyConfig struct {
 	// Empty (default) = untouched. ["auto"] = this PC's own LAN IPv4 addresses, an untested
 	// attempt to stop two PCs on one home network seeing each other's LM (error 21-11).
 	LMIPAddresses []string `json:"lmIpAddresses,omitempty"`
+	// CardMobileSuit is the mobile suit (mst_mobile_suit_id) drawn on the card on the
+	// "Use this card?" screen. Server-Infinite always sends 0, which the game shows as
+	// "NOT SET". 0 = leave the card server's value alone.
+	CardMobileSuit uint32 `json:"cardMobileSuit,omitempty"`
 }
 
 type MatchConfig struct {

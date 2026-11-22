@@ -39,6 +39,10 @@ type LauncherConfig struct {
 	SetupDone   bool     `json:"setupDone"`
 	Advanced    bool     `json:"advanced"`       // show Host mode and the server address
 	ServerSet   bool     `json:"serverMigrated"` // switched to the public server once             // first-run setup finished
+	// CardMobileSuit is the suit drawn on the card on the game's "Use this card?"
+	// screen. The card server always sends none ("NOT SET"), so exvs-online fills
+	// it in. Online modes only. 0 = not set.
+	CardMobileSuit uint32 `json:"cardMobileSuit,omitempty"`
 }
 
 type Paths struct {
@@ -459,6 +463,14 @@ func writeOnlineConfig(lc LauncherConfig, p Paths) error {
 		// Only this PC's game talks to the proxy in Join mode, so nobody else
 		// on the network can reach the card server through it.
 		proxy["listen"] = onlineServer
+	}
+	if lc.CardMobileSuit > 0 {
+		proxy, _ := cfg["proxy"].(map[string]any)
+		if proxy == nil {
+			proxy = map[string]any{}
+			cfg["proxy"] = proxy
+		}
+		proxy["cardMobileSuit"] = lc.CardMobileSuit
 	}
 	b, _ := json.MarshalIndent(cfg, "", "  ")
 	return os.WriteFile(p.OnlineCfg, b, 0644)

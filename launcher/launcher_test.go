@@ -160,6 +160,20 @@ func TestOnlineConfigFromTemplate(t *testing.T) {
 	if !strings.Contains(string(b), `"mode": "both"`) {
 		t.Errorf("host config = %s", b)
 	}
+	if strings.Contains(string(b), "cardMobileSuit") {
+		t.Errorf("card picture written while unset: %s", b)
+	}
+	// the card picture goes to exvs-online's proxy
+	lc.Mode, lc.CardMobileSuit = "friend", 135
+	if err := writeOnlineConfig(lc, p); err != nil {
+		t.Fatal(err)
+	}
+	b, _ = os.ReadFile(p.OnlineCfg)
+	got = nil
+	json.Unmarshal(b, &got)
+	if got["proxy"].(map[string]any)["cardMobileSuit"] != float64(135) {
+		t.Errorf("card picture not passed on: %s", b)
+	}
 }
 
 func TestEnsureOnlineMode(t *testing.T) {

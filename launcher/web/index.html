@@ -166,6 +166,11 @@
   .gpick img { width: 100%; height: 36px; font-size: 0; color: transparent; object-fit: cover; border: 2px solid transparent; cursor: pointer; background: #000; display: block; }
   .gpick img:hover { border-color: var(--cyan); }
   .gpick img.on { border-color: var(--yel); box-shadow: 0 0 0 1px var(--yel); }
+  .cpic { display: flex; gap: 10px; align-items: center; }
+  .cpic input { flex: 1; min-width: 0; }
+  .cpic .btn { flex: none; }
+  .cpic img { width: 90px; height: 40px; object-fit: contain; flex: none; background: #000; border: 1px solid var(--line); }
+  .cpic img:not([src]) { visibility: hidden; }
   .suits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
   .suit { background: var(--panel2); border: 1px solid var(--line); padding: 6px; display: flex; gap: 8px; align-items: center; min-width: 0; }
   .suit img { width: 84px; height: 38px; object-fit: contain; flex: none; background: #000; }
@@ -357,6 +362,7 @@
 
     <div class="csub card" id="sub-profile">
       <div class="grid2">
+        <div>
         <div class="panel">
           <h2>Pilot</h2>
           <div class="row">
@@ -375,6 +381,17 @@
           </div>
           <div class="chips" id="cBgmList"></div>
           <div class="note">Letters, numbers, spaces and Japanese work. Symbols like ! ? &amp; are changed to the game's full-width versions.</div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h2>Card picture <small>(the suit on the "Use this card?" screen)</small></h2>
+          <div class="cpic">
+            <img id="cPicImg" alt="">
+            <input type="text" id="cPic" list="cSuitList" spellcheck="false" placeholder="Not set. Type to search" aria-label="Suit on your card">
+            <button class="btn sm" type="button" id="cPicSet"><span>Use</span></button>
+            <button class="btn sm" type="button" id="cPicClear"><span>Clear</span></button>
+          </div>
+          <div class="note">Online play only. Saved right away in the launcher, not on the card.</div>
+        </div>
         </div>
         <div class="panel">
           <h2>Gauge design</h2>
@@ -982,6 +999,7 @@ function fillCard() {
   $('cSuitList').innerHTML = card.cat.suits.filter(m => m.id > 0).map(m => '<option value="' + esc(suitLabel(m)) + '">').join('');
   card.suits = (S.suits || []).map(x => ({ ...x }));
   drawSuits();
+  drawCardPic();
   // comms
   if (S.comms) {
     $('cRecv').checked = !!S.comms.allowReceiveMessage; $('cAuto').checked = !!S.comms.commandMessageAutoFlag;
@@ -1062,6 +1080,31 @@ function addSuit() {
 }
 $('cSuitAddBtn').onclick = addSuit;
 $('cSuitAdd').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addSuit(); } };
+
+// Card picture: the suit on the "Use this card?" screen. A launcher setting
+// (exvs-online sends it to the game), so it saves through /api/settings.
+function drawCardPic() {
+  const id = (data.settings.launcher.cardMobileSuit | 0), m = card.cat.suits && card.cat.suits.find(x => x.id === id);
+  $('cPic').value = id ? (m ? suitLabel(m) : 'Suit ' + id) : '';
+  if (id) $('cPicImg').src = '/cardimg/mobile_suits/' + id + '.webp'; else $('cPicImg').removeAttribute('src');
+}
+async function setCardPic(id) {
+  try {
+    await save(true, s => { s.launcher.cardMobileSuit = id; });
+    drawCardPic();
+    toast(id ? 'Card picture set. It shows next time you start the game in Online mode.' : 'Card picture cleared.');
+  } catch (e) { toast(e.message, true); }
+}
+$('cPicSet').onclick = () => {
+  const q = $('cPic').value.trim().toLowerCase(); if (!q) return setCardPic(0);
+  const all = (card.cat.suits || []).filter(m => m.id > 0);
+  const m = all.find(x => suitLabel(x).toLowerCase() === q) || all.find(x => x.value.toLowerCase() === q) ||
+    all.find(x => suitLabel(x).toLowerCase().includes(q));
+  if (!m) return toast('No suit matches "' + $('cPic').value + '".', true);
+  setCardPic(m.id);
+};
+$('cPic').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('cPicSet').click(); } };
+$('cPicClear').onclick = () => setCardPic(0);
 
 function readGroup() {
   const g = card.sec.comms && card.sec.comms[card.group]; if (!g) return;
