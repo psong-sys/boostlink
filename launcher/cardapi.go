@@ -264,6 +264,14 @@ func (u *uiServer) cardRoutes(mux *http.ServeMux) {
 		w.Header().Set("Cache-Control", "max-age=3600")
 		_, _ = w.Write(b)
 	})
+	mux.HandleFunc("POST /api/card/window", func(w http.ResponseWriter, r *http.Request) {
+		if !sameOrigin(r) {
+			http.Error(w, "forbidden", 403)
+			return
+		}
+		openAppWindow("http://"+uiAddr+"/?card=1", 1440, 940)
+		writeJSON(w, map[string]bool{"ok": true})
+	})
 	// Pictures (gauges, sticker backgrounds and so on) from the card server's folder.
 	mux.HandleFunc("GET /cardimg/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "max-age=3600")
