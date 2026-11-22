@@ -12,11 +12,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type HostPort struct {
@@ -103,7 +105,17 @@ func main() {
 	asJSON := flag.Bool("json", false, "with -check: print the result as JSON")
 	gameDir := flag.String("game", "", "with -check: the game folder (default: found automatically)")
 	fixFW := flag.Bool("fix-firewall", false, "add Windows Firewall allow rules (shows an admin prompt) and exit")
+	probe := flag.Bool("probe", false, "read the running game's screen steps into hang-probe.txt and exit")
 	flag.Parse()
+	if *probe {
+		out := filepath.Join(filepath.Dir(exe), "hang-probe-"+time.Now().Format("20060102-150405")+".txt")
+		if err := runProbe(out); err != nil {
+			fmt.Println("probe failed:", err)
+			os.Exit(1)
+		}
+		fmt.Println("wrote", out)
+		return
+	}
 	if *check || *fixFW {
 		cp := ""
 		if isFlagSet("config") {
@@ -171,6 +183,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		p.hw = newHangWatch(filepath.Dir(*cfgPath), tl)
 		log.Printf("%s mode: listening on %s, card server %s", cfg.Mode, cfg.Proxy.Listen, cfg.Proxy.Upstream)
 		log.Fatal(http.ListenAndServe(cfg.Proxy.Listen, p))
 	default:
