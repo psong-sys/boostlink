@@ -29,7 +29,7 @@ import (
 )
 
 // updateURL can be changed at build time with -ldflags "-X main.updateURL=...".
-var updateURL = "https://github.com/psong-sys/boostlink-releases/releases/latest/download/latest.json"
+var updateURL = "https://github.com/psong-sys/boostlink/releases/latest/download/latest.json"
 
 type updateFile struct {
 	Path   string `json:"path"`

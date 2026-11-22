@@ -4,19 +4,19 @@
 # To release: bump `version` in launcher/main.go, then push a tag that matches,
 # e.g.  git tag v1.5.0 && git push origin v1.5.0
 #
-# Setup (once):
-#   1. Create the PUBLIC repo named in RELEASES_REPO below (it only ever holds
-#      the built files, never code or game files).
-#   2. Create a fine-grained token with "Contents: read and write" on that
-#      repo, and add it to this repo as the Actions secret RELEASES_TOKEN.
+# The repo must be public so launchers can download the release without a
+# login. Releases hold only the built exes and json, never game files.
 name: Release
 
 on:
   push:
     tags: ['v*']
 
+permissions:
+  contents: write
+
 env:
-  RELEASES_REPO: psong-sys/boostlink-releases
+  RELEASES_REPO: ${{ github.repository }}
 
 jobs:
   release:
@@ -69,7 +69,7 @@ jobs:
 
       - name: Publish
         env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" dist/* -R "$RELEASES_REPO" \
             --title "Boost Link $VERSION" --notes "Boost Link $VERSION. The launcher updates itself; you don't need to download anything here."
