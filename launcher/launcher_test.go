@@ -274,7 +274,7 @@ func TestLockKestrel(t *testing.T) {
 
 func TestSafeScreenAvoidsTrueFullscreen(t *testing.T) {
 	g := safeScreen(GameSettings{Windowed: false, Borderless: false})
-	if !g.Windowed || !g.Borderless {
+	if !g.Windowed || !g.Borderless || !g.FramerateLim {
 		t.Fatalf("true fullscreen should become borderless, got %+v", g)
 	}
 	w := safeScreen(GameSettings{Windowed: true, Borderless: false})

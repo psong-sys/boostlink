@@ -512,9 +512,6 @@
             <label class="f">RESOLUTION
               <select id="resolution"><option value="1080p">1080p</option><option value="900p">900p</option><option value="720p">720p</option><option value="480p">480p</option></select></label>
           </div>
-          <div class="row">
-            <label class="c"><input type="checkbox" id="framerateLimit"> Frame limit (keep on, the game runs at 60 FPS)</label>
-          </div>
           <div class="note">Borderless stretches the game over your whole screen. There's no true fullscreen: the game turns its 60 FPS limit off there and runs too fast on monitors above 60 Hz.</div>
         </div>
         <div class="panel">
@@ -690,7 +687,6 @@ function render() {
   // The game only uses BorderlessWindow when Windowed is also on.
   // True fullscreen (Windowed off) has no FPS limit, so show it as Borderless.
   $('screenMode').value = s.game.borderless || !s.game.windowed ? 'borderless' : 'window';
-  $('framerateLimit').checked = s.game.framerateLimit;
   { const r = $('resolution'), v = s.game.resolution || '1080p';
     if (![...r.options].some(o => o.value === v)) r.insertAdjacentHTML('beforeend', '<option value="' + esc(v) + '">' + esc(v) + ' (not supported by the game)</option>');
     r.value = v; }
@@ -760,7 +756,6 @@ function collect() {
   s.card.accessCode = $('accessCode').value.trim();
   s.game.windowed = true;
   s.game.borderless = $('screenMode').value === 'borderless';
-  s.game.framerateLimit = $('framerateLimit').checked;
   s.game.resolution = $('resolution').value;
   s.game.interfaceName = $('interfaceName').value.trim();
   s.launcher.liveMonitor = $('liveMonitor').value;

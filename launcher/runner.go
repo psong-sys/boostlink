@@ -283,6 +283,10 @@ func (r *Runner) run() error {
 		r.logf("config.ini had the game in true fullscreen, where it runs too fast (no 60 FPS limit). Switching it to Borderless")
 		fix = true
 	}
+	if !s.Game.FramerateLim {
+		r.logf("config.ini had the 60 FPS limit off, which makes the game run too fast. Turning it on")
+		fix = true
+	}
 	if fix {
 		r.logf("Setting Server=%s in config.ini and lmnfig.ini for %s mode", want, lc.Mode)
 		if err := writeSettings(s); err != nil {

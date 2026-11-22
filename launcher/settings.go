@@ -325,10 +325,12 @@ func copyFile(src, dst string) error {
 }
 
 // setBool writes a True/False key, but doesn't add a missing key just to say False.
-// safeScreen keeps the game out of true fullscreen (Windowed=False). The
-// game's bngrw.dll switches its 60 FPS limiter off in that mode, so on a
-// monitor above 60 Hz the whole game runs too fast. Borderless keeps the limit.
+// safeScreen keeps the game at 60 FPS: the frame limit is always on, and the
+// game stays out of true fullscreen (Windowed=False), where bngrw.dll switches
+// the limiter off. Without it the whole game runs too fast on monitors above
+// 60 Hz. Borderless keeps the limit.
 func safeScreen(g GameSettings) GameSettings {
+	g.FramerateLim = true
 	if !g.Windowed {
 		g.Windowed = true
 		g.Borderless = true
