@@ -20,7 +20,7 @@ import (
 //go:embed web
 var webFS embed.FS
 
-const version = "1.5.2"
+const version = "1.5.3"
 
 func main() {
 	play := flag.Bool("play", false, "start the game right away without the settings window")
@@ -50,7 +50,7 @@ func main() {
 	if !*noBrowser {
 		openUI("http://" + uiAddr + "/")
 	}
-	_ = http.Serve(ln, srv.routes())
+	_ = http.Serve(ln, localOnly(srv.routes()))
 }
 
 func playHeadless() {
@@ -110,6 +110,20 @@ func writeErr(w http.ResponseWriter, err error) {
 func sameOrigin(r *http.Request) bool {
 	o := r.Header.Get("Origin")
 	return o == "" || o == "http://"+uiAddr
+}
+
+// localOnly refuses requests whose Host isn't the launcher's own address. A
+// website that points its own name at 127.0.0.1 (DNS rebinding) would
+// otherwise count as same-origin and could read the settings, card included.
+func localOnly(h http.Handler) http.Handler {
+	_, port, _ := net.SplitHostPort(uiAddr)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Host != uiAddr && r.Host != "localhost:"+port {
+			http.Error(w, "forbidden", http.StatusForbidden)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
 }
 
 func (u *uiServer) routes() http.Handler {

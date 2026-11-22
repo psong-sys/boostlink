@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -222,6 +224,19 @@ func TestHostField(t *testing.T) {
 	for _, bad := range []string{"", "HOST_IP_HERE", "a b", "300.1.1.1", "-x.com"} {
 		if validHost(normalizeHost(bad)) && bad != "HOST_IP_HERE" {
 			t.Errorf("%q accepted", bad)
+		}
+	}
+}
+
+func TestLocalOnly(t *testing.T) {
+	h := localOnly(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) }))
+	for host, want := range map[string]int{uiAddr: 200, "localhost:28077": 200, "evil.example:28077": 403, "127.0.0.1:28078": 403, "": 403} {
+		r := httptest.NewRequest("GET", "/api/settings", nil)
+		r.Host = host
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		if w.Code != want {
+			t.Errorf("Host %q: got %d, want %d", host, w.Code, want)
 		}
 	}
 }

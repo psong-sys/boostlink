@@ -53,6 +53,22 @@ allow inbound:
 Check it works: open `http://<server IP>:28090` in a browser. That's the Boost Link home page
 (live queue count, how to join, Discord button); `/status` has the detailed queue and connection results.
 
+## 4b. Lock it down (2 minutes, recommended)
+
+```
+bash boost-link-server/harden.sh
+```
+
+This turns on the server's own firewall with only the ports above open, installs security
+updates automatically, blocks addresses that keep guessing SSH passwords, and, if you log in
+with an SSH key, turns password logins off. If you only have a password, add a key from your
+PC first and run it again. In PowerShell on your PC:
+
+```
+ssh-keygen -t ed25519
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh root@203.0.113.50 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+```
+
 ## 5. Point everyone at it
 
 Everyone, you included, opens the launcher and picks **Join**, with the server's IP as the

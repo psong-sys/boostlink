@@ -192,7 +192,7 @@ func main() {
 			mmsH.ServeHTTP(w, r)
 		}))
 		log.Printf("status page: http://<this server>%s/status", cfg.Match.Listen[strings.LastIndex(cfg.Match.Listen, ":"):])
-		log.Fatal(http.ListenAndServe(cfg.Match.Listen, mux))
+		log.Fatal(newServer(cfg.Match.Listen, mux).ListenAndServe())
 	case "proxy", "both":
 		var local *Matcher
 		if cfg.Mode == "both" {
@@ -217,7 +217,7 @@ func main() {
 			}
 		}
 		log.Printf("%s mode: listening on %s, card server %s", cfg.Mode, cfg.Proxy.Listen, cfg.Proxy.Upstream)
-		log.Fatal(http.ListenAndServe(cfg.Proxy.Listen, p))
+		log.Fatal(newServer(cfg.Proxy.Listen, p).ListenAndServe())
 	default:
 		log.Fatalf("unknown mode %q (use proxy, match or both)", cfg.Mode)
 	}

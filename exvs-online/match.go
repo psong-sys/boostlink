@@ -78,7 +78,11 @@ func (m *Matcher) Handler(tl *trafficLog) http.Handler {
 			http.Error(w, "POST only", http.StatusMethodNotAllowed)
 			return
 		}
-		body, _ := io.ReadAll(r.Body)
+		body, err := io.ReadAll(io.LimitReader(r.Body, maxMMSBody+1))
+		if err != nil || len(body) > maxMMSBody {
+			http.Error(w, "request too large", http.StatusRequestEntityTooLarge)
+			return
+		}
 		req := &mms.Request{}
 		if err := (proto.UnmarshalOptions{AllowPartial: true}).Unmarshal(body, req); err != nil {
 			tl.Line("MMS>", fmt.Sprintf("<undecodable %d bytes: %v>", len(body), err))
@@ -99,15 +103,21 @@ func (m *Matcher) Handler(tl *trafficLog) http.Handler {
 	})
 }
 
+// clientIP is the address a request came from. X-Forwarded-For is only
+// believed from this machine itself (a reverse proxy in front of the server);
+// from anywhere else it is a header any stranger can write.
 func clientIP(r *http.Request) string {
+	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+	if rp := net.ParseIP(ip); rp == nil || !rp.IsLoopback() {
+		return ip
+	}
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		ip := strings.TrimSpace(strings.Split(xff, ",")[0])
-		// The local proxy reports 127.0.0.1; only trust public-looking addresses from it.
-		if p := net.ParseIP(ip); p != nil && !p.IsLoopback() {
-			return ip
+		f := strings.TrimSpace(strings.Split(xff, ",")[0])
+		// The local proxy reports 127.0.0.1; only use public-looking addresses.
+		if p := net.ParseIP(f); p != nil && !p.IsLoopback() {
+			return f
 		}
 	}
-	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
 	return ip
 }
 
@@ -141,6 +151,9 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 		node := em.Myclient.GetNodeId()
 		if old, ok := m.entries[node]; ok {
 			m.removeLocked(old)
+		} else if len(m.entries) >= maxEntries {
+			resp.Code = mms.ErrorCode_ERR_REQUEST.Enum()
+			break
 		}
 		applyID := em.GetApplyId()
 		if applyID == 0 {
@@ -154,13 +167,16 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 			e.timeout = 2 * time.Minute
 		}
 		me := proto.Clone(em.Myclient).(*mms.Client)
+		sanitizeClient(me)
 		if me.GetGlobalIpaddress() == "" && remoteIP != "" {
 			me.GlobalIpaddress = proto.String(remoteIP)
 		}
 		e.clients = append(e.clients, me)
 		for _, g := range em.Groups {
-			if g.Client != nil {
-				e.clients = append(e.clients, g.Client)
+			if g.Client != nil && len(e.clients) <= maxGroups {
+				gc := proto.Clone(g.Client).(*mms.Client)
+				sanitizeClient(gc)
+				e.clients = append(e.clients, gc)
 			}
 		}
 		e.players = len(e.clients)

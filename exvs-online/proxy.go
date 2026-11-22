@@ -54,8 +54,12 @@ func isMatchPath(path string) bool {
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	body, _ := io.ReadAll(r.Body)
+	body, err := io.ReadAll(io.LimitReader(r.Body, maxProxyBody+1))
 	r.Body.Close()
+	if err != nil || len(body) > maxProxyBody {
+		http.Error(w, "request too large", http.StatusRequestEntityTooLarge)
+		return
+	}
 
 	if r.Method == http.MethodGet && p.local != nil && (r.URL.Path == "/status" || r.URL.Path == "/status.json") {
 		p.local.StatusHandler().ServeHTTP(w, r)

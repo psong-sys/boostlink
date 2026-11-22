@@ -92,6 +92,7 @@ func startTurn(cfg *LocalTurnConfig, stunHost *HostPort, tl *trafficLog) error {
 				RelayAddress: relayIP, Address: "0.0.0.0",
 				MinPort: uint16(cfg.MinPort), MaxPort: uint16(cfg.MaxPort),
 			},
+			PermissionHandler: turnPeerAllowed(relayIP),
 		}},
 	})
 	if err != nil {
