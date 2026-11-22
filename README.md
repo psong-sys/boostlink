@@ -28,6 +28,8 @@ nothing to download here by hand.
 | [`english/`](english) | English patch tools for the exe strings and the in-game screens, plus the `repaint/` toolkit used to build them. |
 | [`docs/`](docs) | Reverse-engineering notes. |
 
+Security: see [SECURITY.md](SECURITY.md) for how updates are trusted, what was reviewed and fixed, and how to report a problem.
+
 ## Building
 
 Each folder is its own Go module (Go 1.24+):
