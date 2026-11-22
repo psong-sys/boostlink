@@ -2,7 +2,7 @@ import sys,glob,os,re,struct;sys.path.insert(0,'.');sys.path.insert(0,'specs')
 from fhm2 import FHM2,tex_list
 from PIL import Image
 from strings import S
-SRC='/mnt/user-data/uploads/exv2/data/x64/dplcache_release'
+SRC=os.environ.get('EXVS_DATA','data/x64/dplcache_release')  # the game's dplcache_release folder
 os.makedirs('build',exist_ok=True)
 def patch_strings(raw,d):
     n=0

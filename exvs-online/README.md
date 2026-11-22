@@ -15,7 +15,7 @@ What it does:
 3. Implements the game's matchmaking protocol (`nue.protocol.mms`, pulled out of `vsac29_Release.exe`): ISSUE_NODE_ID, ENTRY_MATCHING, CHECK_MATCHING, CANCEL_MATCHING and MATCHING_SETTING.
 4. Writes every decoded request and response to `traffic.log`, so a failed test shows exactly where the game stopped.
 
-**This is untested against the real game.** The message formats come from the game itself, but some behaviour is guesswork. The guesses are configurable (see "Knobs to try").
+Most players never run it by hand: the launcher starts it in the background. The sections below are for running it yourself or debugging.
 
 ## Solo test: one PC, one fake opponent
 
@@ -26,11 +26,11 @@ registration, joining the queue and being told a match was found.
 2. In `config.ini`, set `Server =127.0.0.1:28090`.
 3. Start the game, insert a card and pick online versus.
 4. Expect it to search, "find" an opponent within a few seconds, then fail to connect, because the fake opponent doesn't exist. That failure is the success signal.
-5. Send me `traffic.log` and a photo or the text of whatever error the game shows.
+5. Check `traffic.log` and note whatever error the game shows.
 
-## First real test: 2 PCs on Radmin VPN (1v1)
+## Manual setup: 2 PCs on a LAN or VPN (1v1)
 
-Both PCs: put this folder anywhere (for example inside the game folder), keep `config.ini` set to `InterfaceName=Radmin VPN`, and start `Server-Infinite.exe` as usual.
+Both PCs: put this folder anywhere (for example inside the game folder), set `InterfaceName` in `config.ini` to the adapter the two PCs share, and start `Server-Infinite.exe` as usual.
 
 **Host PC**
 1. Copy `exvs-online.host.json` to `exvs-online.json`.
@@ -38,7 +38,7 @@ Both PCs: put this folder anywhere (for example inside the game folder), keep `c
 3. In the game's `config.ini`, change `Server =127.0.0.1:28080` to `Server =127.0.0.1:28090`.
 
 **Friend PC**
-1. Copy `exvs-online.friend.json` to `exvs-online.json` and replace `HOST_IP_HERE` with the host's Radmin IP.
+1. Copy `exvs-online.friend.json` to `exvs-online.json` and replace `HOST_IP_HERE` with the host's IP on that network.
 2. Run `exvs-online.exe`.
 3. Same `config.ini` change: `Server =127.0.0.1:28090`.
 
@@ -124,12 +124,12 @@ relay is needed. "mapping not measured" is what our STUN server reports and is n
 The 300 ms limit comes from the card server (`thresholdDelayedRtt` in its LOAD_BLACK_LIST
 reply), so it can be raised there if ping turns out to be the only problem.
 
-## Playing over the internet without a VPN (later)
+## Running a match server on the internet
 
-- Host runs `exvs-online.exe match` on a reachable server (port 28100 open). Everyone else runs proxy mode with `matchServer` set to `http://SERVER_IP:28100`.
+- The ready-made kit is in [`../server`](../server). By hand: the host runs `exvs-online.exe match` on a reachable server (port 28100 open). Everyone else runs proxy mode with `matchServer` set to `http://SERVER_IP:28100`.
 - For players behind strict routers, run coturn with `coturn/turnserver.conf` (UDP 3478 plus 49160 to 49200 open) and add the `turn` block to each proxy config:
   `"turn": { "host": "SERVER_IP", "port": 3478, "user": "exvs", "pass": "CHANGE_ME" }`
-- Set `InterfaceName` in `config.ini` to your real network adapter (for example `Ethernet`) instead of Radmin.
+- Set `InterfaceName` in `config.ini` to your real network adapter (for example `Ethernet`) instead of a VPN adapter.
 
 ## Building from source
 

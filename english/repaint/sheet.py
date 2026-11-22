@@ -1,4 +1,5 @@
 import sys,glob,os,hashlib
+SRC=os.environ.get('EXVS_DATA','data/x64/dplcache_release')  # the game's dplcache_release folder
 sys.path.insert(0,'.')
 from fhm2 import FHM2,tex_list,to_image
 from PIL import Image,ImageDraw
@@ -25,7 +26,7 @@ def sheet(path,out,maxw=1600,scale=0.5):
     for (i,im),(x,y) in zip(ims,pos):
         S.alpha_composite(im,(x,y+14)); d.text((x,y),str(i),fill=(255,255,0,255))
     S.convert('RGB').save(out,quality=80); return len(ims)
-for p in sorted(glob.glob('/mnt/user-data/uploads/exv2/data/x64/dplcache_release/*.fhm2d')):
+for p in sorted(glob.glob(f'{SRC}/*.fhm2d')):
     n=os.path.basename(p)[:-6]
     if os.path.exists(f'sheets/{n}.jpg'): continue
     try: c=sheet(p,f'sheets/{n}.jpg')
