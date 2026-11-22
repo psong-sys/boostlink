@@ -134,7 +134,7 @@ func scanOnce(h windows.Handle, base uint64, vt map[uint64]string, label string,
 						continue
 					}
 					name, ok := vt[v]
-					if !ok {
+					if !ok || probeNoise(name) {
 						continue
 					}
 					at := uint64(mbi.BaseAddress+off) + uint64(i)
@@ -250,4 +250,14 @@ func runProbe(outPath string) error {
 		}
 	}
 	return os.WriteFile(outPath, []byte(sb.String()), 0644)
+}
+
+// probeNoise drops engine classes (render resources, physics, UI runtime) that are not game steps.
+func probeNoise(name string) bool {
+	for _, p := range []string{"nu::", "lumen::", "hk", "VDK::ENG::"} {
+		if strings.HasPrefix(name, p) {
+			return true
+		}
+	}
+	return false
 }
