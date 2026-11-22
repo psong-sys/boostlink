@@ -36,7 +36,7 @@ The Live Monitor setting can hide it, minimize it, show it normally, or not star
 - **Updates**: when a new version is published, a banner on the PLAY tab offers **Update now**. It downloads the new launcher and exvs-online, checks each file's SHA-256, replaces them (never anything outside `exvs-launcher\` and `exvs-online\`), and restarts the launcher.
 - Warnings at the top have one-click fixes (wrong adapter, default card IDs).
 
-## Try it
+## Using it
 
 1. Keep this folder where it is: `exv2\exvs-launcher\` (it looks for the game one folder up).
 2. Double-click `exvs-launcher.exe`. A settings window opens.
@@ -45,7 +45,7 @@ The Live Monitor setting can hide it, minimize it, show it normally, or not star
 
 Close the settings window when you're done. The launcher quits on its own a few seconds later (or up to 3 minutes later if Windows doesn't tell it the window closed).
 
-**True one click:** press **Add desktop shortcuts**. You get "Boost Link Play", which starts the game straight away with your saved settings (no window), and "Boost Link", which opens the settings.
+**Desktop shortcuts:** press **Add desktop shortcuts**. You get "Boost Link Play", which starts the game straight away with your saved settings (no window), and "Boost Link", which opens the settings.
 
 ## Modes
 
@@ -70,9 +70,9 @@ For online play, every player needs a different machine serial, chip ID and acce
 
 ## Building from source
 
-Source is in `src\`. With Go 1.24+, from `src\`:
+With Go 1.24+, from this folder:
 
 ```
-GOOS=windows GOARCH=amd64 go build -ldflags "-H=windowsgui -s -w" -o ..\exvs-launcher.exe .
+GOOS=windows GOARCH=amd64 go build -ldflags "-H=windowsgui -s -w" -o exvs-launcher.exe .
 go test .
 ```
