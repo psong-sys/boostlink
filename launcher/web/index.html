@@ -219,6 +219,20 @@
   .kraw { margin-top: 12px; font-size: 12px; color: var(--muted); }
   .kraw summary { cursor: pointer; margin-bottom: 8px; }
   .muted { color: var(--muted); font-weight: 400; }
+  #msPick .panel { max-width: 1060px; max-height: calc(92vh / var(--z, 1)); display: flex; flex-direction: column; overflow: hidden; }
+  .mshead { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .mshead h2 { margin: 0; }
+  .mshead input { flex: 1; min-width: 180px; width: auto; }
+  .msgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; overflow-y: auto; padding-right: 4px; min-height: 0; flex: 1; }
+  .ms { background: #000; border: 2px solid var(--line); cursor: pointer; position: relative; padding: 0; text-align: left; color: var(--text); font: inherit; }
+  .ms img { width: 100%; aspect-ratio: 228 / 104; object-fit: cover; display: block; }
+  .ms div { padding: 3px 6px 4px; background: var(--panel2); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms div span { display: block; color: var(--muted); font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+  .ms:hover { border-color: var(--cyan); }
+  .ms.on { border-color: var(--yel); box-shadow: 0 0 0 1px var(--yel); }
+  .ms.on::after { content: "✓"; position: absolute; top: 3px; right: 5px; background: var(--yel); color: var(--ink); font: 700 13px "Chakra"; padding: 0 5px; }
+  .ms i { position: absolute; top: 3px; left: 4px; font: 700 italic 10px "Chakra"; background: rgba(0,0,0,.75); color: var(--yel); padding: 0 4px; }
+  .cpicname { flex: 1; font-size: 14px; }
   .tab { display: none; }
   .tab.on { display: block; }
   .footer { flex: none; padding-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--ink); font-size: 12px; font-weight: 700; }
@@ -372,8 +386,8 @@
           <h2>Card picture <small>(the suit on the "Use this card?" screen)</small></h2>
           <div class="cpic">
             <img id="cPicImg" alt="">
-            <input type="text" id="cPic" list="cSuitList" spellcheck="false" placeholder="Your first favorite suit. Type to change" aria-label="Suit on your card">
-            <button class="btn sm" type="button" id="cPicSet"><span>Use</span></button>
+            <span id="cPic" class="cpicname"></span>
+            <button class="btn sm" type="button" id="cPicSet"><span>Choose</span></button>
             <button class="btn sm" type="button" id="cPicClear"><span>Clear</span></button>
           </div>
           <div class="note">Online play only. Left empty, the card shows your first favorite suit. Saved right away in the launcher.</div>
@@ -391,11 +405,7 @@
     <div class="csub card" id="sub-suits">
       <div class="panel">
         <h2>Favorite suits <small id="cSuitCount"></small></h2>
-        <div class="row" style="margin-top:0">
-          <label class="f">ADD A SUIT (type to search) <input type="text" id="cSuitAdd" list="cSuitList" spellcheck="false" placeholder="e.g. Gundam, Amuro, Wing Zero"></label>
-          <datalist id="cSuitList"></datalist>
-          <button class="btn" type="button" id="cSuitAddBtn" style="flex:none"><span>Add</span></button>
-        </div>
+        <button class="btn y" type="button" id="cSuitAddBtn"><span>+ Add suits</span></button>
         <div class="suits" id="cSuits"></div>
         <div class="note">Up to 12. These show first on the suit select screen. New suits use your default gauge and BGM.</div>
       </div>
@@ -617,6 +627,19 @@
       <button class="btn" id="wSkip" type="button"><span>Skip</span></button>
       <button class="btn y" id="wGo" type="button"><span>Let's go</span></button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="msPick">
+  <div class="panel">
+    <div class="mshead">
+      <h2 id="msTitle">Pick a suit</h2>
+      <input type="text" id="msSearch" spellcheck="false" placeholder="Search suit, pilot or series">
+      <div class="seg" id="msCost"><button type="button" data-c="0" class="on">ALL</button><button type="button" data-c="3000">3000</button><button type="button" data-c="2500">2500</button><button type="button" data-c="2000">2000</button><button type="button" data-c="1500">1500</button></div>
+      <button class="btn y" type="button" id="msDone"><span>Done</span></button>
+    </div>
+    <div class="note" id="msNote" style="margin:4px 0 8px"></div>
+    <div class="msgrid" id="msGrid"></div>
   </div>
 </div>
 
@@ -982,7 +1005,6 @@ function fillCard() {
   $('cGauge').innerHTML = card.cat.gauges.map(g => '<img alt="" loading="lazy" data-id="' + g.id + '" title="' + esc(g.id + '  ' + g.value) + '" src="/cardimg/gauges/' + g.id + '.webp">').join('');
   drawGauge();
   // suits
-  $('cSuitList').innerHTML = card.cat.suits.filter(m => m.id > 0).map(m => '<option value="' + esc(suitLabel(m)) + '">').join('');
   card.suits = (S.suits || []).map(x => ({ ...x }));
   drawSuits();
   drawCardPic();
@@ -1025,7 +1047,6 @@ function drawGauge() {
 }
 $('cGauge').onclick = e => { if (e.target.dataset.id) { card.gauge = +e.target.dataset.id; drawGauge(); } };
 
-const suitLabel = m => m.value + ' / ' + m.pilot + ' (' + m.cost + ')';
 function drawSuits() {
   $('cSuitCount').textContent = card.suits.length + ' of 12';
   const bo = ENUMS.burst.map((b, i) => '<option value="' + i + '">' + b + ' burst</option>').join('');
@@ -1049,29 +1070,58 @@ $('cSuits').onclick = e => {
   if (a === 'down' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
   drawSuits();
 };
-function addSuit() {
-  const q = $('cSuitAdd').value.trim().toLowerCase(); if (!q) return;
-  const all = card.cat.suits.filter(m => m.id > 0);
-  const m = all.find(x => suitLabel(x).toLowerCase() === q) || all.find(x => x.value.toLowerCase() === q) ||
-    all.find(x => suitLabel(x).toLowerCase().includes(q));
-  if (!m) return toast('No suit matches "' + $('cSuitAdd').value + '".', true);
-  if (card.suits.some(s => s.msId === m.id)) return toast(m.value + ' is already in your list.', true);
-  if (card.suits.length >= 12) return toast('You can have up to 12 favorite suits. Remove one first.', true);
+function addSuit(m) {
+  if (card.suits.length >= 12) { toast('You can have up to 12 favorite suits. Remove one first.', true); return false; }
   const p = card.sec.profile, base = card.suits[0];
   const clone = o => JSON.parse(JSON.stringify(o));
   const n = base ? clone(base) : { burstType: 0, battleNaviId: (card.sec.navi && card.sec.navi.defaultBattleNaviId) || 0,
     defaultTitle: clone(p.defaultTitle), triadTitle: clone(p.triadTitle), classMatchTitle: clone(p.classMatchTitle) };
   Object.assign(n, { msId: m.id, gaugeDesignId: card.gauge, bgmPlayingMethod: p.defaultBgmPlayingMethod, bgmList: [...card.bgm] });
-  card.suits.push(n); $('cSuitAdd').value = ''; drawSuits();
+  card.suits.push(n); drawSuits(); return true;
 }
-$('cSuitAddBtn').onclick = addSuit;
-$('cSuitAdd').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addSuit(); } };
+
+// Suit picker: a searchable grid of suit pictures. multi = favorites (click
+// adds or removes, stays open); otherwise one click picks and closes.
+const picker = { multi: false, onPick: null, selected: () => [], cost: 0 };
+function openSuitPicker(title, multi, selected, onPick) {
+  Object.assign(picker, { multi, selected, onPick });
+  $('msTitle').textContent = title; $('msSearch').value = '';
+  $('msDone').style.display = multi ? '' : 'none';
+  $('msPick').classList.add('on'); drawPicker(); setTimeout(() => $('msSearch').focus(), 50);
+}
+function drawPicker() {
+  const q = $('msSearch').value.trim().toLowerCase(), sel = picker.selected();
+  const list = (card.cat.suits || []).filter(m => m.id > 0 && m.value !== 'RANDOM' && (!picker.cost || +m.cost === picker.cost) &&
+    (!q || [m.value, m.pilot, m.series, m.valueJP, m.pilotJP].some(v => v && String(v).toLowerCase().includes(q))));
+  $('msGrid').innerHTML = list.map(m => '<button type="button" class="ms' + (sel.includes(m.id) ? ' on' : '') + '" data-id="' + m.id + '" title="' + esc(m.value + ' / ' + m.pilot + (m.series ? ' / ' + m.series : '')) + '">' +
+    '<img loading="lazy" alt="" src="/cardimg/mobile_suits/' + m.id + '.webp"><i>' + esc(m.cost || '') + '</i><div>' + esc(m.value) + '<span>' + esc(m.pilot || '') + '</span></div></button>').join('') ||
+    '<div class="note">No suits match.</div>';
+  $('msNote').textContent = picker.multi ? 'Click a suit to add it, click again to remove. ' + sel.length + ' of 12 picked.' : list.length + ' suits. Click one to pick it.';
+}
+$('msGrid').onclick = e => {
+  const b = e.target.closest('.ms'); if (!b) return;
+  const m = card.cat.suits.find(x => x.id === +b.dataset.id); if (!m) return;
+  if (!picker.multi) { $('msPick').classList.remove('on'); picker.onPick(m); return; }
+  picker.onPick(m); drawPicker();
+};
+$('msSearch').oninput = drawPicker;
+$('msSearch').onkeydown = e => { if (e.key === 'Escape') $('msPick').classList.remove('on'); };
+$('msCost').onclick = e => {
+  const c = e.target.dataset.c; if (c === undefined) return;
+  picker.cost = +c; $('msCost').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === e.target)); drawPicker();
+};
+$('msDone').onclick = () => $('msPick').classList.remove('on');
+$('msPick').onclick = e => { if (e.target === $('msPick')) $('msPick').classList.remove('on'); };
+$('cSuitAddBtn').onclick = () => openSuitPicker('Favorite suits', true, () => card.suits.map(s => s.msId), m => {
+  const i = card.suits.findIndex(s => s.msId === m.id);
+  if (i >= 0) { card.suits.splice(i, 1); drawSuits(); } else addSuit(m);
+});
 
 // Card picture: the suit on the "Use this card?" screen. A launcher setting
 // (exvs-online sends it to the game), so it saves through /api/settings.
 function drawCardPic() {
   const id = (data.settings.launcher.cardMobileSuit | 0), m = card.cat.suits && card.cat.suits.find(x => x.id === id);
-  $('cPic').value = id ? (m ? suitLabel(m) : 'Suit ' + id) : '';
+  $('cPic').textContent = id ? (m ? m.value + ' / ' + m.pilot : 'Suit ' + id) : 'Your first favorite suit';
   if (id) $('cPicImg').src = '/cardimg/mobile_suits/' + id + '.webp'; else $('cPicImg').removeAttribute('src');
 }
 async function setCardPic(id) {
@@ -1082,14 +1132,9 @@ async function setCardPic(id) {
   } catch (e) { toast(e.message, true); }
 }
 $('cPicSet').onclick = () => {
-  const q = $('cPic').value.trim().toLowerCase(); if (!q) return setCardPic(0);
-  const all = (card.cat.suits || []).filter(m => m.id > 0);
-  const m = all.find(x => suitLabel(x).toLowerCase() === q) || all.find(x => x.value.toLowerCase() === q) ||
-    all.find(x => suitLabel(x).toLowerCase().includes(q));
-  if (!m) return toast('No suit matches "' + $('cPic').value + '".', true);
-  setCardPic(m.id);
+  const id = data.settings.launcher.cardMobileSuit | 0;
+  openSuitPicker('Card picture', false, () => id ? [id] : [], m => setCardPic(m.id));
 };
-$('cPic').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('cPicSet').click(); } };
 $('cPicClear').onclick = () => setCardPic(0);
 
 function readGroup() {
