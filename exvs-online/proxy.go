@@ -27,6 +27,7 @@ type Proxy struct {
 	tl       *trafficLog
 	rturn    remoteTurn
 	rset     remoteSettings
+	hw       *hangWatch // probes the game when it goes quiet after a result
 }
 
 func NewProxy(cfg ProxyConfig, local *Matcher, tl *trafficLog) (*Proxy, error) {
@@ -83,6 +84,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			p.local.Handler(p.tl).ServeHTTP(w, r)
 			return
 		}
+		p.hw.activity()
 		p.logMMS("MMS>", body, &mms.Request{})
 		p.forward(w, r, body, p.match, "/match", func(rb []byte) []byte {
 			p.logMMS("MMS<", rb, &mms.Response{})
@@ -98,6 +100,13 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err := (proto.UnmarshalOptions{AllowPartial: true, DiscardUnknown: false}).Unmarshal(body, req); err == nil && req.Type != nil && req.RequestId != nil {
 			gameReq = req
 			p.tl.Msg("GAME>", req)
+			switch req.GetType() {
+			case exvs.MethodType_MTHD_SAVE_VSM_ON_RESULT:
+				p.hw.resultSaved()
+			case exvs.MethodType_MTHD_PING:
+			default:
+				p.hw.activity()
+			}
 			if c := req.GetCheckCommunication(); c != nil {
 				p.reportCheck(c)
 			}
