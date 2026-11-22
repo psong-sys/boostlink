@@ -3,10 +3,14 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"log"
 	"path/filepath"
 	"sync"
 	"time"
 )
+
+// probeSay prints probe progress. The automatic probe sends it to the log instead.
+var probeSay = func(format string, a ...any) { log.Printf("probe: "+format, a...) }
 
 //go:embed probe_vtables.txt
 var probeVtables string
