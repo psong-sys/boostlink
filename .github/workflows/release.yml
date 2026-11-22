@@ -52,6 +52,11 @@ jobs:
           (cd launcher && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o ../dist/exvs-launcher.exe .)
           (cd exvs-online && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../dist/exvs-online.exe .)
           cp exvs-online/exvs-online.friend.json exvs-online/exvs-online.host.json dist/
+          # The first-time download: the same files laid out the way they go in the game folder.
+          mkdir -p pack/exvs-launcher pack/exvs-online
+          cp dist/exvs-launcher.exe pack/exvs-launcher/
+          cp dist/exvs-online.exe dist/exvs-online.friend.json dist/exvs-online.host.json "exvs-online/Check my PC.cmd" pack/exvs-online/
+          (cd pack && zip -qr "../Boost-Link-$VERSION.zip" exvs-launcher exvs-online)
 
       - name: Write latest.json
         if: steps.ver.outputs.skip != 'true'
@@ -75,6 +80,9 @@ jobs:
                                  capture_output=True, text=True).stdout.strip()
           json.dump({"version": os.environ["VERSION"], "notes": notes, "files": files},
                     open("dist/latest.json", "w"), indent=1)
+          body = open(".github/release-notes.md").read()
+          body = body.replace("__VERSION__", os.environ["VERSION"]).replace("__NOTES__", notes or "Fixes and improvements.")
+          open("notes.md", "w").write(body)
           PY
           cat dist/latest.json
 
@@ -83,5 +91,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$TAG" dist/* --target "$GITHUB_SHA" -R "$RELEASES_REPO" \
-            --title "Boost Link $VERSION" --notes "Boost Link $VERSION. The launcher updates itself; you don't need to download anything here."
+          gh release create "$TAG" dist/* "Boost-Link-$VERSION.zip" --target "$GITHUB_SHA" -R "$RELEASES_REPO" \
+            --title "Boost Link $VERSION" --notes-file notes.md

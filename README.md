@@ -70,8 +70,11 @@ The match server only introduces players. Inputs and game state go between the t
 
 ## Getting started
 
-1. Get the Boost Link player pack from the Boost Link Discord and extract it into your game
-   folder. It contains the launcher, `exvs-online` and the English patch.
+1. Download `Boost-Link-<version>.zip` from the
+   [latest release](https://github.com/psong-sys/boostlink/releases/latest) and extract it
+   into your game folder (the one with `vsac29_Release.exe`). You get `exvs-launcher\` and
+   `exvs-online\` next to the game. For English menus, also get the player pack from the
+   Boost Link Discord; it's built from game files, so it isn't on GitHub.
 2. Open `exvs-launcher\exvs-launcher.exe`. On first run it picks your network adapter, gives
    you unique card IDs and checks for the Visual C++ runtime.
 3. On the **PLAY** tab, click **Check my PC** and fix anything marked FAIL. If it offers
