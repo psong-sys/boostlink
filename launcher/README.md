@@ -11,18 +11,29 @@ One window to set up and start EXVS2. Press **PLAY** and it:
 
 It never touches the game's own files. The only files it changes are `config.ini`, `card.ini`, `lmnfig.ini` and, in online modes, the battle mode setting in `29\testmode_pcb.json` and `29\testmode_lm.json`. The network adapter setting is written to both `config.ini` and `lmnfig.ini`, because the Live Monitor fails with "failed to find interface" when they differ. The mode sets `Server=` in both files too (28090 online, 28080 offline), so the Live Monitor also goes through exvs-online.
 
-In Host and Join a friend modes, the launcher also switches the game's battle mode to online before starting the Live Monitor. It's the same setting as Live Monitor F3 → GAME PCBs SETTING → Battle mode = Online, stored in `29\testmode_pcb.json` and `29\testmode_lm.json`. It changes only that value in the active setting file, backs both files up to `backups\` first, and logs the old value. Offline mode doesn't touch it.
+In Online (and Host) mode, the launcher also switches the game's battle mode to online before starting the Live Monitor. It's the same setting as Live Monitor F3 → GAME PCBs SETTING → Battle mode = Online, stored in `29\testmode_pcb.json` and `29\testmode_lm.json`. It changes only that value in the active setting file, backs both files up to `backups\` first, and logs the old value. Offline mode doesn't touch it.
 
 The Live Monitor setting can hide it, minimize it, show it normally, or not start it. Muting uses Windows' per-app volume, so the Live Monitor also shows as muted in the Windows volume mixer.
 
 ## What's in the window
 
-- **PLAY tab**: pick Offline, Host or Join. Host shows your Radmin/ZeroTier IP with a Copy button. Join remembers the last hosts you joined. The status panel lights up each step (card server, online, Live Monitor, game).
-- **PILOT tab**: card IDs, "Make my IDs unique", and **Edit card & pilot name**, which opens the card server's own editor (pilot name, favorite suits, stickers, BGM). It starts the card server if needed.
-- **SETTINGS tab**: network adapter (a list of this PC's adapters, with the recommended one marked), display, Live Monitor, desktop shortcuts.
+- **PLAY tab**: pick Offline or Online. Online connects to the Boost Link match server (149.28.115.108). The status panel lights up each step (card server, online, Live Monitor, game).
+- **PILOT tab**: a card editor in English, with these sub-tabs:
+  - **Card IDs**: card IDs and "Make my IDs unique".
+  - **Profile**: pilot name, title text, Quick Start, BGM safe mode, fixed radar, your BGM list and gauge design.
+  - **Favorite suits**: up to 12 suits, each with its burst type.
+  - **Comms**: start, end and direction messages for solo, team and quick-team play, plus the comms options.
+  - **Sticker**: opening sticker background and effect (with a preview), stats, comment, and the pilot picture options.
+  - **Buttons**: the game's own controller button layout (Normal Type (Custom)).
+
+  It reads and saves through the card server's own web API on 127.0.0.1:28080, starting the card server if needed, and keeps any card fields it doesn't show. Before every save it copies `Server\ServerInfinite.db` once per run, and the part being changed every time, to `backups\card\`. Saving is blocked while the game is running. Play once first so the card exists.
+- **SETTINGS tab**: network adapter (picked automatically; VPN and virtual adapters such as Radmin and ZeroTier are hidden unless you tick "Show all adapters"), display, Live Monitor, desktop shortcuts.
+- **Advanced** (SETTINGS tab): tick "Show advanced options" to change the match server address (IP or name) and to show **HOST** on the PLAY tab, where one PC runs the match server for a group. "Use the Boost Link server" puts the default back.
+- The window is one fixed size with no scroll bar.
 - **CONTROLS tab**: every keyboard and controller key.
 - **First run**: a short welcome sets the adapter, gives you your own card IDs, and checks for the Visual C++ 2010 runtime the Live Monitor needs.
 - **Check my PC** (PLAY tab): runs exvs-online's pre-match checks (firewall, runtime, network and so on). It lists each result with a suggested fix, and has a **Fix firewall** button that adds the needed Windows Firewall rules after an admin prompt. Needs an exvs-online.exe that supports `-check`.
+- **Updates**: when a new version is published, a banner on the PLAY tab offers **Update now**. It downloads the new launcher and exvs-online, checks each file's SHA-256, replaces them (never anything outside `exvs-launcher\` and `exvs-online\`), and restarts the launcher.
 - Warnings at the top have one-click fixes (wrong adapter, default card IDs).
 
 ## Try it
@@ -41,8 +52,8 @@ Close the settings window when you're done. The launcher quits on its own a few 
 | Mode | What it does | config.ini `Server=` |
 |---|---|---|
 | Offline | Same as before: card server only. | `127.0.0.1:28080` |
-| Host online | Runs exvs-online as host. The window shows your Radmin IP to give your friends. | `127.0.0.1:28090` |
-| Join a friend | Runs exvs-online pointed at the host's Radmin IP. | `127.0.0.1:28090` |
+| Online | Runs exvs-online pointed at the Boost Link server (or the address set under Advanced). | `127.0.0.1:28090` |
+| Host (Advanced) | Runs exvs-online as the match server for a group. | `127.0.0.1:28090` |
 
 Online modes need `exv2\exvs-online\exvs-online.exe`. The launcher reads that folder's `exvs-online.host.json` or `exvs-online.friend.json` as a template and writes its own copy to `exvs-launcher\exvs-online.json`, so the exvs-online folder is never changed. exvs-online's `traffic.log` ends up in this folder.
 

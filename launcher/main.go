@@ -20,12 +20,14 @@ import (
 //go:embed web
 var webFS embed.FS
 
-const version = "1.2.1"
+const version = "1.5.0"
 
 func main() {
 	play := flag.Bool("play", false, "start the game right away without the settings window")
 	noBrowser := flag.Bool("no-browser", false, "don't open the settings window (for testing)")
+	updated := flag.Bool("updated", false, "started by an update: wait for the old launcher to close")
 	flag.Parse()
+	go cleanOldExe()
 
 	if *play {
 		playHeadless()
@@ -33,9 +35,14 @@ func main() {
 	}
 
 	ln, err := net.Listen("tcp", uiAddr)
+	for i := 0; err != nil && *updated && i < 40; i++ {
+		time.Sleep(250 * time.Millisecond)
+		ln, err = net.Listen("tcp", uiAddr)
+	}
 	if err != nil {
 		// Probably already open: just show the existing window.
 		openUI("http://" + uiAddr + "/")
+		fitUIWindow()
 		return
 	}
 	srv := newUIServer()
@@ -109,6 +116,8 @@ func (u *uiServer) routes() http.Handler {
 	mux := http.NewServeMux()
 	sub, _ := fs.Sub(webFS, "web")
 	mux.Handle("GET /", http.FileServer(http.FS(sub)))
+	u.cardRoutes(mux)
+	u.updateRoutes(mux)
 
 	mux.HandleFunc("GET /api/settings", func(w http.ResponseWriter, r *http.Request) {
 		u.touch()

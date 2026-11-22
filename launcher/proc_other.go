@@ -37,3 +37,4 @@ func portOwner(port int) string { return "" }
 
 func openURL(url string)    { fmt.Println("open", url) }
 func missingVCRT2010() bool { return false }
+func fitUIWindow()          {}

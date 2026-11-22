@@ -73,7 +73,7 @@ func planSteps(lc LauncherConfig) []Step {
 	if lc.Mode != "offline" {
 		label := "Online (host)"
 		if lc.Mode == "friend" {
-			label = "Online (join)"
+			label = "Online (Boost Link)"
 		}
 		steps = append(steps, Step{ID: "online", Label: label, State: "waiting"})
 	}
