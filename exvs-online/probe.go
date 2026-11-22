@@ -12,6 +12,9 @@ import (
 // probeSay prints probe progress. The automatic probe sends it to the log instead.
 var probeSay = func(format string, a ...any) { log.Printf("probe: "+format, a...) }
 
+// PE TimeDateStamp of the 1.04.27 game exe the probe and the game patch were made for.
+const probeTimestamp = 0x68a458ad
+
 //go:embed probe_vtables.txt
 var probeVtables string
 

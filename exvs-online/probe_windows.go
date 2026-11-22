@@ -21,7 +21,6 @@ import (
 const (
 	memPrivate     = 0x20000
 	probeExe       = "vsac29_release.exe"
-	probeTimestamp = 0x68a458ad // PE TimeDateStamp of the 1.04.27 exe the vtable list was taken from
 	probeImageSize = 0x3063000
 	rdataStart     = 0x1335000
 	rdataEnd       = 0x2367000

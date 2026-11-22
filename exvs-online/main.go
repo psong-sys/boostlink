@@ -106,7 +106,30 @@ func main() {
 	gameDir := flag.String("game", "", "with -check: the game folder (default: found automatically)")
 	fixFW := flag.Bool("fix-firewall", false, "add Windows Firewall allow rules (shows an admin prompt) and exit")
 	probe := flag.Bool("probe", false, "read the running game's screen steps into hang-probe.txt and exit")
+	patchGame := flag.Bool("patch-game", false, "apply the online result-screen fix to the game exe and exit")
+	unpatchGame := flag.Bool("unpatch-game", false, "undo the result-screen fix and exit")
 	flag.Parse()
+	if *patchGame || *unpatchGame {
+		dir := *gameDir
+		if dir == "" {
+			dir = findGameDir(filepath.Dir(exe))
+		}
+		if dir == "" {
+			fmt.Println("couldn't find vsac29_Release.exe; pass -game <folder>")
+			os.Exit(1)
+		}
+		f := patchGameExe
+		if *unpatchGame {
+			f = unpatchGameExe
+		}
+		msg, err := f(filepath.Join(dir, "vsac29_Release.exe"))
+		if err != nil {
+			fmt.Println("result-screen fix:", err)
+			os.Exit(1)
+		}
+		fmt.Println("result-screen fix:", msg)
+		return
+	}
 	if *probe {
 		fmt.Println("Boost Link game probe: reads which screen step the game is in. Leave the game running.")
 		probeSay = func(format string, a ...any) { fmt.Printf(format+"\n", a...) }
@@ -186,6 +209,13 @@ func main() {
 			log.Fatal(err)
 		}
 		p.hw = newHangWatch(filepath.Dir(*cfgPath), tl)
+		if dir := findGameDir(filepath.Dir(exe)); dir != "" {
+			if msg, err := patchGameExe(filepath.Join(dir, "vsac29_Release.exe")); err != nil {
+				log.Printf("result-screen fix not applied: %v", err)
+			} else {
+				log.Printf("result-screen fix: %s", msg)
+			}
+		}
 		log.Printf("%s mode: listening on %s, card server %s", cfg.Mode, cfg.Proxy.Listen, cfg.Proxy.Upstream)
 		log.Fatal(http.ListenAndServe(cfg.Proxy.Listen, p))
 	default:

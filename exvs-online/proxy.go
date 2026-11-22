@@ -103,7 +103,8 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			switch req.GetType() {
 			case exvs.MethodType_MTHD_SAVE_VSM_ON_RESULT:
 				p.hw.resultSaved()
-			case exvs.MethodType_MTHD_PING:
+			case exvs.MethodType_MTHD_PING, exvs.MethodType_MTHD_LOAD_RANKING:
+				// sent on a timer even while the game is stuck, so not a sign it moved on
 			default:
 				p.hw.activity()
 			}
