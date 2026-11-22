@@ -311,7 +311,7 @@ func (c *checker) Run() *CheckReport {
 		}
 	}
 	if len(vpns) == 0 {
-		r.add("vpn", "VPN (ZeroTier or Radmin)", "info", "None connected. That's fine if you play over the internet with port forwarding, otherwise join the same ZeroTier network.", "")
+		r.add("vpn", "VPN (ZeroTier or Radmin)", "info", "None connected. That's fine: Boost Link plays over the internet through the server.", "")
 	} else {
 		r.add("vpn", "VPN (ZeroTier or Radmin)", "ok", strings.Join(vpns, ", ")+". Hosts share this IP with players.", "")
 	}
@@ -377,7 +377,7 @@ func (c *checker) Run() *CheckReport {
 			r.add("nat", "NAT type", "ok", "Easy NAT: your router keeps the same port for everyone, so direct connections should work.", "")
 		} else {
 			r.add("nat", "NAT type", "warn", "Strict NAT: your router changes ports per destination, so direct connections may fail.",
-				"If a match times out, turn on the relay on the host, or play both on the ZeroTier adapter.")
+				"The server's relay is used automatically when a direct connection fails.")
 		}
 	}
 
@@ -401,7 +401,7 @@ func (c *checker) Run() *CheckReport {
 		}
 		if d, err := c.httpGet(base + "/status.json"); err != nil {
 			r.add("host", "Match host", "fail", "Can't reach the host at "+base+": "+shortErr(err),
-				"Check the host has the game (or exvs-online) running, both PCs are in the same ZeroTier network, and the host allowed exvs-online in its firewall.")
+				"Check the server address in the launcher and your internet connection. If the server is down, tell the server owner.")
 		} else {
 			st := "ok"
 			if d > 250*time.Millisecond {
