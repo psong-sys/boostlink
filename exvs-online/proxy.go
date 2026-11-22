@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -210,7 +211,7 @@ func (p *Proxy) patchGameResponse(r *http.Request, req *exvs.Request, b []byte) 
 			resp = orig.(*exvs.Response)
 		}
 	}
-	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && p.patchCardMobileSuit(resp.PreLoadCard) {
+	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && p.patchCardMobileSuit(req.PreLoadCard, resp.PreLoadCard) {
 		fillRequired(resp)
 		if nb, err := (proto.MarshalOptions{AllowPartial: true}).Marshal(resp); err == nil {
 			p.tl.Msg("GAME< (patched card mobile suit)", resp)
@@ -383,22 +384,76 @@ func (p *Proxy) logMMS(dir string, b []byte, m proto.Message) {
 	p.tl.Msg(dir, m)
 }
 
-// patchCardMobileSuit puts the chosen mobile suit on the card shown on the
-// "Use this card?" screen (PreLoadCard user.customize_group.mst_mobile_suit_id).
-// The game looks the id up in its mobile suit table and shows "NOT SET" for 0.
-func (p *Proxy) patchCardMobileSuit(pl *exvs.Response_PreLoadCard) bool {
+// patchCardMobileSuit fills in the suit drawn on the card on the "Use this card?"
+// screen. The game shows the first entry of PreLoadCard user.favorite_mobile_suits
+// (tested 2026-11-22) and "NOT SET" when the list is empty, which it always is from
+// Server-Infinite. The suit is cardMobileSuit when set, otherwise the player's
+// first favorite suit from Server-Infinite's web API.
+func (p *Proxy) patchCardMobileSuit(rq *exvs.Request_PreLoadCard, pl *exvs.Response_PreLoadCard) bool {
+	if pl == nil || pl.User == nil || len(pl.User.FavoriteMobileSuits) > 0 {
+		return false
+	}
 	ms := p.cfg.CardMobileSuit
-	if ms == 0 || pl == nil || pl.User == nil {
+	if ms == 0 && rq != nil {
+		ms = p.firstFavoriteSuit(rq.GetAccessCode(), rq.GetChipId())
+	}
+	if ms == 0 {
 		return false
 	}
-	cg := pl.User.CustomizeGroup
-	if cg == nil {
-		cg = &exvs.Response_PreLoadCard_MobileUserGroup_CustomizeGroup{}
-		pl.User.CustomizeGroup = cg
-	}
-	if cg.GetMstMobileSuitId() == ms {
-		return false
-	}
-	cg.MstMobileSuitId = proto.Uint32(ms)
+	pl.User.FavoriteMobileSuits = []*exvs.Response_PreLoadCard_MobileUserGroup_FavoriteMSGroup{{
+		MstMobileSuitId: proto.Uint32(ms), MsUsedNum: proto.Uint32(0),
+		BgmPlayMethod: proto.Uint32(0), BurstType: proto.Uint32(0)}}
 	return true
+}
+
+// firstFavoriteSuit asks Server-Infinite's web API for the card's favorite suits
+// and returns the first one's id (0 when there is none or the call fails).
+func (p *Proxy) firstFavoriteSuit(accessCode, chipID string) uint32 {
+	if accessCode == "" || chipID == "" || p.upstream == nil {
+		return 0
+	}
+	u := strings.TrimRight(p.upstream.String(), "/") + "/ui/mobileSuit/getAllFavouriteMs/" +
+		url.PathEscape(accessCode) + "/" + url.PathEscape(chipID)
+	c := &http.Client{Timeout: 2 * time.Second}
+	resp, err := c.Get(u)
+	if err != nil {
+		return 0
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return 0
+	}
+	b, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	return firstSuitID(b)
+}
+
+// firstSuitID reads the first suit id from the favorite suit list, which is
+// either a JSON array or an object holding one, with ids under msId or MsId.
+func firstSuitID(b []byte) uint32 {
+	var v any
+	if json.Unmarshal(b, &v) != nil {
+		return 0
+	}
+	if m, ok := v.(map[string]any); ok {
+		for _, x := range m {
+			if a, ok := x.([]any); ok {
+				v = a
+				break
+			}
+		}
+	}
+	a, ok := v.([]any)
+	if !ok || len(a) == 0 {
+		return 0
+	}
+	if e, ok := a[0].(map[string]any); ok {
+		for k, x := range e {
+			if strings.EqualFold(k, "msId") || strings.EqualFold(k, "mstMobileSuitId") {
+				if f, ok := x.(float64); ok && f > 0 {
+					return uint32(f)
+				}
+			}
+		}
+	}
+	return 0
 }

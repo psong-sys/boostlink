@@ -40,8 +40,8 @@ type LauncherConfig struct {
 	Advanced    bool     `json:"advanced"`       // show Host mode and the server address
 	ServerSet   bool     `json:"serverMigrated"` // switched to the public server once             // first-run setup finished
 	// CardMobileSuit is the suit drawn on the card on the game's "Use this card?"
-	// screen. The card server always sends none ("NOT SET"), so exvs-online fills
-	// it in. Online modes only. 0 = not set.
+	// screen. Server-Infinite sends none ("NOT SET"), so exvs-online fills it in.
+	// Online modes only. 0 = the card's first favorite suit.
 	CardMobileSuit uint32 `json:"cardMobileSuit,omitempty"`
 }
 
