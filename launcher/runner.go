@@ -295,6 +295,9 @@ func (r *Runner) run() error {
 			return fmt.Errorf("card server not found at %s", p.ServerExe)
 		}
 		r.stage("Starting the card server (Server-Infinite)")
+		if msg := lockCardServer(p); msg != "" {
+			r.logf("%s", msg)
+		}
 		exited, err := r.startHelper("card-server", p.ServerExe, nil, filepath.Dir(p.ServerExe), p)
 		if err != nil {
 			return fmt.Errorf("starting card server: %w", err)
@@ -493,6 +496,9 @@ func (r *Runner) StartCardServer() error {
 	p := resolvePaths(loadLauncherConfig())
 	if !fileExists(p.ServerExe) {
 		return fmt.Errorf("card server not found at %s", p.ServerExe)
+	}
+	if msg := lockCardServer(p); msg != "" {
+		r.logf("%s", msg)
 	}
 	_ = os.MkdirAll(p.LogDir, 0755)
 	lf, err := os.Create(filepath.Join(p.LogDir, "card-server-editor.log"))

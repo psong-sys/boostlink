@@ -442,6 +442,9 @@ func writeOnlineConfig(lc LauncherConfig, p Paths) error {
 			cfg["proxy"] = proxy
 		}
 		proxy["matchServer"] = fmt.Sprintf("http://%s:%d", lc.HostIP, proxyPort)
+		// Only this PC's game talks to the proxy in Join mode, so nobody else
+		// on the network can reach the card server through it.
+		proxy["listen"] = onlineServer
 	}
 	b, _ := json.MarshalIndent(cfg, "", "  ")
 	return os.WriteFile(p.OnlineCfg, b, 0644)
@@ -449,7 +452,7 @@ func writeOnlineConfig(lc LauncherConfig, p Paths) error {
 
 func defaultOnlineTemplate(mode string) string {
 	if mode == "friend" {
-		return `{"mode":"proxy","proxy":{"listen":"0.0.0.0:28090","upstream":"http://127.0.0.1:28080","matchPort":28090,"stun":{"host":"stun.l.google.com","port":19302},"logTraffic":true}}`
+		return `{"mode":"proxy","proxy":{"listen":"127.0.0.1:28090","upstream":"http://127.0.0.1:28080","matchPort":28090,"stun":{"host":"stun.l.google.com","port":19302},"logTraffic":true}}`
 	}
 	return `{"mode":"both","proxy":{"listen":"0.0.0.0:28090","upstream":"http://127.0.0.1:28080","matchPort":28090,"stun":{"host":"stun.l.google.com","port":19302},"logTraffic":true},"match":{"listen":"0.0.0.0:28100","roomSize":2,"fallbackRoomSize":2,"fallbackAfterSeconds":0,"groupIdBase":0,"waitCode":"PROCESS_WAIT","requireSameWorld":true}}`
 }

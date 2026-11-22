@@ -1,7 +1,7 @@
 {
   "mode": "proxy",
   "proxy": {
-    "listen": "0.0.0.0:28090",
+    "listen": "127.0.0.1:28090",
     "upstream": "http://127.0.0.1:28080",
     "matchServer": "http://HOST_IP_HERE:28090",
     "matchPort": 28090,

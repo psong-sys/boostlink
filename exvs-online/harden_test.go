@@ -80,3 +80,38 @@ func TestTurnPeerAllowed(t *testing.T) {
 		t.Error("private relay rules wrong")
 	}
 }
+
+func TestQueueTiedToIP(t *testing.T) {
+	m := NewMatcher(MatchConfig{RoomSize: 2, RequireSameWorld: true, WaitCode: "SUCCESS"})
+	req := func(typ mms.MethodType, node uint32, ip string) *mms.Response {
+		r := &mms.Request{Type: typ.Enum(), RequestId: proto.String("1")}
+		switch typ {
+		case mms.MethodType_ENTRY_MATCHING:
+			r.EntryMatching = &mms.Request_EntryMatching{Myclient: &mms.Client{NodeId: proto.Uint32(node), PcbSerial: proto.String("S"), LocId: proto.String("L")}}
+		case mms.MethodType_CHECK_MATCHING:
+			r.CheckMatching = &mms.Request_CheckMatching{NodeId: proto.Uint32(node)}
+		case mms.MethodType_CANCEL_MATCHING:
+			r.CancelMatching = &mms.Request_CancelMatching{NodeId: proto.Uint32(node)}
+		}
+		return m.handle(r, ip)
+	}
+	owner, stranger := "203.0.113.1", "198.51.100.66"
+	req(mms.MethodType_ENTRY_MATCHING, 7, owner)
+	if r := req(mms.MethodType_CHECK_MATCHING, 7, stranger); r.GetCode() != mms.ErrorCode_ERR_MATCH_NOENTRY {
+		t.Errorf("stranger could check someone else's entry: %v", r.GetCode())
+	}
+	req(mms.MethodType_CANCEL_MATCHING, 7, stranger)
+	if req(mms.MethodType_ENTRY_MATCHING, 7, stranger).GetCode() == mms.ErrorCode_SUCCESS {
+		t.Error("stranger could take over a queued node id")
+	}
+	if _, ok := m.entries[7]; !ok {
+		t.Fatal("stranger removed someone else's entry")
+	}
+	if r := req(mms.MethodType_CHECK_MATCHING, 7, owner); r.GetCode() != mms.ErrorCode_SUCCESS {
+		t.Errorf("owner's check refused: %v", r.GetCode())
+	}
+	req(mms.MethodType_CANCEL_MATCHING, 7, owner)
+	if _, ok := m.entries[7]; ok {
+		t.Error("owner couldn't cancel")
+	}
+}

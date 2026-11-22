@@ -145,6 +145,9 @@ func TestOnlineConfigFromTemplate(t *testing.T) {
 	b, _ := os.ReadFile(p.OnlineCfg)
 	json.Unmarshal(b, &got)
 	proxy := got["proxy"].(map[string]any)
+	if proxy["listen"] != "127.0.0.1:28090" {
+		t.Errorf("Join mode proxy listens on %v, want 127.0.0.1:28090", proxy["listen"])
+	}
 	if proxy["matchServer"] != "http://26.5.6.7:28090" || proxy["extra"] != float64(1) || got["mode"] != "proxy" {
 		t.Errorf("got %s", b)
 	}
@@ -238,5 +241,33 @@ func TestLocalOnly(t *testing.T) {
 		if w.Code != want {
 			t.Errorf("Host %q: got %d, want %d", host, w.Code, want)
 		}
+	}
+}
+
+func TestLockKestrel(t *testing.T) {
+	in := "\xEF\xBB\xBF{\"Kestrel\":{\"Endpoints\":{\"BaseServer\":{\"Url\": \"http://0.0.0.0:28080\"}}}}"
+	want := "\xEF\xBB\xBF{\"Kestrel\":{\"Endpoints\":{\"BaseServer\":{\"Url\": \"http://127.0.0.1:28080\"}}}}"
+	if got := string(lockKestrel([]byte(in))); got != want {
+		t.Errorf("got %q", got)
+	}
+	if got := string(lockKestrel([]byte(want))); got != want {
+		t.Error("already-locked file changed")
+	}
+	dir := t.TempDir()
+	os.MkdirAll(filepath.Join(dir, "Server", "Configurations"), 0755)
+	f := filepath.Join(dir, "Server", "Configurations", "kestrel.json")
+	os.WriteFile(f, []byte(in), 0644)
+	p := Paths{ServerExe: filepath.Join(dir, "Server", "Server-Infinite.exe")}
+	if lockCardServer(p) == "" {
+		t.Error("no change reported")
+	}
+	if b, _ := os.ReadFile(f); string(b) != want {
+		t.Errorf("file not locked: %q", b)
+	}
+	if b, _ := os.ReadFile(f + ".original"); string(b) != in {
+		t.Error("no .original backup")
+	}
+	if lockCardServer(p) != "" {
+		t.Error("second run changed something")
 	}
 }

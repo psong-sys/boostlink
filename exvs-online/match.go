@@ -33,6 +33,7 @@ type entry struct {
 	entered  time.Time
 	lastSeen time.Time
 	timeout  time.Duration
+	ip       string // address that queued it; only it may check or cancel
 	roomID   uint32
 	room     []*mms.Response_CheckMatching_MatchedClient
 	bot      bool
@@ -150,6 +151,10 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 		}
 		node := em.Myclient.GetNodeId()
 		if old, ok := m.entries[node]; ok {
+			if !old.ownedBy(remoteIP) {
+				resp.Code = mms.ErrorCode_ERR_REQUEST.Enum()
+				break
+			}
 			m.removeLocked(old)
 		} else if len(m.entries) >= maxEntries {
 			resp.Code = mms.ErrorCode_ERR_REQUEST.Enum()
@@ -160,7 +165,7 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 			applyID = m.nextApp
 			m.nextApp++
 		}
-		e := &entry{nodeID: node, applyID: applyID, world: worldKey(em.World),
+		e := &entry{nodeID: node, applyID: applyID, world: worldKey(em.World), ip: remoteIP,
 			entered: time.Now(), lastSeen: time.Now(),
 			timeout: time.Duration(em.GetMatchingTimeout()) * time.Second}
 		if e.timeout <= 0 || e.timeout > 10*time.Minute {
@@ -195,7 +200,7 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 	case mms.MethodType_CHECK_MATCHING:
 		node := req.GetCheckMatching().GetNodeId()
 		e, ok := m.entries[node]
-		if !ok {
+		if !ok || !e.ownedBy(remoteIP) {
 			resp.Code = mms.ErrorCode_ERR_MATCH_NOENTRY.Enum()
 			break
 		}
@@ -213,7 +218,7 @@ func (m *Matcher) handle(req *mms.Request, remoteIP string) *mms.Response {
 		}
 
 	case mms.MethodType_CANCEL_MATCHING:
-		if e, ok := m.entries[req.GetCancelMatching().GetNodeId()]; ok {
+		if e, ok := m.entries[req.GetCancelMatching().GetNodeId()]; ok && e.ownedBy(remoteIP) {
 			m.removeLocked(e)
 			log.Printf("cancel: node %d", e.nodeID)
 		}
@@ -252,6 +257,12 @@ func (m *Matcher) addBotsLocked(real *entry) {
 		m.queue = append(m.queue, b)
 	}
 	log.Printf("added %d test bots for node %d", m.cfg.TestBots, real.nodeID)
+}
+
+// ownedBy reports whether a request from ip may act on this entry. Strangers
+// can't guess a node id to cancel someone's search or read who they matched.
+func (e *entry) ownedBy(ip string) bool {
+	return e.bot || e.ip == "" || e.ip == ip
 }
 
 func worldKey(w *mms.World) string {
