@@ -39,8 +39,8 @@ Server (Linux): `cd exvs-online && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go buil
 Binaries and the friend pack are never committed. The friend pack includes translated
 screen files built from the game, so it must never be attached to a release here.
 
-**Auto-update.** Pushing a tag like `v1.5.0` (matching `version` in `launcher/main.go`)
-runs `.github/workflows/release.yml`. It builds `exvs-launcher.exe` and `exvs-online.exe`
+**Auto-update.** Merging a new `version` in `launcher/main.go` to main runs
+`.github/workflows/release.yml`. It builds `exvs-launcher.exe` and `exvs-online.exe`
 and publishes them, with a `latest.json` manifest, as a release of this repo. Launchers from 1.5.0 on check that manifest when they
 open and offer **Update now**. It only ever contains these built files, never game files or
 the translated screens.
