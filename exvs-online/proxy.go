@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"exvsonline/pb/exvs"
@@ -29,6 +30,9 @@ type Proxy struct {
 	rturn    remoteTurn
 	rset     remoteSettings
 	hw       *hangWatch // probes the game when it goes quiet after a result
+
+	mu        sync.Mutex
+	pilotName string // from the last PreLoadCard, for the leaderboard
 }
 
 func NewProxy(cfg ProxyConfig, local *Matcher, tl *trafficLog) (*Proxy, error) {
@@ -64,6 +68,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet && p.local != nil && (r.URL.Path == "/status" || r.URL.Path == "/status.json") {
 		p.local.StatusHandler().ServeHTTP(w, r)
+		return
+	}
+	if r.Method == http.MethodPost && p.local != nil && r.URL.Path == "/result" {
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		p.local.ResultHandler().ServeHTTP(w, r)
 		return
 	}
 	if r.Method == http.MethodPost && p.local != nil && r.URL.Path == "/report" {
@@ -113,6 +122,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			switch req.GetType() {
 			case exvs.MethodType_MTHD_SAVE_VSM_ON_RESULT:
 				p.hw.resultSaved()
+				p.reportResult(req.GetSaveVsmOnResult())
 			case exvs.MethodType_MTHD_PING, exvs.MethodType_MTHD_LOAD_RANKING:
 				// sent on a timer even while the game is stuck, so not a sign it moved on
 			default:
@@ -215,6 +225,11 @@ func (p *Proxy) patchGameResponse(r *http.Request, req *exvs.Request, b []byte) 
 			}
 			resp = orig.(*exvs.Response)
 		}
+	}
+	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && resp.PreLoadCard != nil && resp.PreLoadCard.User != nil {
+		p.mu.Lock()
+		p.pilotName = resp.PreLoadCard.User.GetPlayerName()
+		p.mu.Unlock()
 	}
 	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && p.patchCardMobileSuit(req.PreLoadCard, resp.PreLoadCard) {
 		fillRequired(resp)

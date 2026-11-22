@@ -52,6 +52,11 @@ type ProxyConfig struct {
 	// TeamCode: players who use the same code are put on the same side of a 2v2.
 	// With a code set, this PC only gets 2v2 rooms (never the 1v1 fallback).
 	TeamCode string `json:"teamCode,omitempty"`
+	// After each online match the result goes to the match server's leaderboard
+	// (status page) under the card's pilot name. StatsName replaces that name;
+	// NoShareStats keeps results on this PC only.
+	StatsName    string `json:"statsName,omitempty"`
+	NoShareStats bool   `json:"noShareStats,omitempty"`
 }
 
 type MatchConfig struct {
@@ -171,6 +176,9 @@ func main() {
 
 	tl := newTrafficLog(filepath.Join(filepath.Dir(*cfgPath), "traffic.log"), cfg.Proxy.LogTraffic)
 	m := NewMatcher(cfg.Match)
+	if cfg.Mode != "proxy" {
+		m.stats = newStatBook(filepath.Join(filepath.Dir(*cfgPath), "stats.json"))
+	}
 
 	switch cfg.Mode {
 	case "match":
@@ -186,6 +194,7 @@ func main() {
 		mux.Handle("/status.json", m.StatusHandler())
 		mux.HandleFunc("/turninfo", turnInfoHandler)
 		mux.Handle("/report", m.ReportHandler())
+		mux.Handle("/result", m.ResultHandler())
 		mux.Handle("/settings", m.SettingsHandler())
 		mux.Handle("/home", m.HomeHandler())
 		mmsH := m.Handler(tl)

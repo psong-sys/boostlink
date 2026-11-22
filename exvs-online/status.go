@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -15,6 +16,8 @@ type Status struct {
 	InRooms       int           `json:"inRooms"`     // players matched in the last few minutes, still polling
 	RecentRooms   []StatusRoom  `json:"recentRooms"` // newest first
 	Results       []ConnResult  `json:"results"`     // newest first
+	Leaderboard   []PilotStats  `json:"leaderboard"` // most wins first
+	Fights        []Fight       `json:"fights"`      // newest first
 	RoomSize      int           `json:"roomSize"`
 	RTTLimit      uint32        `json:"rttLimitMs"`
 	UptimeSeconds int64         `json:"uptimeSeconds"`
@@ -60,6 +63,9 @@ func (m *Matcher) Status() Status {
 		r := m.recent[i]
 		st.RecentRooms = append(st.RecentRooms, StatusRoom{ID: r.ID, Players: r.Players, AgeSeconds: int64(now.Sub(r.At).Seconds()), Test: r.Bots})
 	}
+	if m.stats != nil {
+		st.Leaderboard, st.Fights = m.stats.board(20)
+	}
 	st.Results = []ConnResult{}
 	for i := len(m.results) - 1; i >= 0; i-- {
 		st.Results = append(st.Results, m.results[i])
@@ -68,8 +74,10 @@ func (m *Matcher) Status() Status {
 }
 
 var statusPage = template.Must(template.New("s").Funcs(template.FuncMap{
-	"ago": func(t time.Time) string { return fmtDur(int64(time.Since(t).Seconds())) },
-	"dur": fmtDur,
+	"ago":   func(t time.Time) string { return fmtDur(int64(time.Since(t).Seconds())) },
+	"dur":   fmtDur,
+	"names": func(ns []string) string { return strings.Join(ns, " + ") },
+	"inc":   func(i int) int { return i + 1 },
 }).Parse(statusHTML))
 
 func fmtDur(s int64) string {
@@ -107,7 +115,9 @@ td,th{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);font-
 th{color:var(--muted);font-weight:500;font-size:13px;text-transform:uppercase}.empty{color:var(--muted);padding:12px;border:2px dashed var(--line)}
 .res{background:var(--card);border:2px solid var(--line);border-left:6px solid var(--bad);padding:10px 14px;margin-bottom:8px}
 .res.ok{border-left-color:var(--ok)}.res p{margin:4px 0}.res .fix{font-weight:700;color:var(--yellow)}.res .meta,.res .when{color:var(--muted);font-size:14px}
-@media (max-width:540px){.tiles{gap:10px}.tile b{font-size:30px}.tile span{font-size:11px}}
+.lb .pilot{font-weight:700}.w{color:var(--ok)}.l{color:var(--bad)}.when{color:var(--muted);font-size:14px;white-space:nowrap}
+.scroll{overflow-x:auto}
+@media (max-width:540px){.tiles{gap:10px}.tile b{font-size:30px}.tile span{font-size:11px}.opt{display:none}td,th{padding:8px 8px}}
 </style></head><body><main>
 <h1><a href="/">Boost Link</a></h1><p class="sub">Updates every 5 seconds. Up for {{dur .UptimeSeconds}}.</p>
 <div class="tiles">
@@ -115,6 +125,12 @@ th{color:var(--muted);font-weight:500;font-size:13px;text-transform:uppercase}.e
 <div class="tile" style="--c:var(--red)"><b>{{.InRooms}}</b><span>just matched</span></div>
 <div class="tile"><b>{{.RoomSize}}</b><span>players per match</span></div>
 </div>
+<h2>Leaderboard</h2>
+{{if .Leaderboard}}<div class="scroll"><table class="lb"><tr><th>#</th><th>Pilot</th><th>W</th><th>L</th><th>Win %</th><th>Streak</th><th>Best</th><th class="opt">Avg dmg</th></tr>
+{{range $i, $p := .Leaderboard}}<tr><td>{{inc $i}}</td><td class="pilot">{{$p.Name}}</td><td class="w">{{$p.Wins}}</td><td class="l">{{$p.Losses}}</td><td>{{$p.WinPct}}%</td><td>{{if $p.Streak}}{{$p.Streak}}{{else}}-{{end}}</td><td>{{$p.Best}}</td><td class="opt">{{$p.AvgDamage}}</td></tr>{{end}}</table></div>
+{{else}}<div class="empty">No results yet. Every online match played through this server counts.</div>{{end}}
+{{if .Fights}}<h2>Recent fights</h2><table>
+{{range .Fights}}<tr><td>{{if .Winners}}<b class="w">{{names .Winners}}</b>{{else}}?{{end}} beat {{if .Losers}}<b class="l">{{names .Losers}}</b>{{else}}?{{end}}</td><td class="when">{{ago .At}} ago</td></tr>{{end}}</table>{{end}}
 <h2>In the queue</h2>
 {{if .WaitingGroups}}<table><tr><th>Players</th><th>Waiting</th></tr>
 {{range .WaitingGroups}}<tr><td>{{.Players}}</td><td>{{dur .WaitSeconds}}</td></tr>{{end}}</table>

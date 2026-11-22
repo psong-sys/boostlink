@@ -71,6 +71,8 @@ yet counts as a solo for 2v2 rooms. Both players still pick Mix Match and solo s
 
 Whoever runs the match server can open **`http://<match server>:28090/status`** in a browser (or `:28100/status` when it runs in `match` mode). It shows how many players are searching, how long they've waited and the recent matches, and refreshes every 5 seconds. `/status.json` has the same data for a website or a Discord bot. It shows no IPs or card serials.
 
+The page also has a **leaderboard** (wins, losses, win %, current and best win streak, average damage) and the **recent fights** ("Paul beat Friend"). After every online match each player's exvs-online sends the game's result to the match server (`POST /result`) under the card's pilot name. The server only takes results from addresses that played a match through it in the last two hours, counts each player once per match, and saves everything to `stats.json` next to its config, so a restart keeps the board. A player can set `"statsName"` in the `proxy` section to show another name, or `"noShareStats": true` to keep results off the board (the result still appears as a `MATCH` line in traffic.log). To reset the board, stop the server and delete `stats.json`.
+
 ## Built-in relay (TURN), for when two players match but can't connect
 
 Some home routers block the direct game connection. The game then falls back to a relay (TURN) server.

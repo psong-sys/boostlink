@@ -72,6 +72,7 @@ type Matcher struct {
 	failedPairs  map[string]time.Time // serial pair -> when it last failed to connect
 	lastAnnounce time.Time            // last Discord post
 	started      time.Time
+	stats        *statBook // leaderboard (match and both modes)
 }
 
 type roomRecord struct {
@@ -79,10 +80,11 @@ type roomRecord struct {
 	At      time.Time
 	Players int
 	Bots    bool
+	ips     []string // who queued for it, so only they can send its result
 }
 
 func NewMatcher(cfg MatchConfig) *Matcher {
-	m := &Matcher{cfg: cfg, nextNode: 1000, nextApp: 1, nextRoom: 1, entries: map[uint32]*entry{}, started: time.Now()}
+	m := &Matcher{cfg: cfg, nextNode: 1000, nextApp: 1, nextRoom: 1, entries: map[uint32]*entry{}, started: time.Now(), stats: newStatBook("")}
 	go func() {
 		for range time.Tick(5 * time.Second) {
 			m.expire()
@@ -464,6 +466,9 @@ func (m *Matcher) makeRoomLocked(us []*unit) {
 	rec := roomRecord{ID: roomID, At: time.Now(), Players: total}
 	for _, e := range es {
 		rec.Bots = rec.Bots || e.bot
+		if e.ip != "" {
+			rec.ips = append(rec.ips, e.ip)
+		}
 	}
 	m.recent = append(m.recent, rec)
 	if len(m.recent) > 20 {

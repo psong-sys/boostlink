@@ -102,6 +102,8 @@ Edit `/opt/boost-link/server.json` (`nano /opt/boost-link/server.json`), then
 ## Notes
 
 - The status page and Discord posts never show IPs or serials.
+- The status page leaderboard shows the pilot names from players' cards. It's saved in
+  `/opt/boost-link/stats.json`. To reset it: `sudo systemctl stop boost-link`, delete that file, then start it again.
 - The relay password is handed to players' launchers automatically. It's random each restart.
 - If the server's public IP isn't found at start (log says "relay disabled"), set
   `"relayIP": "<server IP>"` under `localTurn` in server.json and restart.
