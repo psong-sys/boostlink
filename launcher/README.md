@@ -17,7 +17,7 @@ The Live Monitor setting can hide it, minimize it, show it normally, or not star
 
 ## What's in the window
 
-- **PLAY tab**: pick Offline or Online. Online connects to the Boost Link match server (149.28.115.108). The status panel lights up each step (card server, online, Live Monitor, game).
+- **PLAY tab**: pick Offline or Online. Online connects to the public Boost Link match server. The status panel lights up each step (card server, online, Live Monitor, game).
 - **PILOT tab**: a card editor in English, with these sub-tabs:
   - **Card IDs**: card IDs and "Make my IDs unique".
   - **Profile**: pilot name, title text, Quick Start, BGM safe mode, fixed radar, your BGM list and gauge design.
