@@ -27,7 +27,8 @@
     background-size: 9px 9px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     background-attachment: fixed;
   }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 12px 16px 12px; position: relative; height: 100vh; display: flex; flex-direction: column; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 12px 16px 12px; position: relative; height: calc(100vh / var(--z, 1)); display: flex; flex-direction: column; zoom: var(--z, 1); }
+  .modal > .panel, .toast { zoom: var(--z, 1); }
   #alerts:empty { display: none; }
   #form { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .tab.on { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 0 8px 8px 0; }
@@ -1350,19 +1351,17 @@ if (CARDPAGE) {
 })();
 $('bigEditor').onclick = async () => { try { await api('POST', '/api/card/window'); } catch (e) { toast(e.message, true); } };
 
-// Keep the window at one size that fits every tab. Edge remembers the last
-// app window size, so snap back to it on open and after a resize.
+// The page is laid out for 1104x721 CSS pixels. The launcher makes the window
+// bigger on larger screens, and everything is scaled up to fill it.
 const FIT_W = 1104, FIT_H = 721;
 function fitWindow() {
   if (CARDPAGE) return;
-  try {
-    const w = FIT_W + (outerWidth - innerWidth), h = FIT_H + (outerHeight - innerHeight);
-    if (Math.abs(outerWidth - w) > 2 || Math.abs(outerHeight - h) > 2) resizeTo(w, h);
-  } catch (e) {}
+  const z = Math.max(0.5, Math.min(innerWidth / FIT_W, innerHeight / FIT_H));
+  document.documentElement.style.setProperty('--z', z.toFixed(4));
 }
-let fitTimer;
-window.addEventListener('load', () => { fitWindow(); setTimeout(fitWindow, 300); });
-window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitWindow, 600); });
+fitWindow();
+window.addEventListener('load', fitWindow);
+window.addEventListener('resize', fitWindow);
 </script>
 </body>
 </html>
