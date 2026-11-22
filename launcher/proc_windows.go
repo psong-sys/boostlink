@@ -152,17 +152,6 @@ func portOwner(port int) string {
 	return ""
 }
 
-// openAppWindow opens a page in its own Edge app window of the given size,
-// falling back to the default browser.
-func openAppWindow(url string, w, h int) {
-	if edge := findEdge(); edge != "" {
-		if exec.Command(edge, "--app="+url, "--window-size="+strconv.Itoa(w)+","+strconv.Itoa(h)).Start() == nil {
-			return
-		}
-	}
-	openURL(url)
-}
-
 func openURL(url string) {
 	_ = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 }

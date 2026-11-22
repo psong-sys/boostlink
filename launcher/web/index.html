@@ -189,20 +189,6 @@
   .stprev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .stprev img[src=""] { display: none; }
   .panel h2 small { font: 400 12px "Chakra"; color: var(--muted); letter-spacing: 0; text-transform: none; }
-  .subnav button.big { background: var(--yel); color: var(--ink); }
-  body.cardpage nav, body.cardpage .footer, body.cardpage #bigEditor, body.cardpage #cardNav button[data-sub=ids] { display: none !important; }
-  html.cardpage, body.cardpage { height: auto; overflow: auto; min-height: 100vh; }
-  html.cardpage { background: var(--hot); }
-  body.cardpage .wrap { height: auto; max-width: 1400px; }
-  body.cardpage .tab.on { overflow: visible; }
-  body.cardpage .grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  body.cardpage .gpick { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-  body.cardpage .gpick img { height: auto; aspect-ratio: 530 / 298; }
-  body.cardpage .suits { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-  body.cardpage .suit img { width: 150px; height: 68px; }
-  body.cardpage .suit .sn { font-size: 14px; }
-  body.cardpage .stprev { max-height: none; }
-  body.cardpage .wrap { max-width: 1800px; }
   #zoomPop { position: fixed; z-index: 90; display: none; pointer-events: none; background: #000; border: 3px solid var(--yel); box-shadow: 0 10px 40px rgba(0,0,0,.7); }
   #zoomPop img { display: block; width: 100%; height: auto; }
   #zoomPop div { font: 600 14px "Chakra"; color: #fff; background: var(--ink); padding: 6px 10px; }
@@ -335,7 +321,6 @@
       <button type="button" data-sub="sticker">STICKER</button>
       <button type="button" data-sub="buttons">BUTTONS</button>
       <span class="cstat" id="cardStat"></span>
-      <button type="button" id="bigEditor" class="big">BIG EDITOR ⤢</button>
     </div>
 
     <div class="csub on" id="sub-ids">
@@ -354,7 +339,7 @@
         </div>
         <div class="panel">
           <h2>Customize your card</h2>
-          <p style="margin-top:0">Use the tabs above, or <b>BIG EDITOR</b> for a larger window, to change your pilot name, favorite suits, comms, sticker and buttons. Changes are saved to your card on the card server, and show up the next time you insert your card.</p>
+          <p style="margin-top:0">Use the tabs above to change your pilot name, favorite suits, comms, sticker and buttons. Changes are saved to your card on the card server, and show up the next time you insert your card.</p>
           <div class="note">Play once first so your card exists. Before every change the launcher backs up your card to <code>exvs-launcher\backups\card</code>.</div>
           <button class="btn sm" id="cardEditBtn" type="button" style="margin-top:10px"><span>Open the card server's own page</span></button>
         </div>
@@ -717,7 +702,7 @@ function render() {
   $('recent').innerHTML = (s.launcher.recentHosts || []).map(h => '<span class="chip" data-ip="' + esc(h) + '">' + esc(h) + '</span>').join('');
   $('recent').querySelectorAll('.chip').forEach(c => c.onclick = () => { $('hostIp').value = c.dataset.ip; setDirty(true); });
   updateMode(); renderAlerts(); setDirty(false);
-  if (d.firstRun && !busy && !CARDPAGE) openWelcome();
+  if (d.firstRun && !busy) openWelcome();
 }
 
 function renderAlerts() {
@@ -1319,14 +1304,6 @@ $('ctlNav').onclick = e => {
   document.querySelectorAll('#tab-controls .ksub').forEach(x => x.classList.toggle('on', x.id === 'k-' + k));
 };
 
-// The big card editor: the same page opened with ?card=1 in its own window.
-const CARDPAGE = new URLSearchParams(location.search).has('card');
-if (CARDPAGE) {
-  document.documentElement.classList.add('cardpage'); document.body.classList.add('cardpage');
-  document.title = 'Boost Link Card Editor';
-  document.querySelector('nav button[data-tab=player]').click();
-  document.querySelector('#cardNav button[data-sub=profile]').click();
-}
 // Hovering a gauge or suit picture pops it up large on the far side of the window.
 (() => {
   const pop = document.body.appendChild(document.createElement('div'));
@@ -1349,13 +1326,11 @@ if (CARDPAGE) {
   });
   addEventListener('scroll', () => { pop.style.display = 'none'; }, true);
 })();
-$('bigEditor').onclick = async () => { try { await api('POST', '/api/card/window'); } catch (e) { toast(e.message, true); } };
 
 // The page is laid out for 1104x721 CSS pixels. The launcher makes the window
 // bigger on larger screens, and everything is scaled up to fill it.
 const FIT_W = 1104, FIT_H = 721;
 function fitWindow() {
-  if (CARDPAGE) return;
   const z = Math.max(0.5, Math.min(innerWidth / FIT_W, innerHeight / FIT_H));
   document.documentElement.style.setProperty('--z', z.toFixed(4));
 }
