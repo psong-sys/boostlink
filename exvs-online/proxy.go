@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"exvsonline/pb/exvs"
+	"exvsonline/pb/mms"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -82,7 +83,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			p.local.Handler(p.tl).ServeHTTP(w, r)
 			return
 		}
-		p.forward(w, r, body, p.match, "/match", nil)
+		p.logMMS("MMS>", body, &mms.Request{})
+		p.forward(w, r, body, p.match, "/match", func(rb []byte) []byte {
+			p.logMMS("MMS<", rb, &mms.Response{})
+			return rb
+		})
 		return
 	}
 
@@ -339,4 +344,17 @@ func (p *Proxy) matchHostIP() string {
 		}
 	}
 	return h
+}
+
+// logMMS writes a forwarded matchmaking message to traffic.log, so a player PC
+// can show what the game asked the remote match server.
+func (p *Proxy) logMMS(dir string, b []byte, m proto.Message) {
+	if p.tl == nil {
+		return
+	}
+	if err := (proto.UnmarshalOptions{AllowPartial: true}).Unmarshal(b, m); err != nil {
+		p.tl.Line(dir, fmt.Sprintf("<undecodable %d bytes: %v>", len(b), err))
+		return
+	}
+	p.tl.Msg(dir, m)
 }
