@@ -94,8 +94,11 @@ func readMem(h windows.Handle, addr uint64, buf []byte) bool {
 	return err == nil && int(n) == len(buf)
 }
 
-func scanOnce(h windows.Handle, base uint64, vt map[uint64]string) []probeHit {
+func scanOnce(h windows.Handle, base uint64, vt map[uint64]string, label string, deadline time.Time) []probeHit {
 	var hits []probeHit
+	var scanned, nextReport uint64
+	nextReport = 1 << 30
+	t0 := time.Now()
 	chunk := make([]byte, 4<<20)
 	node := make([]byte, nodeReadSize)
 	var addr uintptr
@@ -113,8 +116,17 @@ func scanOnce(h windows.Handle, base uint64, vt map[uint64]string) []probeHit {
 					n = mbi.RegionSize - off
 				}
 				b := chunk[:n]
+				if time.Now().After(deadline) {
+					probeSay("%s: stopped early after %d MB (time limit)", label, scanned>>20)
+					return hits
+				}
 				if !readMem(h, uint64(mbi.BaseAddress+off), b) {
 					continue
+				}
+				scanned += uint64(n)
+				if scanned >= nextReport {
+					probeSay("%s: %d MB read, %d steps found so far", label, scanned>>20, len(hits))
+					nextReport += 1 << 30
 				}
 				for i := 0; i+8 <= len(b); i += 8 {
 					v := binary.LittleEndian.Uint64(b[i:])
@@ -126,7 +138,9 @@ func scanOnce(h windows.Handle, base uint64, vt map[uint64]string) []probeHit {
 						continue
 					}
 					at := uint64(mbi.BaseAddress+off) + uint64(i)
-					if !readMem(h, at, node) {
+					if i+nodeReadSize <= len(b) {
+						copy(node, b[i:i+nodeReadSize])
+					} else if !readMem(h, at, node) {
 						continue
 					}
 					st := binary.LittleEndian.Uint64(node[stateOff:])
@@ -149,15 +163,18 @@ func scanOnce(h windows.Handle, base uint64, vt map[uint64]string) []probeHit {
 		}
 		addr = next
 	}
+	probeSay("%s: done, %d MB read in %s, %d steps found", label, scanned>>20, time.Since(t0).Round(time.Millisecond), len(hits))
 	return hits
 }
 
 // runProbe takes two snapshots a few seconds apart and writes what it found to outPath.
 func runProbe(outPath string) error {
+	probeSay("looking for the game...")
 	pid, base, size, err := findGame()
 	if err != nil {
 		return err
 	}
+	probeSay("found the game (process %d), checking its version", pid)
 	h, err := windows.OpenProcess(windows.PROCESS_VM_READ|windows.PROCESS_QUERY_INFORMATION, false, pid)
 	if err != nil {
 		return fmt.Errorf("opening the game: %w (if the game runs as administrator, run this as administrator too)", err)
@@ -179,9 +196,11 @@ func runProbe(outPath string) error {
 
 	vt := loadVtables(base)
 	t0 := time.Now()
-	first := scanOnce(h, base, vt)
+	probeSay("reading game memory, pass 1 of 2 (can take up to a minute)")
+	first := scanOnce(h, base, vt, "pass 1", time.Now().Add(75*time.Second))
 	time.Sleep(3 * time.Second)
-	second := scanOnce(h, base, vt)
+	probeSay("pass 2 of 2")
+	second := scanOnce(h, base, vt, "pass 2", time.Now().Add(75*time.Second))
 	took := time.Since(t0)
 
 	before := map[uint64]probeHit{}

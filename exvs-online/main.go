@@ -108,6 +108,8 @@ func main() {
 	probe := flag.Bool("probe", false, "read the running game's screen steps into hang-probe.txt and exit")
 	flag.Parse()
 	if *probe {
+		fmt.Println("Boost Link game probe: reads which screen step the game is in. Leave the game running.")
+		probeSay = func(format string, a ...any) { fmt.Printf(format+"\n", a...) }
 		out := filepath.Join(filepath.Dir(exe), "hang-probe-"+time.Now().Format("20060102-150405")+".txt")
 		if err := runProbe(out); err != nil {
 			fmt.Println("probe failed:", err)
