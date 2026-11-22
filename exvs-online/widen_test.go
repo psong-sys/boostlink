@@ -36,24 +36,17 @@ func TestFailedPairTriesSomeoneElse(t *testing.T) {
 	if l := m.failedPairList(); len(l) != 1 || l[0] != "AAAA|BBBB" {
 		t.Fatalf("failed pairs %v", l)
 	}
-	// Both re-queue, then C arrives: A should get C, not B again.
-	queueSerial(m, 11, "AAAA")
-	queueSerial(m, 12, "BBBB")
-	if m.entries[11].roomID != 0 {
-		t.Fatal("A and B re-paired straight away")
-	}
+	// C is already searching when A and B come back: A should get C, not B again.
 	queueSerial(m, 13, "CCCC")
+	queueSerial(m, 11, "AAAA")
 	if m.entries[11].roomID == 0 || m.entries[11].roomID != m.entries[13].roomID {
 		t.Fatal("A should be matched with C")
 	}
-	// After the wait, a failed pair is allowed again if nobody else is around.
+	// With nobody else searching, the failed pair is retried straight away.
+	queueSerial(m, 12, "BBBB")
 	queueSerial(m, 21, "AAAA")
-	m.mu.Lock()
-	m.entries[12].entered = time.Now().Add(-time.Minute) // B has waited a minute
-	m.tryMatchLocked()
-	m.mu.Unlock()
-	if m.entries[12].roomID == 0 {
-		t.Fatal("B should be retried with A after waiting")
+	if m.entries[12].roomID == 0 || m.entries[12].roomID != m.entries[21].roomID {
+		t.Fatal("A and B should be retried when they are the only two searching")
 	}
 }
 

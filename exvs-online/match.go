@@ -267,6 +267,15 @@ func (m *Matcher) pickLocked(size int) []*entry {
 	if size <= 0 || len(m.queue) == 0 {
 		return nil
 	}
+	// Prefer opponents this player hasn't just failed to reach. If nobody else
+	// fits, retry the failed pair right away: a small scene can't afford to wait.
+	if pick := m.pickWithLocked(size, true); pick != nil {
+		return pick
+	}
+	return m.pickWithLocked(size, false)
+}
+
+func (m *Matcher) pickWithLocked(size int, avoidFailed bool) []*entry {
 	head := m.queue[0]
 	var pick []*entry
 	total := 0
@@ -277,7 +286,7 @@ func (m *Matcher) pickLocked(size int) []*entry {
 		if total+e.players > size {
 			continue
 		}
-		if len(pick) > 0 && time.Since(head.entered) < m.widenAfter() && m.recentlyFailedLocked(pick, e) {
+		if avoidFailed && len(pick) > 0 && time.Since(head.entered) < m.widenAfter() && m.recentlyFailedLocked(pick, e) {
 			continue
 		}
 		pick = append(pick, e)
