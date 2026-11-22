@@ -325,6 +325,17 @@ func copyFile(src, dst string) error {
 }
 
 // setBool writes a True/False key, but doesn't add a missing key just to say False.
+// safeScreen keeps the game out of true fullscreen (Windowed=False). The
+// game's bngrw.dll switches its 60 FPS limiter off in that mode, so on a
+// monitor above 60 Hz the whole game runs too fast. Borderless keeps the limit.
+func safeScreen(g GameSettings) GameSettings {
+	if !g.Windowed {
+		g.Windowed = true
+		g.Borderless = true
+	}
+	return g
+}
+
 func setBool(f *IniFile, section, key string, v bool) {
 	if v || f.Has(section, key) {
 		f.Set(section, key, boolStr(v))
@@ -355,6 +366,7 @@ func writeSettings(s Settings) error {
 	cfg.Set("config", "Server", server)
 	cfg.Set("config", "serial", s.Game.Serial)
 	cfg.Set("config", "InterfaceName", s.Game.InterfaceName)
+	s.Game = safeScreen(s.Game)
 	cfg.Set("config", "Windowed", boolStr(s.Game.Windowed))
 	setBool(cfg, "config", "BorderlessWindow", s.Game.Borderless)
 	if s.Game.Resolution != "" {

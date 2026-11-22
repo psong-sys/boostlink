@@ -278,7 +278,12 @@ func (r *Runner) run() error {
 	if lm, err := LoadIni(p.LMIni); err == nil {
 		lmServer, _ = lm.Get("config", "Server")
 	}
-	if s.Game.Server != want || lmServer != want {
+	fix := s.Game.Server != want || lmServer != want
+	if !s.Game.Windowed {
+		r.logf("config.ini had the game in true fullscreen, where it runs too fast (no 60 FPS limit). Switching it to Borderless")
+		fix = true
+	}
+	if fix {
 		r.logf("Setting Server=%s in config.ini and lmnfig.ini for %s mode", want, lc.Mode)
 		if err := writeSettings(s); err != nil {
 			return err
