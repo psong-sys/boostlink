@@ -504,13 +504,17 @@
         <div class="panel">
           <h2>Display</h2>
           <div class="row">
-            <label class="c"><input type="checkbox" id="windowed"> Windowed</label>
-            <label class="c"><input type="checkbox" id="borderless"> Borderless</label>
-            <label class="c"><input type="checkbox" id="framerateLimit"> Frame limit</label>
+            <label class="f">SCREEN
+              <select id="screenMode">
+                <option value="full">Fullscreen</option>
+                <option value="borderless">Borderless</option>
+                <option value="window">Window</option>
+              </select></label>
+            <label class="f">RESOLUTION
+              <select id="resolution"><option value="1080p">1080p</option><option value="900p">900p</option><option value="720p">720p</option><option value="480p">480p</option></select></label>
           </div>
           <div class="row">
-            <label class="f">RESOLUTION <input type="text" id="resolution" list="resList" spellcheck="false"></label>
-            <datalist id="resList"><option value="720p"><option value="1080p"><option value="1440p"><option value="4K"></datalist>
+            <label class="c"><input type="checkbox" id="framerateLimit"> Frame limit (keep on, the game runs at 60 FPS)</label>
           </div>
         </div>
         <div class="panel">
@@ -683,10 +687,12 @@ function render() {
   $('serial').value = s.game.serial || '';
   $('chipId').value = s.card.chipId || '';
   $('accessCode').value = s.card.accessCode || '';
-  $('windowed').checked = s.game.windowed;
-  $('borderless').checked = s.game.borderless;
+  // The game only uses BorderlessWindow when Windowed is also on.
+  $('screenMode').value = s.game.borderless ? 'borderless' : s.game.windowed ? 'window' : 'full';
   $('framerateLimit').checked = s.game.framerateLimit;
-  $('resolution').value = s.game.resolution || '';
+  { const r = $('resolution'), v = s.game.resolution || '1080p';
+    if (![...r.options].some(o => o.value === v)) r.insertAdjacentHTML('beforeend', '<option value="' + esc(v) + '">' + esc(v) + ' (not supported by the game)</option>');
+    r.value = v; }
   adapterOptions($('interfaceName'), s.game.interfaceName, d);
   $('liveMonitor').value = s.launcher.liveMonitor || 'hide';
   $('lmMute').checked = !s.launcher.lmSound;
@@ -751,10 +757,10 @@ function collect() {
   s.game.serial = $('serial').value.trim();
   s.card.chipId = $('chipId').value.trim();
   s.card.accessCode = $('accessCode').value.trim();
-  s.game.windowed = $('windowed').checked;
-  s.game.borderless = $('borderless').checked;
+  s.game.windowed = $('screenMode').value !== 'full';
+  s.game.borderless = $('screenMode').value === 'borderless';
   s.game.framerateLimit = $('framerateLimit').checked;
-  s.game.resolution = $('resolution').value.trim();
+  s.game.resolution = $('resolution').value;
   s.game.interfaceName = $('interfaceName').value.trim();
   s.launcher.liveMonitor = $('liveMonitor').value;
   s.launcher.lmSound = !$('lmMute').checked;
