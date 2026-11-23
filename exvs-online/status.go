@@ -96,53 +96,73 @@ const statusHTML = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Anton&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b090c;--fg:#fbf9ee;--muted:#b9b3c2;--card:#16131a;--line:#3a3442;--accent:#25b1c8;--ok:#16dece;--bad:#e9465e;--yellow:#f0f31d;--red:#e9465e;--cyan:#25b1c8;
+:root{--bg:#0b090c;--fg:#fbf9ee;--muted:#9a94a3;--dim:#6b6573;--line:#2a2530;--panel:#131016;--ok:#16dece;--bad:#e9465e;--yellow:#f0f31d;--red:#e9465e;--cyan:#25b1c8;
   --head:"Anton",Impact,sans-serif;--body:"Chakra Petch",system-ui,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 1px 1px,rgba(210,58,117,.2) 1.2px,transparent 1.6px) 0 0/9px 9px,var(--bg);color:var(--fg);font:500 16px/1.5 var(--body)}
-body::before{content:"";display:block;height:14px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,var(--bg) 10px 20px)}
-main{max-width:760px;margin:0 auto;padding:24px 16px 40px}
-h1{font-family:var(--head);font-weight:400;font-size:44px;line-height:1;margin:0 0 6px;color:var(--yellow);text-transform:uppercase;transform:skew(-10deg);display:inline-block;text-shadow:5px 5px 0 var(--red)}
-h1 a{color:inherit;text-decoration:none}
-.sub{color:var(--muted);margin:6px 0 22px}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.tile{background:var(--card);border:3px solid var(--fg);padding:12px 14px;box-shadow:5px 5px 0 var(--c,var(--cyan))}
-.tile b{display:block;font-family:var(--head);font-weight:400;font-size:40px;color:var(--c,var(--cyan));font-variant-numeric:tabular-nums}
-.tile span{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px}
-h2{font-family:var(--head);font-weight:400;font-size:24px;text-transform:uppercase;letter-spacing:.8px;margin:28px 0 10px;color:var(--cyan)}
-table{width:100%;border-collapse:collapse;background:var(--card);border:2px solid var(--line)}
-td,th{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-th{color:var(--muted);font-weight:500;font-size:13px;text-transform:uppercase}.empty{color:var(--muted);padding:12px;border:2px dashed var(--line)}
-.res{background:var(--card);border:2px solid var(--line);border-left:6px solid var(--bad);padding:10px 14px;margin-bottom:8px}
-.res.ok{border-left-color:var(--ok)}.res p{margin:4px 0}.res .fix{font-weight:700;color:var(--yellow)}.res .meta,.res .when{color:var(--muted);font-size:14px}
-.lb .pilot{font-weight:700}.w{color:var(--ok)}.l{color:var(--bad)}.when{color:var(--muted);font-size:14px;white-space:nowrap}
-.scroll{overflow-x:auto}
-@media (max-width:540px){.tiles{gap:10px}.tile b{font-size:30px}.tile span{font-size:11px}.opt{display:none}td,th{padding:8px 8px}}
+body{margin:0;background:var(--bg);color:var(--fg);font:500 15px/1.5 var(--body)}
+body::before{content:"";display:block;height:5px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 8px,var(--bg) 8px 16px)}
+main{max-width:1040px;margin:0 auto;padding:22px 16px 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--head);font-weight:400;font-size:30px;line-height:1;color:var(--yellow);text-transform:uppercase;transform:skew(-10deg);text-shadow:3px 3px 0 var(--red);text-decoration:none}
+.live{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(22,222,206,.18)}
+.strip{display:flex;flex-wrap:wrap;gap:8px 32px;padding:18px 0 26px}
+.stat{display:flex;align-items:baseline;gap:8px}
+.stat b{font-family:var(--head);font-weight:400;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:40px}
+section{margin-bottom:30px}
+h2{display:flex;align-items:baseline;justify-content:space-between;font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:0 0 4px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h2 small{font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim)}
+table{width:100%;border-collapse:collapse}
+td,th{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+th{color:var(--dim);font-weight:500;font-size:12px}
+td.n,th.n{text-align:right}
+.rank{color:var(--dim);width:28px}
+.pilot{font-weight:700;width:100%}
+tr.top .pilot{color:var(--yellow)}
+.w{color:var(--ok)}.l{color:var(--bad)}
+.none{color:var(--dim);padding:12px 0;margin:0}
+.fight{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.fight .vs{color:var(--dim)}
+.when{color:var(--dim);font-size:13px;white-space:nowrap}
+.res{padding:10px 0;border-bottom:1px solid var(--line)}
+.res .t{display:flex;justify-content:space-between;gap:10px}
+.res .t b{font-weight:700}
+.res .t b::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:middle}
+.res.ok .t b::before{background:var(--ok)}
+.res p{margin:3px 0 0 15px;color:var(--muted);font-size:14px}.res .fix{color:var(--yellow)}
+@media (max-width:820px){.grid{grid-template-columns:1fr;gap:6px}}
+@media (max-width:540px){.opt{display:none}.stat b{font-size:28px}.strip{gap:8px 22px}td,th{padding:9px 4px}}
 </style></head><body><main>
-<h1><a href="/">Boost Link</a></h1><p class="sub">Updates every 5 seconds. Up for {{dur .UptimeSeconds}}.</p>
-<div class="tiles">
-<div class="tile" style="--c:var(--yellow)"><b>{{.Searching}}</b><span>searching now</span></div>
-<div class="tile" style="--c:var(--red)"><b>{{.InRooms}}</b><span>just matched</span></div>
-<div class="tile"><b>{{.RoomSize}}</b><span>players per match</span></div>
+<header><a class="logo" href="/">Boost Link</a><span class="live"><i></i>Live, up {{dur .UptimeSeconds}}</span></header>
+<div class="strip">
+<div class="stat"><b style="color:var(--yellow)">{{.Searching}}</b><span>searching now</span></div>
+<div class="stat"><b style="color:var(--red)">{{.InRooms}}</b><span>just matched</span></div>
+<div class="stat"><b style="color:var(--cyan)">{{.RoomSize}}</b><span>players per match</span></div>
 </div>
-<h2>Leaderboard</h2>
-{{if .Leaderboard}}<div class="scroll"><table class="lb"><tr><th>#</th><th>Pilot</th><th>W</th><th>L</th><th>Win %</th><th>Streak</th><th>Best</th><th class="opt">Avg dmg</th></tr>
-{{range $i, $p := .Leaderboard}}<tr><td>{{inc $i}}</td><td class="pilot">{{$p.Name}}</td><td class="w">{{$p.Wins}}</td><td class="l">{{$p.Losses}}</td><td>{{$p.WinPct}}%</td><td>{{if $p.Streak}}{{$p.Streak}}{{else}}-{{end}}</td><td>{{$p.Best}}</td><td class="opt">{{$p.AvgDamage}}</td></tr>{{end}}</table></div>
-{{else}}<div class="empty">No results yet. Every online match played through this server counts.</div>{{end}}
-{{if .Fights}}<h2>Recent fights</h2><table>
-{{range .Fights}}<tr><td>{{if .Winners}}<b class="w">{{names .Winners}}</b>{{else}}?{{end}} beat {{if .Losers}}<b class="l">{{names .Losers}}</b>{{else}}?{{end}}</td><td class="when">{{ago .At}} ago</td></tr>{{end}}</table>{{end}}
-<h2>In the queue</h2>
-{{if .WaitingGroups}}<table><tr><th>Players</th><th>Waiting</th></tr>
-{{range .WaitingGroups}}<tr><td>{{.Players}}</td><td>{{dur .WaitSeconds}}</td></tr>{{end}}</table>
-{{else}}<div class="empty">Nobody is searching right now.</div>{{end}}
-<h2>Recent matches</h2>
-{{if .RecentRooms}}<table><tr><th>Match</th><th>Players</th><th>Started</th></tr>
-{{range .RecentRooms}}<tr><td>#{{.ID}}{{if .Test}} (test){{end}}</td><td>{{.Players}}</td><td>{{dur .AgeSeconds}} ago</td></tr>{{end}}</table>
-{{else}}<div class="empty">No matches yet.</div>{{end}}
-<h2>Connection results</h2>
-{{if .Results}}{{range .Results}}<div class="res {{if .Connected}}ok{{else}}bad{{end}}"><b>{{.From}}, try {{.Try}}: {{.Result}}</b> <span class="when">{{ago .At}} ago</span>
-<p>{{.Meaning}}</p>{{if .Fix}}<p class="fix">Fix: {{.Fix}}</p>{{end}}<p class="meta">NAT: {{.NAT}}{{if .RTTs}}. Ping: {{range $i, $r := .RTTs}}{{if $i}}, {{end}}{{$r}} ms{{end}} (limit {{$.RTTLimit}}){{end}}</p></div>{{end}}
-{{else}}<div class="empty">No connection attempts yet. The game reports one after every match try.</div>{{end}}
+<div class="grid"><div>
+<section><h2>Leaderboard <small>online matches on this server</small></h2>
+{{if .Leaderboard}}<table><tr><th class="rank">#</th><th>Pilot</th><th class="n">W</th><th class="n">L</th><th class="n">Win %</th><th class="n">Streak</th><th class="n opt">Best</th><th class="n opt">Avg dmg</th></tr>
+{{range $i, $p := .Leaderboard}}<tr{{if eq $i 0}} class="top"{{end}}><td class="rank">{{inc $i}}</td><td class="pilot">{{$p.Name}}</td><td class="n w">{{$p.Wins}}</td><td class="n l">{{$p.Losses}}</td><td class="n">{{$p.WinPct}}%</td><td class="n">{{if $p.Streak}}{{$p.Streak}}{{else}}&ndash;{{end}}</td><td class="n opt">{{$p.Best}}</td><td class="n opt">{{$p.AvgDamage}}</td></tr>{{end}}</table>
+{{else}}<p class="none">No results yet. Every online match played through this server counts.</p>{{end}}</section>
+<section><h2>Recent fights</h2>
+{{if .Fights}}{{range .Fights}}<div class="fight"><span>{{if .Winners}}<b class="w">{{names .Winners}}</b>{{else}}?{{end}} <span class="vs">beat</span> {{if .Losers}}<b class="l">{{names .Losers}}</b>{{else}}?{{end}}</span><span class="when">{{ago .At}} ago</span></div>{{end}}
+{{else}}<p class="none">No fights yet.</p>{{end}}</section>
+</div><div>
+<section><h2>Queue</h2>
+{{if .WaitingGroups}}<table><tr><th>Players</th><th class="n">Waiting</th></tr>
+{{range .WaitingGroups}}<tr><td>{{.Players}}</td><td class="n">{{dur .WaitSeconds}}</td></tr>{{end}}</table>
+{{else}}<p class="none">Nobody is searching right now.</p>{{end}}</section>
+<section><h2>Recent matches</h2>
+{{if .RecentRooms}}<table><tr><th>Match</th><th>Players</th><th class="n">Started</th></tr>
+{{range .RecentRooms}}<tr><td>#{{.ID}}{{if .Test}} <span class="when">test</span>{{end}}</td><td>{{.Players}}</td><td class="n when">{{dur .AgeSeconds}} ago</td></tr>{{end}}</table>
+{{else}}<p class="none">No matches yet.</p>{{end}}</section>
+<section><h2>Connection results</h2>
+{{if .Results}}{{range .Results}}<div class="res {{if .Connected}}ok{{end}}"><div class="t"><b>{{.From}}, try {{.Try}}: {{.Result}}</b><span class="when">{{ago .At}} ago</span></div>
+<p>{{.Meaning}}</p>{{if .Fix}}<p class="fix">Fix: {{.Fix}}</p>{{end}}<p>NAT: {{.NAT}}{{if .RTTs}}. Ping: {{range $i, $r := .RTTs}}{{if $i}}, {{end}}{{$r}} ms{{end}} (limit {{$.RTTLimit}}){{end}}</p></div>{{end}}
+{{else}}<p class="none">No connection attempts yet. The game reports one after every match try.</p>{{end}}</section>
+</div></div>
 </main></body></html>`
 
 // StatusHandler serves /status (HTML) and /status.json.
