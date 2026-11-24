@@ -227,6 +227,7 @@ func (c *checker) Run() *CheckReport {
 		r.add("game", "Game folder", "fail", "Missing: "+strings.Join(missing, ", ")+".", "Re-extract the game and the friend pack into the same folder.")
 	} else {
 		r.add("game", "Game folder", "ok", c.gameDir, "")
+		c.checkBuild(r)
 	}
 
 	// 2. Visual C++ runtimes
@@ -629,4 +630,33 @@ func runCheck(cfgPath, gameDir string, asJSON, fixOnly bool) int {
 		return 1
 	}
 	return 0
+}
+
+// checkBuild reports which game build this is, whether the result-screen fix fits it, and
+// whether bngrw.dll belongs to this exe (a DLL copied from another game pack can't hook it).
+func (c *checker) checkBuild(r *CheckReport) {
+	exe, err := os.ReadFile(filepath.Join(c.gameDir, "vsac29_Release.exe"))
+	if err != nil {
+		return
+	}
+	p, err := parsePE(exe)
+	if err != nil {
+		return // not something we can read; the game itself will complain
+	}
+	if dll, err := os.ReadFile(filepath.Join(c.gameDir, "bngrw.dll")); err == nil {
+		if err := checkDLLMatchesExe(dll, exe); err != nil {
+			r.add("build", "Game build", "fail", buildName(p)+". "+err.Error()+".",
+				"Put back the bngrw.dll that came with this game pack, then run exvs-online.exe -patch-game.")
+			return
+		}
+	}
+	if st, err := gamePatchState(exe); err != nil {
+		r.add("build", "Game build", "warn", buildName(p)+". The result-screen fix doesn't fit this build: "+err.Error()+".",
+			"Online matches may hang on the result screen. Send check-report.txt to the Boost Link team.")
+		return
+	} else if st == "original" {
+		r.add("build", "Game build", "ok", buildName(p)+". The result-screen fix will be applied when exvs-online starts.", "")
+		return
+	}
+	r.add("build", "Game build", "ok", buildName(p)+", result-screen fix applied.", "")
 }

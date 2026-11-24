@@ -146,3 +146,18 @@ reply), so it can be raised there if ping turns out to be the only problem.
 
 Go 1.24+: `GOOS=windows GOARCH=amd64 go build -o exvs-online.exe .` and `go test .` for the tests.
 The `pb/` packages were generated from the protobuf descriptors embedded in `vsac29_Release.exe` (v1.04.27).
+
+## Game patches (`-patch-game`)
+
+`exvs-online.exe -patch-game` applies two small patches; `-unpatch-game` takes them out again.
+Each keeps a backup next to the file it changes.
+
+- **Result-screen fix** (`vsac29_Release.exe`): after an online match, stop waiting for the
+  other PC after 10 seconds. exvs-online also applies this one by itself when it starts.
+- **Keyboard focus fix** (`bngrw.dll`): the game ignores the keyboard while another window
+  is in front. Controllers are not affected.
+
+Both are found by byte pattern, so they fit each game build that still has the same code
+(checked on 1.04.27 and the 2026-04 build). Anything else is refused with "unsupported".
+`-check` also warns when `bngrw.dll` came from a different game pack than the exe: each
+pack's DLL is built for its own exe and won't hook another one.

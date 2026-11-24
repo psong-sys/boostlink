@@ -146,7 +146,7 @@ func run(cmd string) error {
 		}
 		return nil
 	case "install":
-		// check everything first, change nothing unless all files are as expected
+		// Our own files must all be intact before anything is written.
 		for _, f := range list {
 			if orig[f] == "" || eng[f] == "" {
 				return fmt.Errorf("%s has no checksum in ui-en, nothing changed", f)
@@ -154,24 +154,33 @@ func run(cmd string) error {
 			if s, err := md5file(filepath.Join(c.uien, filepath.FromSlash(f))); err != nil || s != eng[f] {
 				return fmt.Errorf("ui-en\\%s is damaged or missing, nothing changed", f)
 			}
+		}
+		// Game files are checked one by one. A file this build changed (or another mod
+		// already replaced) is left alone and listed; the rest are installed. This keeps
+		// most of the English on a newer game build while those few files get rebuilt
+		// with repaint\ from the new originals.
+		var todo, skipped []string
+		for _, f := range list {
 			cur, err := md5file(filepath.Join(c.cache, filepath.Base(f)))
-			if err != nil {
-				return fmt.Errorf("game file %s not found, nothing changed", f)
+			switch {
+			case err != nil:
+				skipped = append(skipped, filepath.Base(f)+" (not in this game build)")
+			case cur == eng[f]:
+			case cur == orig[f]:
+				todo = append(todo, f)
+			default:
+				skipped = append(skipped, filepath.Base(f)+" (different version in this game build)")
 			}
-			if cur != orig[f] && cur != eng[f] {
-				return fmt.Errorf("game file %s is a different version than this patch expects, nothing changed", f)
-			}
+		}
+		if len(todo) == 0 && len(skipped) == len(list) {
+			return fmt.Errorf("none of the %d game files match what this patch expects; nothing changed", len(list))
 		}
 		if err := os.MkdirAll(c.backup, 0o755); err != nil {
 			return err
 		}
 		n := 0
-		for _, f := range list {
+		for _, f := range todo {
 			g := filepath.Join(c.cache, filepath.Base(f))
-			cur, _ := md5file(g)
-			if cur == eng[f] {
-				continue
-			}
 			b := filepath.Join(c.backup, filepath.Base(f))
 			if bs, err := md5file(b); err != nil || bs != orig[f] {
 				if err := copyFile(g, b); err != nil {
@@ -187,6 +196,12 @@ func run(cmd string) error {
 			n++
 		}
 		fmt.Printf("English installed (%d file(s) changed). Originals are in %s\n", n, c.backup)
+		if len(skipped) > 0 {
+			fmt.Printf("Left in their current version (%d file(s)); these need rebuilding for this game build:\n", len(skipped))
+			for _, s := range skipped {
+				fmt.Println("  " + s)
+			}
+		}
 		return nil
 	case "restore":
 		n := 0

@@ -39,17 +39,22 @@ func readSvd(path string) (header []byte, payload []byte, err error) {
 	if len(b) < svdHeaderLen || string(b[:4]) != "svd1" {
 		return nil, nil, errors.New("not an svd1 file")
 	}
+	// The size field is the source of truth. Some tools rewrite these files without
+	// truncating them, which leaves a few stale bytes after the payload (seen in the
+	// 2026-04 game build). The game ignores them, so we do too; they are dropped when
+	// the launcher writes the file back.
 	size := binary.LittleEndian.Uint64(b[8:16])
-	if size != uint64(len(b)-svdHeaderLen) {
-		return nil, nil, fmt.Errorf("size field %d doesn't match the file (%d)", size, len(b)-svdHeaderLen)
+	if size > uint64(len(b)-svdHeaderLen) {
+		return nil, nil, fmt.Errorf("size field %d is larger than the file (%d)", size, len(b)-svdHeaderLen)
 	}
+	payload = b[svdHeaderLen : svdHeaderLen+int(size)]
 	h := sha1.New()
 	h.Write(b[:16])
-	h.Write(b[svdHeaderLen:])
+	h.Write(payload)
 	if !bytes.Equal(h.Sum(nil), b[16:36]) {
 		return nil, nil, errors.New("checksum doesn't match, so the format may be different from what the launcher expects")
 	}
-	return b[:svdHeaderLen], b[svdHeaderLen:], nil
+	return b[:svdHeaderLen], payload, nil
 }
 
 func encodeSvd(oldHeader, payload []byte) []byte {
