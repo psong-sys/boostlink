@@ -138,3 +138,58 @@ func TestProxySendsOwnTeamCode(t *testing.T) {
 		t.Fatalf("headers %q", got)
 	}
 }
+
+func queueFrom(m *Matcher, node uint32, serial, ip string) {
+	queueLocal(m, node, serial, ip, "192.168.1.10")
+}
+
+func queueLocal(m *Matcher, node uint32, serial, ip, local string) {
+	m.handle(&mms.Request{Type: mms.MethodType_ENTRY_MATCHING.Enum(), RequestId: proto.String("e"),
+		EntryMatching: &mms.Request_EntryMatching{Myclient: &mms.Client{NodeId: proto.Uint32(node), PcbSerial: proto.String(serial),
+			LocId: proto.String("L"), PrefCode: proto.Uint32(1), LocalIpaddress: proto.String(local), LocalPort: proto.Uint32(48000)}}}, ip)
+}
+
+// A game that stopped polling must not be handed to a real opponent.
+func TestSilentPlayerSkippedAndDropped(t *testing.T) {
+	m := teamMatcher()
+	m.cfg.RoomSize = 2
+	queueFrom(m, 1, "GONE", "203.0.113.1")
+	m.entries[1].lastSeen = time.Now().Add(-time.Minute)
+	queueFrom(m, 2, "LIVE", "203.0.113.2")
+	if m.entries[2].roomID != 0 {
+		t.Fatal("matched against a player who stopped polling")
+	}
+	m.expire()
+	if _, ok := m.entries[1]; ok {
+		t.Fatal("silent player still queued")
+	}
+	queueFrom(m, 3, "LIVE2", "203.0.113.3")
+	if m.entries[2].roomID == 0 || m.entries[2].roomID != m.entries[3].roomID {
+		t.Fatal("live players didn't match")
+	}
+	// a matched player stops polling once the fight starts; that must not drop them early
+	m.entries[2].lastSeen = time.Now().Add(-time.Minute)
+	m.expire()
+	if _, ok := m.entries[2]; !ok {
+		t.Fatal("matched player dropped after 20 s")
+	}
+}
+
+// The same cabinet queuing again under a new node id replaces its old search.
+func TestSameCabinetRequeueReplaces(t *testing.T) {
+	m := teamMatcher()
+	m.cfg.RoomSize = 2
+	queueFrom(m, 1, "PAUL", "203.0.113.1")
+	queueFrom(m, 2, "PAUL", "203.0.113.1")
+	if _, ok := m.entries[1]; ok {
+		t.Fatal("old search from the same cabinet still queued")
+	}
+	if m.entries[2].roomID != 0 {
+		t.Fatal("cabinet matched against itself")
+	}
+	// same serial on another PC in the same house is a different player
+	queueLocal(m, 3, "PAUL", "203.0.113.1", "192.168.1.11")
+	if m.entries[2].roomID == 0 || m.entries[2].roomID != m.entries[3].roomID {
+		t.Fatal("two players sharing a serial couldn't match")
+	}
+}

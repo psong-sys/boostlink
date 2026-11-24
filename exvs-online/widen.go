@@ -29,10 +29,13 @@ func pairKey(a, b string) string {
 	return a + "|" + b
 }
 
+// entrySerials names the cabinets in an entry for failed-pair memory. The serial is
+// paired with the address that queued it, because players who unzipped the same game
+// copy can share a serial and must not be mistaken for each other.
 func entrySerials(e *entry) []string {
 	var s []string
 	for _, c := range e.clients {
-		s = append(s, c.GetPcbSerial())
+		s = append(s, c.GetPcbSerial()+"@"+e.ip)
 	}
 	return s
 }

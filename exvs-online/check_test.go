@@ -58,6 +58,7 @@ func fakeChecker(gameDir string, cfg Config) *checker {
 	}
 	c.stunMapped = func(local, server string) (string, error) { return "1.2.3.4:5000", nil }
 	c.httpGet = func(string) (time.Duration, error) { return 40 * time.Millisecond, nil }
+	c.procs = func() []string { return nil }
 	return c
 }
 
@@ -118,5 +119,21 @@ func TestBattleModesRealFormat(t *testing.T) {
 	v, err := battleModes(filepath.Join(d, "29", "testmode_pcb.json"))
 	if err != nil || len(v) != 3 || v[0] != 1 {
 		t.Fatal(v, err)
+	}
+}
+
+func TestPackSerialAndSnowLauncher(t *testing.T) {
+	c := fakeChecker(fakeGame(t, "Ethernet", 0), defaultConfig())
+	c.procs = func() []string { return []string{"explorer.exe", "SnowLauncher_English.exe"} }
+	r := c.Run()
+	if status(r, "serial").Status != "warn" {
+		t.Errorf("pack serial: %+v", status(r, "serial"))
+	}
+	if status(r, "snowlauncher").Status != "warn" {
+		t.Errorf("snowlauncher: %+v", status(r, "snowlauncher"))
+	}
+	c.procs = func() []string { return []string{"explorer.exe"} }
+	if status(c.Run(), "snowlauncher").Status != "" {
+		t.Error("warned about SnowLauncher that isn't running")
 	}
 }

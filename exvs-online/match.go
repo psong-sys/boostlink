@@ -184,6 +184,7 @@ func (m *Matcher) handleTeam(req *mms.Request, remoteIP, team string) *mms.Respo
 			resp.Code = mms.ErrorCode_ERR_REQUEST.Enum()
 			break
 		}
+		m.dropSameCabinetLocked(em.Myclient, remoteIP)
 		applyID := em.GetApplyId()
 		if applyID == 0 {
 			applyID = m.nextApp
@@ -372,7 +373,11 @@ func (m *Matcher) pickWithLocked(size int, avoidFailed bool) []*unit {
 	head := m.queue[0]
 	var pick []*unit
 	total := 0
+	now := time.Now()
 	for _, u := range m.unitsLocked() {
+		if unitGone(u, now) {
+			continue
+		}
 		if m.cfg.RequireSameWorld && u.es[0].world != head.world {
 			continue
 		}
@@ -396,6 +401,15 @@ func (m *Matcher) pickWithLocked(size int, avoidFailed bool) []*unit {
 		}
 	}
 	return nil
+}
+
+func unitGone(u *unit, now time.Time) bool {
+	for _, e := range u.es {
+		if goneLocked(e, now) {
+			return true
+		}
+	}
+	return false
 }
 
 func (m *Matcher) unitFailedLocked(pick []*unit, u *unit) bool {
@@ -486,6 +500,37 @@ func (m *Matcher) dequeueLocked(e *entry) {
 	}
 }
 
+// dropSameCabinetLocked removes a waiting entry left behind by the same cabinet when it
+// queues again under a new node id, so nobody gets matched against a search that no
+// longer exists, or against themselves. Same cabinet = same serial, same public address
+// and same local ip:port; two PCs in one house differ in their local address.
+func (m *Matcher) dropSameCabinetLocked(c *mms.Client, ip string) {
+	serial, local := c.GetPcbSerial(), fmt.Sprintf("%s:%d", c.GetLocalIpaddress(), c.GetLocalPort())
+	if serial == "" || ip == "" || c.GetLocalIpaddress() == "" {
+		return
+	}
+	for _, e := range append([]*entry(nil), m.queue...) {
+		if e.bot || e.ip != ip || len(e.clients) == 0 {
+			continue
+		}
+		o := e.clients[0]
+		if o.GetPcbSerial() == serial && fmt.Sprintf("%s:%d", o.GetLocalIpaddress(), o.GetLocalPort()) == local {
+			m.removeLocked(e)
+			log.Printf("entry: node %d replaced by a new search from the same cabinet", e.nodeID)
+		}
+	}
+}
+
+// staleWaiting is how long a waiting player may go without polling before they're dropped.
+// The game polls every 3 seconds, so this is several missed polls: the game was closed,
+// crashed or lost its connection, and pairing anyone with it would only fail.
+const staleWaiting = 20 * time.Second
+
+// goneLocked reports a waiting entry whose game stopped polling.
+func goneLocked(e *entry, now time.Time) bool {
+	return !e.bot && e.roomID == 0 && now.Sub(e.lastSeen) > staleWaiting
+}
+
 func (m *Matcher) removeLocked(e *entry) {
 	m.dequeueLocked(e)
 	delete(m.entries, e.nodeID)
@@ -498,7 +543,7 @@ func (m *Matcher) expire() {
 	for _, e := range m.entries {
 		waiting := e.roomID == 0 && now.Sub(e.entered) > e.timeout
 		stale := !e.bot && now.Sub(e.lastSeen) > 2*time.Minute
-		if waiting || stale {
+		if waiting || stale || goneLocked(e, now) {
 			m.removeLocked(e)
 		}
 	}

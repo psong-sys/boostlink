@@ -60,6 +60,7 @@ type checker struct {
 	stunMapped  func(local, server string) (string, error)         // returns mapped ip:port
 	stunServers []string
 	httpGet     func(url string) (time.Duration, error)
+	procs       func() []string // running program names
 }
 
 func newChecker(gameDir string, cfg Config, cfgFound bool) *checker {
@@ -67,7 +68,7 @@ func newChecker(gameDir string, cfg Config, cfgFound bool) *checker {
 	return &checker{gameDir: gameDir, cfg: cfg, cfgFound: cfgFound,
 		ifaces: net.Interfaces, addrs: func(i net.Interface) ([]net.Addr, error) { return i.Addrs() },
 		systemDir: sys, firewall: windowsFirewall, stunMapped: stunMapped,
-		stunServers: []string{"stun.l.google.com:19302", "stun.cloudflare.com:3478"},
+		stunServers: []string{"stun.l.google.com:19302", "stun.cloudflare.com:3478"}, procs: runningExes,
 		httpGet: func(u string) (time.Duration, error) {
 			c := &http.Client{Timeout: 5 * time.Second}
 			t := time.Now()
@@ -82,6 +83,10 @@ func newChecker(gameDir string, cfg Config, cfgFound bool) *checker {
 			return time.Since(t), nil
 		}}
 }
+
+// packSerial is the machine serial the common game copy ships with. Two players with
+// the same serial look like one cabinet to the game, so the launcher replaces it.
+const packSerial = "31Yf"
 
 // findGameDir looks for vsac29_Release.exe next to exvs-online, one level up, or in the working dir.
 func findGameDir(exeDir string) string {
@@ -269,8 +274,21 @@ func (c *checker) Run() *CheckReport {
 	// 4. Serial
 	if s, _ := readIniValue(cfgIni, "serial"); s == "" {
 		r.add("serial", "Machine serial", "warn", "config.ini has no serial.", "Set one in the launcher's Settings. It must differ from your opponent's.")
+	} else if s == packSerial {
+		r.add("serial", "Machine serial", "warn", "Yours is "+s+", the one the game copy came with, so other players probably have it too.", "Open the launcher once: it picks a random serial for you. Or type any other 4 letters/digits in Settings.")
 	} else {
 		r.add("serial", "Machine serial", "info", "Yours is "+s+". It must be different from your opponent's, so compare them once.", "")
+	}
+
+	// 4b. SnowLauncher fights Boost Link: it starts the stock card server on port 28080
+	// and rewrites config.ini from its own copy.
+	if c.procs != nil {
+		for _, p := range c.procs() {
+			if strings.HasPrefix(strings.ToLower(p), "snowlauncher") {
+				r.add("snowlauncher", "SnowLauncher", "warn", p+" is running. It starts its own card server and overwrites config.ini, which breaks Boost Link.", "Close SnowLauncher and start the game from the Boost Link launcher only.")
+				break
+			}
+		}
 	}
 
 	// 5. Online mode

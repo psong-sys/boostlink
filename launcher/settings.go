@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"math/big"
 	"net"
 	"os"
 	"path/filepath"
@@ -186,6 +188,29 @@ type Detected struct {
 	NoVCRT2010  bool     `json:"noVcrt2010"`
 	Version     string   `json:"version"`
 	Server      string   `json:"defaultServer"`
+	NewSerial   bool     `json:"newSerial"` // serial was the pack default and got replaced
+}
+
+// packSerial is the machine serial the common game copy ships with.
+const packSerial = "31Yf"
+
+// randomSerial makes a serial shaped like the pack's (two digits, an upper and a lower
+// case letter), never the pack's own.
+func randomSerial() string {
+	const digits, upper, lower = "0123456789", "ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnpqrstuvwxyz"
+	pick := func(set string) byte {
+		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(set))))
+		if err != nil {
+			return set[time.Now().UnixNano()%int64(len(set))]
+		}
+		return set[n.Int64()]
+	}
+	for {
+		s := string([]byte{pick(digits), pick(digits), pick(upper), pick(lower)})
+		if s != packSerial {
+			return s
+		}
+	}
 }
 
 func truthy(s string) bool {
@@ -230,6 +255,13 @@ func readSettings() (Settings, Detected, error) {
 		Windowed:      truthy(g("Windowed")),
 		Borderless:    truthy(g("BorderlessWindow")),
 		Server:        g("Server"),
+	}
+	if s.Game.Serial == "" || s.Game.Serial == packSerial {
+		// Everyone who copied the same game folder has the same serial, and the game and
+		// the match server treat two players with one serial as one cabinet. Pick a random
+		// one; it's written to config.ini on the next save or start.
+		s.Game.Serial = randomSerial()
+		d.NewSerial = true
 	}
 	s.Game.Resolution, _ = cfg.Get("display", "Resolution")
 	fl, _ := cfg.Get("display", "FramerateLimit")

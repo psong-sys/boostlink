@@ -7,11 +7,12 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
 
-const sampleConfig = "[config]\r\n# Game mode, Client or LM.\r\nmode =Client\r\nserial =31Yf\r\n\r\n# Card server address\r\nServer =127.0.0.1:28080\r\nWindowed =True\r\nInterfaceName=Radmin VPN\r\n\r\n[keyboard]\r\nEnabled =True\r\nA =Z,A,S,F \r\nTest=F7\r\n\r\n[controller]\r\nEnabled =True\r\nTest=9\r\n\r\n[display]\r\nResolution=1080p\r\nFramerateLimit=True\r\n"
+const sampleConfig = "[config]\r\n# Game mode, Client or LM.\r\nmode =Client\r\nserial =18Bt\r\n\r\n# Card server address\r\nServer =127.0.0.1:28080\r\nWindowed =True\r\nInterfaceName=Radmin VPN\r\n\r\n[keyboard]\r\nEnabled =True\r\nA =Z,A,S,F \r\nTest=F7\r\n\r\n[controller]\r\nEnabled =True\r\nTest=9\r\n\r\n[display]\r\nResolution=1080p\r\nFramerateLimit=True\r\n"
 
 func TestIniPreservesLayout(t *testing.T) {
 	f := ParseIni(sampleConfig)
@@ -57,7 +58,7 @@ func TestWriteSettingsBacksUpAndEdits(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !d.StockCard || s.Card.ChipID != "exvs2ib123" || s.Game.Serial != "31Yf" {
+	if !d.StockCard || s.Card.ChipID != "exvs2ib123" || s.Game.Serial != "18Bt" || d.NewSerial {
 		t.Fatalf("read wrong values: %+v %+v", s, d)
 	}
 
@@ -308,5 +309,32 @@ func TestSafeScreenAvoidsTrueFullscreen(t *testing.T) {
 	w := safeScreen(GameSettings{Windowed: true, Borderless: false})
 	if !w.Windowed || w.Borderless {
 		t.Fatalf("window mode should stay a window, got %+v", w)
+	}
+}
+
+func TestPackSerialReplaced(t *testing.T) {
+	dir, lc := setupGameDir(t)
+	cfgPath := filepath.Join(dir, "config.ini")
+	os.WriteFile(cfgPath, []byte(strings.Replace(sampleConfig, "serial =18Bt", "serial =31Yf", 1)), 0644)
+	if err := saveLauncherConfig(lc); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(launcherJSONPath())
+	s, d, err := readSettings()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !d.NewSerial || s.Game.Serial == packSerial || !regexp.MustCompile(`^[0-9]{2}[A-Z][a-z]$`).MatchString(s.Game.Serial) {
+		t.Fatalf("serial %q newSerial %v", s.Game.Serial, d.NewSerial)
+	}
+	if err := writeSettings(s); err != nil {
+		t.Fatal(err)
+	}
+	b, _ := os.ReadFile(cfgPath)
+	if !strings.Contains(string(b), "serial ="+s.Game.Serial+"\r\n") {
+		t.Errorf("new serial not saved:\n%s", b)
+	}
+	if s2, d2, _ := readSettings(); s2.Game.Serial != s.Game.Serial || d2.NewSerial {
+		t.Error("serial changed again on the next read")
 	}
 }

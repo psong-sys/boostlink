@@ -248,7 +248,7 @@ func (r *Runner) startHelperWith(name, exe string, args []string, dir string, p 
 }
 
 func (r *Runner) run() error {
-	s, _, err := readSettings()
+	s, det, err := readSettings()
 	if err != nil {
 		return err
 	}
@@ -285,6 +285,10 @@ func (r *Runner) run() error {
 	}
 	if !s.Game.FramerateLim {
 		r.logf("config.ini had the 60 FPS limit off, which makes the game run too fast. Turning it on")
+		fix = true
+	}
+	if det.NewSerial {
+		r.logf("config.ini had the game copy's shared machine serial. Using %s instead so you don't clash with other players", s.Game.Serial)
 		fix = true
 	}
 	if fix {
