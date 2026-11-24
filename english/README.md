@@ -1,6 +1,6 @@
 # exvs-english
 
-English patch for EXVS2 IB 1.04.27 (vsac29_Release.exe and vsac29_Release_LM.exe).
+English patch for EXVS2 IB (vsac29_Release.exe and vsac29_Release_LM.exe). Made on 1.04.27; works on later builds too.
 
 ## What it translates
 
@@ -25,7 +25,8 @@ Put exvs-english.exe in an `exvs-english` folder inside the game folder and doub
 - `copies`: leaves the originals alone and writes vsac29_Release_EN.exe / vsac29_Release_LM_EN.exe.
 - `status`: shows which version each exe is.
 
-It checks every string before writing and refuses to touch a different build.
+It finds each string by its content, so it works on newer game builds: strings a build no longer has are skipped and counted.
+It refuses an exe that has fewer than 80% of the strings. Where it wrote is saved next to the backup (`<exe>.english.json`), so restore never guesses.
 
 ## Source
 

@@ -117,8 +117,8 @@ func main() {
 	gameDir := flag.String("game", "", "with -check: the game folder (default: found automatically)")
 	fixFW := flag.Bool("fix-firewall", false, "add Windows Firewall allow rules (shows an admin prompt) and exit")
 	probe := flag.Bool("probe", false, "read the running game's screen steps into hang-probe.txt and exit")
-	patchGame := flag.Bool("patch-game", false, "apply the online result-screen fix to the game exe and exit")
-	unpatchGame := flag.Bool("unpatch-game", false, "undo the result-screen fix and exit")
+	patchGame := flag.Bool("patch-game", false, "apply the result-screen fix (game exe) and the keyboard focus fix (bngrw.dll), then exit")
+	unpatchGame := flag.Bool("unpatch-game", false, "undo the result-screen and keyboard focus fixes, then exit")
 	flag.Parse()
 	if *patchGame || *unpatchGame {
 		dir := *gameDir
@@ -129,16 +129,36 @@ func main() {
 			fmt.Println("couldn't find vsac29_Release.exe; pass -game <folder>")
 			os.Exit(1)
 		}
-		f := patchGameExe
+		fexe, fdll := patchGameExe, patchFocusDLL
 		if *unpatchGame {
-			f = unpatchGameExe
+			fexe, fdll = unpatchGameExe, unpatchFocusDLL
 		}
-		msg, err := f(filepath.Join(dir, "vsac29_Release.exe"))
-		if err != nil {
+		failed := false
+		if exe, err := os.ReadFile(filepath.Join(dir, "vsac29_Release.exe")); err == nil {
+			if p, err := parsePE(exe); err == nil {
+				fmt.Println("game build:", buildName(p))
+			}
+			if dll, err := os.ReadFile(filepath.Join(dir, "bngrw.dll")); err == nil {
+				if err := checkDLLMatchesExe(dll, exe); err != nil {
+					fmt.Println("warning:", err)
+				}
+			}
+		}
+		if msg, err := fexe(filepath.Join(dir, "vsac29_Release.exe")); err != nil {
 			fmt.Println("result-screen fix:", err)
+			failed = true
+		} else {
+			fmt.Println("result-screen fix:", msg)
+		}
+		if msg, err := fdll(filepath.Join(dir, "bngrw.dll")); err != nil {
+			fmt.Println("keyboard focus fix:", err)
+			failed = true
+		} else {
+			fmt.Println("keyboard focus fix:", msg)
+		}
+		if failed {
 			os.Exit(1)
 		}
-		fmt.Println("result-screen fix:", msg)
 		return
 	}
 	if *probe {
@@ -229,6 +249,12 @@ func main() {
 				log.Printf("result-screen fix not applied: %v", err)
 			} else {
 				log.Printf("result-screen fix: %s", msg)
+			}
+			exe, _ := os.ReadFile(filepath.Join(dir, "vsac29_Release.exe"))
+			if dll, err := os.ReadFile(filepath.Join(dir, "bngrw.dll")); err == nil {
+				if err := checkDLLMatchesExe(dll, exe); err != nil {
+					log.Printf("warning: %v", err)
+				}
 			}
 		}
 		log.Printf("%s mode: listening on %s, card server %s", cfg.Mode, cfg.Proxy.Listen, cfg.Proxy.Upstream)

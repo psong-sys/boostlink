@@ -136,7 +136,7 @@ func resolvePaths(c LauncherConfig) Paths {
 	p.GameExe = filepath.Join(p.GameDir, gameExeName)
 	p.LMExe = filepath.Join(p.GameDir, lmExeName)
 	p.LMIni = filepath.Join(p.GameDir, "lmnfig.ini")
-	p.ServerExe = filepath.Join(p.GameDir, "Server", "Server-Infinite.exe")
+	p.ServerExe = findCardServer(p.GameDir)
 	p.OnlineExe = c.OnlineExe
 	if p.OnlineExe == "" {
 		p.OnlineExe = filepath.Join(p.GameDir, "exvs-online", "exvs-online.exe")
@@ -644,4 +644,25 @@ func validHost(h string) bool {
 		return ip.To4() != nil
 	}
 	return len(h) <= 253 && hostnameRe.MatchString(h) && strings.ContainsAny(h, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+}
+
+// cardServerCandidates lists where game packs keep the card server. Older packs ship
+// Server\Server-Infinite.exe; newer ones (Server-Infinite 1.1.2) ship server\Server.exe
+// with the same web API, database name and Configurations folder.
+var cardServerCandidates = [][]string{
+	{"Server", "Server-Infinite.exe"},
+	{"Server", "Server.exe"},
+	{"Server-Infinite-v1.1.2", "Server.exe"},
+}
+
+// findCardServer returns the first card server that exists in gameDir, or the
+// classic path when none does (so the error message names the usual place).
+func findCardServer(gameDir string) string {
+	for _, c := range cardServerCandidates {
+		p := filepath.Join(append([]string{gameDir}, c...)...)
+		if st, err := os.Stat(p); err == nil && !st.IsDir() {
+			return p
+		}
+	}
+	return filepath.Join(gameDir, "Server", "Server-Infinite.exe")
 }
