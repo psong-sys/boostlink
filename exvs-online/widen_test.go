@@ -33,7 +33,7 @@ func TestFailedPairTriesSomeoneElse(t *testing.T) {
 	}
 	// A reports that the connection timed out.
 	m.addResult(ConnResult{Result: "FAIL_TIMEOUT", ApplyID: a.applyID, Found: true})
-	if l := m.failedPairList(); len(l) != 1 || l[0] != "AAAA|BBBB" {
+	if l := m.failedPairList(); len(l) != 1 || l[0] != "AAAA@203.0.113.1|BBBB@203.0.113.1" {
 		t.Fatalf("failed pairs %v", l)
 	}
 	// C is already searching when A and B come back: A should get C, not B again.
