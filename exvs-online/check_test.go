@@ -27,7 +27,8 @@ func writeSvd(t *testing.T, path, payload string) {
 
 func fakeGame(t *testing.T, iface string, mode int) string {
 	d := t.TempDir()
-	for _, f := range []string{"vsac29_Release.exe", "vsac29_Release_LM.exe", "bngrw.dll"} {
+	// the Visual C++ DLLs stand in for the system folder (the checker's systemDir is this folder)
+	for _, f := range []string{"vsac29_Release.exe", "vsac29_Release_LM.exe", "bngrw.dll", "msvcr100.dll", "vcruntime140.dll"} {
 		os.WriteFile(filepath.Join(d, f), []byte("x"), 0644)
 	}
 	os.WriteFile(filepath.Join(d, "config.ini"), []byte("[config]\r\nserial =31Yf\r\nServer =127.0.0.1:28090\r\nInterfaceName="+iface+"\r\n"), 0644)
