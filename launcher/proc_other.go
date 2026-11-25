@@ -27,7 +27,14 @@ func killTree(pid int) error { return syscall.Kill(pid, syscall.SIGKILL) }
 
 func messageBox(title, text string, isError bool) { fmt.Println(title+":", text) }
 
-func openUI(url string) { fmt.Println("open", url) }
+func openUI(url string) <-chan struct{} {
+	fmt.Println("open", url)
+	done := make(chan struct{})
+	close(done)
+	return done
+}
+
+func focusUIWindow() bool { return false }
 
 func createShortcuts() (string, error) { return "", errors.New("only on Windows") }
 
@@ -37,5 +44,4 @@ func portOwner(port int) string { return "" }
 
 func openURL(url string)                                         { fmt.Println("open", url) }
 func missingVCRT2010() bool                                      { return false }
-func fitUIWindow()                                               {}
 func fillScreen(done <-chan struct{}, logf func(string, ...any)) {}

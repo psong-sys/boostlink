@@ -96,15 +96,23 @@ func findEdge() string {
 }
 
 // openUI shows the settings page in an Edge app window (no tabs or address
-// bar), falling back to the default browser.
-func openUI(url string) {
+// bar), falling back to the default browser. The returned channel closes once
+// the new window has been sized.
+func openUI(url string) <-chan struct{} {
+	done := make(chan struct{})
 	if edge := findEdge(); edge != "" {
-		if exec.Command(edge, "--app="+url, "--window-size=1120,760").Start() == nil {
-			go fitUIWindow()
-			return
+		before := map[windows.HWND]bool{}
+		for _, h := range uiWindows() {
+			before[h] = true
+		}
+		if edgeAppCmd(edge, url).Start() == nil {
+			go func() { fitUIWindow(before); close(done) }()
+			return done
 		}
 	}
 	_ = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	close(done)
+	return done
 }
 
 // createShortcuts puts "EXVS2 Play" and "EXVS2 Launcher" on the desktop.
