@@ -1,6 +1,6 @@
 # exvs-english
 
-English patch for EXVS2 IB (vsac29_Release.exe and vsac29_Release_LM.exe). Made on 1.04.27; works on later builds too.
+English patch for EXVS2 IB (vsac29_Release.exe and vsac29_Release_LM.exe). Made on 1.04.27; the screen set (`ui-en`) is rebuilt for the 2026-04 build, which already ships most screens in English.
 
 ## What it translates
 

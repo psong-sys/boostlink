@@ -71,7 +71,7 @@ yet counts as a solo for 2v2 rooms. Both players still pick Mix Match and solo s
 
 Whoever runs the match server can open **`http://<match server>:28090/status`** in a browser (or `:28100/status` when it runs in `match` mode). It shows how many players are searching, how long they've waited and the recent matches, and refreshes every 5 seconds. `/status.json` has the same data for a website or a Discord bot. It shows no IPs or card serials.
 
-The page also has a **leaderboard** (wins, losses, win %, current and best win streak, average damage) and the **recent fights** ("Paul beat Friend"). After every online match each player's exvs-online sends the game's result to the match server (`POST /result`) under the card's pilot name. The server only takes results from addresses that played a match through it in the last two hours, counts each player once per match, and saves everything to `stats.json` next to its config, so a restart keeps the board. A player can set `"statsName"` in the `proxy` section to show another name, or `"noShareStats": true` to keep results off the board (the result still appears as a `MATCH` line in traffic.log). To reset the board, stop the server and delete `stats.json`.
+The page also has a **leaderboard** (wins, losses, win %, current and best win streak, average damage) and the **recent fights** ("Amuro beat Char"). After every online match each player's exvs-online sends the game's result to the match server (`POST /result`) under the card's pilot name. The server only takes results from addresses that played a match through it in the last two hours, counts each player once per match, and saves everything to `stats.json` next to its config, so a restart keeps the board. A player can set `"statsName"` in the `proxy` section to show another name, or `"noShareStats": true` to keep results off the board (the result still appears as a `MATCH` line in traffic.log). To reset the board, stop the server and delete `stats.json`.
 
 ## Built-in relay (TURN), for when two players match but can't connect
 
@@ -145,7 +145,9 @@ reply), so it can be raised there if ping turns out to be the only problem.
 ## Building from source
 
 Go 1.24+: `GOOS=windows GOARCH=amd64 go build -o exvs-online.exe .` and `go test .` for the tests.
-The `pb/` packages were generated from the protobuf descriptors embedded in `vsac29_Release.exe` (v1.04.27).
+The `pb/` packages are generated from the protobuf descriptors embedded in `vsac29_Release.exe`, currently the
+2026-04 build (protocol revision 141). To regenerate them for another build, install `protoc-gen-go` v1.36.6 and run
+`go run ./pb/gen <path to vsac29_Release.exe>`. `-check` warns when the game's revision is newer than `pb/`.
 
 ## Game patches (`-patch-game`)
 
