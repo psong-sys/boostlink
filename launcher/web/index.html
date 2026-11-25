@@ -1415,6 +1415,12 @@ function fitWindow() {
 fitWindow();
 window.addEventListener('load', fitWindow);
 window.addEventListener('resize', fitWindow);
+// The page already scales itself to the window, so browser zoom (Ctrl+wheel,
+// Ctrl+plus/minus) only crops it, and Edge would remember it. Turn it off.
+addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && ['+', '=', '-', '_', '0'].includes(e.key)) e.preventDefault();
+}, true);
 </script>
 </body>
 </html>

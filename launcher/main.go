@@ -20,7 +20,7 @@ import (
 //go:embed web
 var webFS embed.FS
 
-const version = "1.8.0"
+const version = "1.8.1"
 
 func main() {
 	play := flag.Bool("play", false, "start the game right away without the settings window")
@@ -40,9 +40,12 @@ func main() {
 		ln, err = net.Listen("tcp", uiAddr)
 	}
 	if err != nil {
-		// Probably already open: just show the existing window.
-		openUI("http://" + uiAddr + "/")
-		fitUIWindow()
+		// Already running: bring its window to the front instead of opening
+		// a second one. Only open a window if it has none (it was closed
+		// while the game kept the launcher running).
+		if !focusUIWindow() {
+			<-openUI("http://" + uiAddr + "/")
+		}
 		return
 	}
 	srv := newUIServer()
