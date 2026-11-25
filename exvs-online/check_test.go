@@ -7,6 +7,8 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 	"time"
 )
@@ -60,6 +62,7 @@ func fakeChecker(gameDir string, cfg Config) *checker {
 	c.stunMapped = func(local, server string) (string, error) { return "1.2.3.4:5000", nil }
 	c.httpGet = func(string) (time.Duration, error) { return 40 * time.Millisecond, nil }
 	c.procs = func() []string { return nil }
+	c.bugchecks = func() []string { return nil }
 	return c
 }
 
@@ -136,5 +139,41 @@ func TestPackSerialAndSnowLauncher(t *testing.T) {
 	c.procs = func() []string { return []string{"explorer.exe"} }
 	if status(c.Run(), "snowlauncher").Status != "" {
 		t.Error("warned about SnowLauncher that isn't running")
+	}
+}
+
+func TestCheckGraphics(t *testing.T) {
+	d := t.TempDir()
+	c := fakeChecker(d, Config{})
+	run := func() CheckItem { r := &CheckReport{}; c.checkGraphics(r); return status(r, "graphics") }
+
+	if it := run(); it.Status != "info" || !strings.Contains(it.Detail, "DirectX 12") {
+		t.Fatalf("off: %+v", it)
+	}
+	c.bugchecks = func() []string { return []string{"2026-11-20"} }
+	if it := run(); it.Status != "warn" || !strings.Contains(it.Fix, "Vulkan mode") {
+		t.Fatalf("off with crashes: %+v", it)
+	}
+	c.bugchecks = nil
+	os.WriteFile(filepath.Join(d, "dxgi.dll"), []byte("x"), 0644)
+	if it := run(); it.Status != "warn" {
+		t.Fatalf("partial: %+v", it)
+	}
+	os.WriteFile(filepath.Join(d, "d3d12.dll"), []byte("x"), 0644)
+	os.WriteFile(filepath.Join(d, "d3d12core.dll"), []byte("x"), 0644)
+	os.WriteFile(filepath.Join(d, "vulkan-1.dll"), []byte("x"), 0644) // systemDir is the game dir in tests
+	if it := run(); it.Status != "info" || !strings.Contains(it.Detail, "didn't install") {
+		t.Fatalf("other files: %+v", it)
+	}
+	os.MkdirAll(filepath.Join(d, "exvs-launcher"), 0755)
+	os.WriteFile(filepath.Join(d, "exvs-launcher", "vulkan.json"), []byte(`{"on":true,"versions":{"vkd3d-proton":"3.1","DXVK":"3.1.1"}}`), 0644)
+	if it := run(); it.Status != "ok" || !strings.Contains(it.Detail, "3.1.1") {
+		t.Fatalf("on: %+v", it)
+	}
+	if runtime.GOOS == "windows" {
+		os.Remove(filepath.Join(d, "vulkan-1.dll"))
+		if it := run(); it.Status != "fail" {
+			t.Fatalf("no driver: %+v", it)
+		}
 	}
 }

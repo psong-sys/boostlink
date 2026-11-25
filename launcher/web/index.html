@@ -531,6 +531,14 @@
           <div class="note">Borderless stretches the game over your whole screen. There's no true fullscreen: the game turns its 60 FPS limit off there and runs too fast on monitors above 60 Hz.</div>
         </div>
         <div class="panel">
+          <h2>Graphics</h2>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button class="btn" id="vulkanBtn" type="button" style="flex:none"><span>Turn on Vulkan mode</span></button>
+            <div class="note" style="margin:0" id="vulkanState">Checking…</div>
+          </div>
+          <div class="note">Vulkan mode makes the game draw through Vulkan (vkd3d-proton and DXVK, downloaded from their official pages) instead of DirectX 12. Turn it on if your PC blue-screens with VIDEO_MEMORY_MANAGEMENT_INTERNAL while playing. Turning it off puts back exactly what was there before.</div>
+        </div>
+        <div class="panel">
           <h2>Live Monitor</h2>
           <div class="row">
             <label class="f">WINDOW
@@ -894,6 +902,26 @@ $('fwBtn').onclick = async () => {
   toast('Windows will ask for permission. Click Yes.');
   try { await api('POST', '/api/fix-firewall'); toast('Firewall rules added.'); runCheck(); } catch (e) { toast(e.message, true); }
 };
+
+// Vulkan mode
+let vulkanOn = false, vulkanState = '';
+function showVulkan(st) {
+  vulkanState = st.state; vulkanOn = st.state === 'on' || st.state === 'partial';
+  $('vulkanState').textContent = st.detail || '';
+  $('vulkanBtn').innerHTML = '<span>' + (st.state === 'partial' ? 'Repair Vulkan mode' : vulkanOn ? 'Turn off Vulkan mode' : 'Turn on Vulkan mode') + '</span>';
+}
+async function loadVulkan() { try { showVulkan(await api('GET', '/api/vulkan')); } catch (e) { $('vulkanState').textContent = e.message; } }
+$('vulkanBtn').onclick = async () => {
+  const b = $('vulkanBtn'); b.disabled = true;
+  const turnOn = !vulkanOn || vulkanState === 'partial';
+  $('vulkanState').textContent = turnOn ? 'Downloading and installing… (about 25 MB the first time)' : 'Turning off…';
+  try {
+    showVulkan(await api('POST', '/api/vulkan', { on: turnOn }));
+    toast(turnOn ? 'Vulkan mode is on. It takes effect the next time the game starts.' : 'Vulkan mode is off. The game draws with DirectX 12 again.');
+  } catch (e) { toast(e.message, true); loadVulkan(); }
+  finally { b.disabled = false; }
+};
+loadVulkan();
 
 // first run
 function openWelcome() {
