@@ -49,6 +49,13 @@ jobs:
         if: steps.ver.outputs.skip != 'true'
         run: |
           mkdir -p dist
+          # exvs-online embeds wintun.dll for Store Team (Route Battle co-op). DLLs aren't
+          # committed, so fetch the official 0.14.1 build and check the amd64 DLL's hash.
+          curl -sSfL -o /tmp/wintun.zip https://www.wintun.net/builds/wintun-0.14.1.zip
+          unzip -q -o /tmp/wintun.zip -d /tmp/wintun
+          mkdir -p exvs-online/wintun
+          cp /tmp/wintun/wintun/bin/amd64/wintun.dll exvs-online/wintun/wintun.dll
+          echo "e5da8447dc2c320edc0fc52fa01885c103de8c118481f683643cacc3220dafce  exvs-online/wintun/wintun.dll" | sha256sum -c -
           (cd launcher && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o ../dist/exvs-launcher.exe .)
           (cd exvs-online && GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../dist/exvs-online.exe .)
           cp exvs-online/exvs-online.friend.json exvs-online/exvs-online.host.json dist/
