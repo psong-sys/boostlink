@@ -330,6 +330,9 @@ func validate(s Settings) error {
 	default:
 		return fmt.Errorf("unknown Store Team setting %q", s.Launcher.StoreTeam)
 	}
+	if s.Launcher.StoreTeam != "" && s.Launcher.Mode == "friend" && strings.TrimSpace(s.Launcher.TeamCode) == "" {
+		return errors.New("Route Battle co-op needs a TEAM CODE: type the same code as your friend (or set co-op to Off)")
+	}
 	switch s.Launcher.LiveMonitor {
 	case "", "hide", "minimize", "show", "off":
 	default:
