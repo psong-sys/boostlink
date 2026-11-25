@@ -167,3 +167,31 @@ func testmodeFiles(gameDir string) []string {
 		filepath.Join(gameDir, "29", "testmode_lm.json"),
 	}
 }
+
+const networkIDKey = ".TestModeParam.game.networkId"
+
+// setSvdInt sets one storage key's "value" in an svd1 testmode file and returns
+// the old value. Nothing is written when it already has that value.
+func setSvdInt(path, key string, v int) (int, error) {
+	hdr, payload, err := readSvd(path)
+	if err != nil {
+		return 0, err
+	}
+	old, s, e, ok := findValue(payload, key)
+	if !ok {
+		return 0, fmt.Errorf("%s not found", key)
+	}
+	if old == v {
+		return old, nil
+	}
+	out := append(append(append([]byte(nil), payload[:s]...), strconv.Itoa(v)...), payload[e:]...)
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, encodeSvd(hdr, out), 0644); err != nil {
+		return old, err
+	}
+	if err := os.Rename(tmp, path); err != nil {
+		os.Remove(tmp)
+		return old, err
+	}
+	return old, nil
+}

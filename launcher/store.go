@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -104,6 +105,7 @@ func (r *Runner) startStoreTeam(lc LauncherConfig, p Paths, realAdapter string) 
 			r.logf("Couldn't put the network adapter back to %s: %v", realAdapter, err)
 		}
 	}
+	lastIP := ""
 	deadline := time.Now().Add(90 * time.Second)
 	last := ""
 	for {
@@ -118,6 +120,7 @@ func (r *Runner) startStoreTeam(lc LauncherConfig, p Paths, realAdapter string) 
 				return nil, fmt.Errorf("Store Team: %s", st.Error)
 			}
 			if st.State == "connected" && st.IP != "" {
+				lastIP = st.IP
 				r.logf("Store Team network up: this PC is %s, %d player(s) on code %q so far", st.IP, st.Members, strings.TrimSpace(lc.TeamCode))
 				break
 			}
@@ -141,10 +144,45 @@ func (r *Runner) startStoreTeam(lc LauncherConfig, p Paths, realAdapter string) 
 		undo()
 		return nil, fmt.Errorf("pointing the game at the Boost Link adapter: %w", err)
 	}
+	// Every cabinet in a store needs its own GAME PCB ID, or the Live Monitor stops
+	// the newcomer with 21-14 "Duplicate GAME PCB ID". Use the team address's last
+	// number (1-8), which the relay hands out uniquely per team.
+	if id, ok := storeCabinetID(lastIP); ok {
+		pcb := filepath.Join(p.GameDir, "29", "testmode_pcb.json")
+		if old, err := setSvdInt(pcb, networkIDKey, id); err != nil {
+			r.logf("Couldn't set this cabinet's ID for the store: %v", err)
+		} else {
+			if old != id {
+				r.logf("Cabinet ID for the store: %d (was %d, put back after the game)", id, old)
+			}
+			prev := undo
+			undo = func() {
+				prev()
+				if old != id {
+					if _, err := setSvdInt(pcb, networkIDKey, old); err != nil {
+						r.logf("Couldn't put the cabinet ID back to %d: %v", old, err)
+					}
+				}
+			}
+		}
+	}
 	note := "you're the store"
 	if lc.StoreTeam == "join" {
 		note = "joining your friend's store"
 	}
 	r.setStep("store", "done", note)
 	return undo, nil
+}
+
+// storeCabinetID turns a team address (10.77.0.N) into a cabinet ID N.
+func storeCabinetID(ip string) (int, bool) {
+	i := strings.LastIndexByte(ip, '.')
+	if i < 0 {
+		return 0, false
+	}
+	n, err := strconv.Atoi(ip[i+1:])
+	if err != nil || n < 1 || n > 15 {
+		return 0, false
+	}
+	return n, true
 }

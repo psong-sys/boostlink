@@ -351,3 +351,27 @@ func TestCommentIpAddress(t *testing.T) {
 		t.Fatal("second call changed something")
 	}
 }
+
+func TestSetSvdInt(t *testing.T) {
+	payload := []byte(`{"storage": {".TestModeParam.game.networkId": {"type": 1, "value": 0}}}`)
+	hdr := make([]byte, svdHeaderLen)
+	copy(hdr, "svd1")
+	path := filepath.Join(t.TempDir(), "testmode_pcb.json")
+	if err := os.WriteFile(path, encodeSvd(hdr, payload), 0644); err != nil {
+		t.Fatal(err)
+	}
+	old, err := setSvdInt(path, networkIDKey, 2)
+	if err != nil || old != 0 {
+		t.Fatal(old, err)
+	}
+	_, p, err := readSvd(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v, _, _, ok := findValue(p, networkIDKey); !ok || v != 2 {
+		t.Fatal(string(p))
+	}
+	if n, ok := storeCabinetID("10.77.0.3"); !ok || n != 3 {
+		t.Fatal(n)
+	}
+}
