@@ -58,15 +58,16 @@ func normTeam(s string) string {
 }
 
 type Matcher struct {
-	cfg      MatchConfig
-	mu       sync.Mutex
-	nextNode uint32
-	nextApp  uint32
-	nextRoom uint32
-	entries  map[uint32]*entry // by node id
-	queue    []*entry          // waiting, oldest first
-	recent   []roomRecord      // last rooms formed, newest last (status page)
-	results  []ConnResult      // last connection reports, newest last (status page)
+	cfg        MatchConfig
+	storeRelay *StoreRelay // Store Team relay (status page counts)
+	mu         sync.Mutex
+	nextNode   uint32
+	nextApp    uint32
+	nextRoom   uint32
+	entries    map[uint32]*entry // by node id
+	queue      []*entry          // waiting, oldest first
+	recent     []roomRecord      // last rooms formed, newest last (status page)
+	results    []ConnResult      // last connection reports, newest last (status page)
 
 	applyRoom    map[uint32][]string  // apply id -> serials it was matched with
 	failedPairs  map[string]time.Time // serial pair -> when it last failed to connect

@@ -48,6 +48,10 @@ type LauncherConfig struct {
 	// TeamCode: two players who type the same code are put on the same side of
 	// a 2v2 by the match server. Empty = normal matching (1v1 or random 2v2).
 	TeamCode string `json:"teamCode,omitempty"`
+	// StoreTeam: Route Battle co-op over the internet (needs a team code).
+	// "" = off, "host" = this PC is the store (runs the Live Monitor), "join" = join
+	// a friend's store (no Live Monitor here).
+	StoreTeam string `json:"storeTeam,omitempty"`
 }
 
 type Paths struct {
@@ -249,9 +253,14 @@ func readSettings() (Settings, Detected, error) {
 		return s, d, err
 	}
 	g := func(k string) string { v, _ := cfg.Get("config", k); return v }
+	iface := g("InterfaceName")
+	if strings.EqualFold(iface, storeAdapter) {
+		// left over from a Store Team run that didn't finish: back to the real adapter
+		iface = suggestAdapter()
+	}
 	s.Game = GameSettings{
 		Serial:        g("serial"),
-		InterfaceName: g("InterfaceName"),
+		InterfaceName: iface,
 		Windowed:      truthy(g("Windowed")),
 		Borderless:    truthy(g("BorderlessWindow")),
 		Server:        g("Server"),
@@ -315,6 +324,11 @@ func validate(s Settings) error {
 		}
 	default:
 		return fmt.Errorf("unknown mode %q", s.Launcher.Mode)
+	}
+	switch s.Launcher.StoreTeam {
+	case "", "host", "join":
+	default:
+		return fmt.Errorf("unknown Store Team setting %q", s.Launcher.StoreTeam)
 	}
 	switch s.Launcher.LiveMonitor {
 	case "", "hide", "minimize", "show", "off":

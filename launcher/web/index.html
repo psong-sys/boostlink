@@ -310,9 +310,13 @@
           <div class="ctx" id="ctx-friend" style="display:none">
             <div class="ipline"><span class="tag">SERVER</span><span class="ip" id="serverShow"></span></div>
             <div class="note" style="margin-top:0">Press PLAY, insert your card and pick a versus mode. You'll be matched with whoever else is online.</div>
-            <label class="f" style="margin-top:10px">TEAM CODE (optional, for 2v2 with a friend)
-              <input type="text" id="teamCode" maxlength="24" spellcheck="false" autocomplete="off" placeholder="leave empty for normal matches"></label>
-            <div class="note" style="margin-top:4px">You and your friend type the same code, then both pick Mix Match. You'll be teamed up once two other players are searching. Leave it empty for 1v1.</div>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+              <label class="f">TEAM CODE (optional, for playing with a friend)
+                <input type="text" id="teamCode" maxlength="24" spellcheck="false" autocomplete="off" placeholder="leave empty for normal matches"></label>
+              <label class="f" style="flex:0 0 190px;min-width:0">ROUTE BATTLE CO-OP
+                <select id="storeTeam"><option value="">Off</option><option value="host">Host (I run the store)</option><option value="join">Join my friend</option></select></label>
+            </div>
+            <div class="note" style="margin-top:4px" id="teamNote"></div>
           </div>
         </div>
         <button id="playBtn" class="play"><span>PLAY</span></button>
@@ -710,6 +714,15 @@ function adapterOptions(sel, current, d) {
   sel.value = current || d.suggestedAdapter || names[0] || '';
 }
 
+function teamNote() {
+  const st = $('storeTeam').value, code = $('teamCode').value.trim();
+  let t = 'Same code as your friend, then both pick Mix Match: you\'re teamed up for 2v2 once two others are searching. Empty = 1v1.';
+  if (st && !code) t = 'Route Battle co-op needs a team code: type the same one as your friend.';
+  else if (st === 'host') t = 'Route Battle > Team Play > Store Team. Your friend picks Join with the same code. Windows asks for admin once per launch (Yes).';
+  else if (st === 'join') t = 'Your friend hosts with the same code; start after they are in the game. No Live Monitor runs here. Windows asks for admin (Yes).';
+  $('teamNote').textContent = t;
+}
+
 function render() {
   const s = data.settings, d = data.detected;
   $('ver').textContent = 'v' + d.version;
@@ -719,6 +732,8 @@ function render() {
   document.querySelectorAll('input[name=mode]').forEach(r => r.checked = r.value === s.launcher.mode);
   $('hostIp').value = s.launcher.hostIp || '';
   $('teamCode').value = s.launcher.teamCode || '';
+  $('storeTeam').value = s.launcher.storeTeam || '';
+  teamNote();
   $('serial').value = s.game.serial || '';
   $('chipId').value = s.card.chipId || '';
   $('accessCode').value = s.card.accessCode || '';
@@ -790,6 +805,7 @@ function collect() {
   s.launcher.hostIp = $('hostIp').value.trim() || data.detected.defaultServer;
   s.launcher.advanced = $('advanced').checked;
   s.launcher.teamCode = $('teamCode').value.trim();
+  s.launcher.storeTeam = $('storeTeam').value;
   s.game.serial = $('serial').value.trim();
   s.card.chipId = $('chipId').value.trim();
   s.card.accessCode = $('accessCode').value.trim();
@@ -852,6 +868,8 @@ $('advanced').onchange = () => {
 $('showAllAdapters').onchange = () => adapterOptions($('interfaceName'), $('interfaceName').value, data.detected);
 $('resetServer').onclick = () => { $('hostIp').value = data.detected.defaultServer; setDirty(true); updateMode(); };
 $('hostIp').addEventListener('input', updateMode);
+$('teamCode').addEventListener('input', teamNote);
+$('storeTeam').addEventListener('change', teamNote);
 $('uniqueBtn').onclick = () => { makeUnique(); toast('New IDs made. Save or PLAY to keep them.'); };
 
 document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => { setDirty(true); updateMode(); });

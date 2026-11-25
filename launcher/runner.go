@@ -35,6 +35,7 @@ type Runner struct {
 	helper []*exec.Cmd // processes we started and must stop
 	solo   *exec.Cmd   // card server started on its own for the card editor
 	stop   chan struct{}
+	undo   []func() // run after the helpers are stopped (Store Team)
 }
 
 var runner = &Runner{st: Status{Stage: "Ready"}}
@@ -76,6 +77,9 @@ func planSteps(lc LauncherConfig) []Step {
 			label = "Online (Boost Link)"
 		}
 		steps = append(steps, Step{ID: "online", Label: label, State: "waiting"})
+	}
+	if storeTeamOn(lc) {
+		steps = append(steps, Step{ID: "store", Label: "Store Team network", State: "waiting"})
 	}
 	if lc.LiveMonitor != "off" {
 		steps = append(steps, Step{ID: "lm", Label: "Live Monitor", State: "waiting"})
@@ -370,8 +374,29 @@ func (r *Runner) run() error {
 		r.ensureOnline(p)
 	}
 
+	// Store Team: the team network, and the game pointed at it
+	if storeTeamOn(lc) {
+		undo, err := r.startStoreTeam(lc, p, s.Game.InterfaceName)
+		if err != nil {
+			return err
+		}
+		r.mu.Lock()
+		r.undo = append(r.undo, undo)
+		r.mu.Unlock()
+		if lc.StoreTeam == "join" {
+			if processRunning(lmExeName) {
+				r.logf("A Live Monitor is running on this PC. With Store Team (Join), close it: two Live Monitors in one store give error 21-11")
+			}
+			r.setStep("lm", "skipped", "your friend's runs the store")
+			r.logf("Store Team (Join): not starting a Live Monitor, the game uses your friend's")
+			lc.LiveMonitor = "off"
+		}
+	}
+
 	// 3. the Live Monitor, which the client needs running
-	if err := r.startLiveMonitor(lc, p); err != nil {
+	if lc.LiveMonitor == "off" && storeTeamOn(lc) {
+		// skipped above
+	} else if err := r.startLiveMonitor(lc, p); err != nil {
 		return err
 	}
 	if r.stopped() {
@@ -411,7 +436,14 @@ func (r *Runner) cleanup() {
 	r.mu.Lock()
 	helpers := r.helper
 	r.helper = nil
+	undo := r.undo
+	r.undo = nil
 	r.mu.Unlock()
+	defer func() {
+		for _, u := range undo {
+			u()
+		}
+	}()
 	if len(helpers) > 0 {
 		r.stage("Shutting down background programs")
 	}

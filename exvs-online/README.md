@@ -67,6 +67,26 @@ code are one unit: they always land in the same `group_id`, never face each othe
 the smaller fallback room, so they only play 2v2 (`roomSize` 4). A code nobody else is using
 yet counts as a solo for 2v2 rooms. Both players still pick Mix Match and solo sortie in the game.
 
+## Store Team (Route Battle co-op over the internet)
+
+In an arcade, Route Battle > Team Play > Store Team links cabinets through one Live
+Monitor on the shop LAN. At start the Live Monitor broadcasts "store hub at <ip>:48000"
+to UDP 255.255.255.255:49000-49015, each cabinet announces "<ip>:4800N" once at boot,
+and after that everything is unicast with the private IPs written inside the messages.
+
+`exvs-online -storelink -server <match server> -team <code>` (admin) adds a Wintun
+virtual adapter called **Boost Link** and relays IPv4 for 10.77.0.0/24 plus broadcasts
+through the match server's UDP port (same number as `listen`, default 28090/udp;
+`"storeLink": "off"` in `match` turns it off). Players with the same team code share one
+10.77.0.0/24; nobody else hears them. The relay replays the last broadcasts to players who
+join later. Status for the launcher: `GET http://127.0.0.1:28094/status`, `POST /stop`.
+
+The launcher does it all when ROUTE BATTLE CO-OP is Host or Join (Online mode, team
+code set): it starts this with an admin prompt, sets `InterfaceName=Boost Link` in
+config.ini and lmnfig.ini for the run, and on Join starts no Live Monitor (two Live
+Monitors in one store give 21-11). wintun.dll (0.14.1, signed by WireGuard LLC) is
+embedded and written next to exvs-online.exe; see `wintun/LICENSE.txt`.
+
 ## Live status page
 
 Whoever runs the match server can open **`http://<match server>:28090/status`** in a browser (or `:28100/status` when it runs in `match` mode). It shows how many players are searching, how long they've waited and the recent matches, and refreshes every 5 seconds. `/status.json` has the same data for a website or a Discord bot. It shows no IPs or card serials.

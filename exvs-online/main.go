@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -77,6 +78,9 @@ type MatchConfig struct {
 	PublicStatusURL             string `json:"publicStatusUrl,omitempty"`             // added to the Discord post
 	DiscordInvite               string `json:"discordInvite,omitempty"`               // "Join the Discord" button on the home page
 	SiteTagline                 string `json:"siteTagline,omitempty"`                 // home page subtitle
+	// StoreLink is the UDP address of the Store Team relay (Route Battle co-op).
+	// Empty = the same port as listen, on UDP. "off" turns it off.
+	StoreLink string `json:"storeLink,omitempty"`
 }
 
 type Config struct {
@@ -119,7 +123,27 @@ func main() {
 	probe := flag.Bool("probe", false, "read the running game's screen steps into hang-probe.txt and exit")
 	patchGame := flag.Bool("patch-game", false, "apply the result-screen fix (game exe) and the keyboard focus fix (bngrw.dll), then exit")
 	unpatchGame := flag.Bool("unpatch-game", false, "undo the result-screen and keyboard focus fixes, then exit")
+	storeLink := flag.Bool("storelink", false, "Store Team mode (needs admin): join the team network for Route Battle co-op")
+	slServer := flag.String("server", "", "with -storelink: the match server (IP or IP:port)")
+	slTeam := flag.String("team", "", "with -storelink: the team code")
+	slStatusAddr := flag.String("status", "127.0.0.1:28094", "with -storelink: where the launcher reads the status")
+	slParent := flag.Int("parent", 0, "with -storelink: stop when this process exits")
+	logFile := flag.String("log", "", "also write the log to this file")
 	flag.Parse()
+	if *logFile != "" {
+		if f, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
+			log.SetOutput(io.MultiWriter(os.Stderr, f))
+		}
+	}
+	if *storeLink {
+		log.Printf("Boost Link Store Team: server %s", *slServer)
+		if err := runStoreLink(*slServer, *slTeam, *slStatusAddr, *slParent); err != nil {
+			log.Printf("store team: %v", err)
+			os.Exit(1)
+		}
+		log.Printf("store team: stopped")
+		return
+	}
 	if *patchGame || *unpatchGame {
 		dir := *gameDir
 		if dir == "" {
@@ -203,6 +227,15 @@ func main() {
 	switch cfg.Mode {
 	case "match":
 		log.Printf("match server listening on %s", cfg.Match.Listen)
+		if sl := storeLinkAddr(cfg.Match); sl != "" {
+			r := NewStoreRelay()
+			if err := r.Listen(sl); err != nil {
+				log.Printf("store team relay disabled: %v", err)
+			} else {
+				m.storeRelay = r
+				log.Printf("store team relay on UDP %s", sl)
+			}
+		}
 		if err := startStun(cfg.Proxy.LocalStun, tl); err != nil {
 			log.Fatal(err)
 		}
@@ -261,6 +294,21 @@ func main() {
 		log.Fatal(newServer(cfg.Proxy.Listen, p).ListenAndServe())
 	default:
 		log.Fatalf("unknown mode %q (use proxy, match or both)", cfg.Mode)
+	}
+}
+
+// storeLinkAddr is the Store Team relay's UDP address, or "" when it is off.
+func storeLinkAddr(mc MatchConfig) string {
+	switch v := strings.TrimSpace(mc.StoreLink); v {
+	case "off":
+		return ""
+	case "":
+		if i := strings.LastIndex(mc.Listen, ":"); i >= 0 {
+			return ":" + mc.Listen[i+1:]
+		}
+		return ":28090"
+	default:
+		return v
 	}
 }
 

@@ -45,6 +45,7 @@ allow inbound:
 | Port | Protocol | For |
 |---|---|---|
 | 28090 | TCP | matchmaking + status page |
+| 28090 | UDP | Store Team relay (Route Battle co-op) |
 | 3478-3479 | UDP | STUN (the game's NAT test) |
 | 3480 | UDP | relay |
 | 49160-49999 | UDP | relay traffic (one port per relayed player) |
