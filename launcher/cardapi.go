@@ -267,6 +267,19 @@ func (u *uiServer) cardRoutes(mux *http.ServeMux) {
 	// Pictures (gauges, sticker backgrounds and so on) from the card server's folder.
 	mux.HandleFunc("GET /cardimg/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "max-age=3600")
-		http.StripPrefix("/cardimg/", http.FileServer(http.Dir(filepath.Join(serverDir(), "images")))).ServeHTTP(w, r)
+		http.StripPrefix("/cardimg/", http.FileServer(http.Dir(cardImageDir()))).ServeHTTP(w, r)
 	})
+}
+
+// cardImageDir is the card server's picture folder: Server\images on the old
+// build, Server\wwwroot\images on the new one.
+func cardImageDir() string { return cardImageDirIn(serverDir()) }
+
+func cardImageDirIn(dir string) string {
+	for _, d := range []string{filepath.Join(dir, "images"), filepath.Join(dir, "wwwroot", "images")} {
+		if st, err := os.Stat(filepath.Join(d, "mobile_suits")); err == nil && st.IsDir() {
+			return d
+		}
+	}
+	return filepath.Join(dir, "images")
 }

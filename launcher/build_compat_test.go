@@ -48,3 +48,18 @@ func TestFindCardServer(t *testing.T) {
 		t.Errorf("classic layout should win = %s", got)
 	}
 }
+
+func TestCardImageDir(t *testing.T) {
+	dir := t.TempDir()
+	if got := cardImageDirIn(dir); got != filepath.Join(dir, "images") {
+		t.Errorf("default = %s", got)
+	}
+	os.MkdirAll(filepath.Join(dir, "wwwroot", "images", "mobile_suits"), 0755)
+	if got := cardImageDirIn(dir); got != filepath.Join(dir, "wwwroot", "images") {
+		t.Errorf("new build = %s", got)
+	}
+	os.MkdirAll(filepath.Join(dir, "images", "mobile_suits"), 0755)
+	if got := cardImageDirIn(dir); got != filepath.Join(dir, "images") {
+		t.Errorf("old build should win = %s", got)
+	}
+}
