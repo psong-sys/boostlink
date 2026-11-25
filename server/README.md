@@ -47,7 +47,7 @@ allow inbound:
 | 28090 | TCP | matchmaking + status page |
 | 3478-3479 | UDP | STUN (the game's NAT test) |
 | 3480 | UDP | relay |
-| 49160-49200 | UDP | relay traffic |
+| 49160-49999 | UDP | relay traffic (one port per relayed player) |
 | 22 | TCP | SSH (so you can log in) |
 
 Check it works: open `http://<server IP>:28090` in a browser. That's the Boost Link home page

@@ -20,6 +20,12 @@ if [ ! -f "$DIR/server.json" ]; then
   echo "Installed default config at $DIR/server.json"
 else
   echo "Kept your existing $DIR/server.json"
+  # Kits before 1.8.2 shipped a 41-port relay range (about 41 relayed players). Widen it
+  # if it's still that old default; a range you picked yourself is left alone.
+  if grep -q '"minPort": 49160' "$DIR/server.json" && grep -q '"maxPort": 49200' "$DIR/server.json"; then
+    sed -i 's/"maxPort": 49200/"maxPort": 49999/' "$DIR/server.json"
+    echo "Widened the relay port range to 49160-49999"
+  fi
 fi
 chown -R boostlink:boostlink "$DIR"
 
@@ -50,7 +56,7 @@ if command -v ufw >/dev/null 2>&1 && ufw status | grep -q "Status: active"; then
   ufw allow 28090/tcp
   ufw allow 3478:3479/udp
   ufw allow 3480/udp
-  ufw allow 49160:49200/udp
+  ufw allow 49160:49999/udp
 fi
 
 if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then

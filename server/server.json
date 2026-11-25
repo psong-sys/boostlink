@@ -9,7 +9,7 @@
       "listen": "0.0.0.0:3480",
       "relayIP": "auto",
       "minPort": 49160,
-      "maxPort": 49200
+      "maxPort": 49999
     },
     "logTraffic": false,
     "localStun": {

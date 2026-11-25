@@ -25,7 +25,7 @@ ufw allow 22/tcp >/dev/null
 ufw allow 28090/tcp >/dev/null
 ufw allow 3478:3479/udp >/dev/null
 ufw allow 3480/udp >/dev/null
-ufw allow 49160:49200/udp >/dev/null
+ufw allow 49160:49999/udp >/dev/null
 ufw --force enable >/dev/null
 ufw status verbose
 
