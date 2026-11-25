@@ -17,3 +17,8 @@ launcher.json
 *.part.*
 # Build output
 /dist/
+
+# Vulkan mode runtime files (live in the launcher folder)
+vulkan.json
+vulkan-backup/
+vulkan-cache/

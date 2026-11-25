@@ -20,7 +20,7 @@ import (
 //go:embed web
 var webFS embed.FS
 
-const version = "1.7.2"
+const version = "1.8.0"
 
 func main() {
 	play := flag.Bool("play", false, "start the game right away without the settings window")
@@ -227,6 +227,34 @@ func (u *uiServer) routes() http.Handler {
 			return
 		}
 		writeJSON(w, res)
+	})
+	mux.HandleFunc("GET /api/vulkan", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, getVulkanStatus())
+	})
+	mux.HandleFunc("POST /api/vulkan", func(w http.ResponseWriter, r *http.Request) {
+		if !sameOrigin(r) {
+			http.Error(w, "forbidden", 403)
+			return
+		}
+		var req struct {
+			On bool `json:"on"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeErr(w, err)
+			return
+		}
+		var st vulkanStatus
+		var err error
+		if req.On {
+			st, err = enableVulkan()
+		} else {
+			st, err = disableVulkan()
+		}
+		if err != nil {
+			writeErr(w, err)
+			return
+		}
+		writeJSON(w, st)
 	})
 	mux.HandleFunc("POST /api/fix-firewall", func(w http.ResponseWriter, r *http.Request) {
 		if !sameOrigin(r) {

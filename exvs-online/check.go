@@ -61,6 +61,7 @@ type checker struct {
 	stunServers []string
 	httpGet     func(url string) (time.Duration, error)
 	procs       func() []string // running program names
+	bugchecks   func() []string // dates of recent 0x10E blue screens
 }
 
 func newChecker(gameDir string, cfg Config, cfgFound bool) *checker {
@@ -68,7 +69,7 @@ func newChecker(gameDir string, cfg Config, cfgFound bool) *checker {
 	return &checker{gameDir: gameDir, cfg: cfg, cfgFound: cfgFound,
 		ifaces: net.Interfaces, addrs: func(i net.Interface) ([]net.Addr, error) { return i.Addrs() },
 		systemDir: sys, firewall: windowsFirewall, stunMapped: stunMapped,
-		stunServers: []string{"stun.l.google.com:19302", "stun.cloudflare.com:3478"}, procs: runningExes,
+		stunServers: []string{"stun.l.google.com:19302", "stun.cloudflare.com:3478"}, procs: runningExes, bugchecks: recentGPUBugchecks,
 		httpGet: func(u string) (time.Duration, error) {
 			c := &http.Client{Timeout: 5 * time.Second}
 			t := time.Now()
@@ -228,6 +229,7 @@ func (c *checker) Run() *CheckReport {
 	} else {
 		r.add("game", "Game folder", "ok", c.gameDir, "")
 		c.checkBuild(r)
+		c.checkGraphics(r)
 	}
 
 	// 2. Visual C++ runtimes
