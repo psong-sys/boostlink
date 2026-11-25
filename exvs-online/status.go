@@ -21,6 +21,8 @@ type Status struct {
 	RoomSize      int           `json:"roomSize"`
 	RTTLimit      uint32        `json:"rttLimitMs"`
 	UptimeSeconds int64         `json:"uptimeSeconds"`
+	StoreTeams    int           `json:"storeTeams"`   // Store Team groups with 2+ players
+	StorePlayers  int           `json:"storePlayers"` // players on the Store Team relay
 	Now           time.Time     `json:"now"`
 }
 
@@ -47,6 +49,7 @@ func (m *Matcher) Status() Status {
 	}
 	st := Status{RoomSize: m.cfg.RoomSize, RTTLimit: lim, UptimeSeconds: int64(now.Sub(m.started).Seconds()), Now: now,
 		WaitingGroups: []StatusEntry{}, RecentRooms: []StatusRoom{}}
+	st.StoreTeams, st.StorePlayers = m.storeRelay.Stats()
 	for _, e := range m.queue {
 		if e.bot {
 			continue

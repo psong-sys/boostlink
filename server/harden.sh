@@ -23,6 +23,7 @@ ufw default deny incoming >/dev/null
 ufw default allow outgoing >/dev/null
 ufw allow 22/tcp >/dev/null
 ufw allow 28090/tcp >/dev/null
+ufw allow 28090/udp >/dev/null
 ufw allow 3478:3479/udp >/dev/null
 ufw allow 3480/udp >/dev/null
 ufw allow 49160:49999/udp >/dev/null
