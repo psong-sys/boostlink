@@ -28,6 +28,7 @@ The Live Monitor setting can hide it, minimize it, show it normally, or not star
 
   It reads and saves through the card server's own web API on 127.0.0.1:28080, starting the card server if needed, and keeps any card fields it doesn't show. Before every save it copies `Server\ServerInfinite.db` once per run, and the part being changed every time, to `backups\card\`. Saving is blocked while the game is running. Play once first so the card exists.
 - **SETTINGS tab**: network adapter (picked automatically; VPN and virtual adapters such as Radmin and ZeroTier are hidden unless you tick "Show all adapters"), display, Live Monitor, desktop shortcuts.
+- **Graphics** (SETTINGS tab): **Vulkan mode** puts the official vkd3d-proton (`d3d12.dll`, `d3d12core.dll`) and DXVK (`dxgi.dll`) next to the game so it draws through Vulkan instead of DirectX 12. Use it if the PC blue-screens with VIDEO_MEMORY_MANAGEMENT_INTERNAL while playing. The archives come from the projects' GitHub releases at pinned versions and are checked by SHA-256, then kept in `vulkan-cache\`. Files it replaces go to `vulkan-backup\` and come back when you turn it off; `vulkan.json` records what it installed.
 - **Advanced** (SETTINGS tab): tick "Show advanced options" to change the match server address (IP or name) and to show **HOST** on the PLAY tab, where one PC runs the match server for a group. "Use the Boost Link server" puts the default back.
 - The window is one fixed size with no scroll bar.
 - **CONTROLS tab**: every keyboard and controller key.

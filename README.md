@@ -1,8 +1,8 @@
 # Boost Link
 
 Boost Link adds online versus to the PC build of *Mobile Suit Gundam Extreme Vs. 2
-Infinite Boost* (EXVS2 IB). It was built on version 1.04.27 and also supports the
-2026-04 build (GQuuuuuuX update).
+Infinite Boost* (EXVS2 IB). It targets the 2026-04 build (GQuuuuuuX update, card protocol 141);
+it was first made on version 1.04.27.
 
 The game already contains the arcade's online code, but it expects the official
 matchmaking servers. Boost Link provides a replacement match server, a local proxy that
@@ -64,7 +64,7 @@ The match server only introduces players. Inputs and game state go between the t
 ## Requirements
 
 - Windows 10 or 11 (64-bit).
-- Your own copy of EXVS2 Infinite Boost (1.04.27 or the 2026-04 GQuuuuuuX build), with its card server (`Server-Infinite`)
+- Your own copy of EXVS2 Infinite Boost (the 2026-04 GQuuuuuuX build; 1.04.27 may still work but is no longer tested), with its card server (`Server-Infinite`)
   and Live Monitor (`vsac29_Release_LM.exe`).
 - The Microsoft Visual C++ 2010 runtime (the Live Monitor needs it; the launcher checks for it).
 - A wired connection is recommended. Ping above 300 ms is rejected by the game.
@@ -97,6 +97,12 @@ Each match attempt produces one `RESULT` line in `exvs-launcher\traffic.log`.
 | `FAIL_TIMEOUT` or `FAIL_TIMEOUT_NO_PACKETS` | Matched, but the PCs couldn't reach each other. | Run **Check my PC** and **Fix firewall** on both PCs. Check both use their real Ethernet or Wi-Fi adapter. |
 | `FAIL_RTT_OUT_OF_LIMIT` | Ping was over 300 ms. | Use a wired connection. The match server can raise the limit. |
 | `FAIL_CANCELED_SOMEONE` | The other player dropped out. | Read their `RESULT` line for the reason. |
+
+**Blue screen while playing** (`VIDEO_MEMORY_MANAGEMENT_INTERNAL`, 0x10E): turn on **Vulkan mode** in the
+launcher's SETTINGS > Graphics. It installs the official [vkd3d-proton](https://github.com/HansKristian-Work/vkd3d-proton)
+and [DXVK](https://github.com/doitsujin/dxvk) next to the game (pinned versions, checked by SHA-256), so the game
+draws through Vulkan instead of DirectX 12. Turning it off restores what was there. Check my PC counts recent
+0x10E blue screens.
 
 Logs are in `exvs-launcher\logs\`. Your original `config.ini`, `card.ini` and `lmnfig.ini`
 are backed up in `exvs-launcher\backups\` before the launcher changes anything. More detail:
@@ -174,8 +180,9 @@ to see which build you have and whether everything fits it.
 
 | Game build | exe PE timestamp | Notes |
 |---|---|---|
-| 1.04.27 | 2025-08-19 | The build Boost Link was made on. |
-| GQuuuuuuX update | 2026-04-17 | Card server `server\Server.exe` (Server-Infinite 1.1.2). 21 debug strings of the English table aren't in it; 7 translated screens need rebuilding with `english/repaint/`. Players on different builds aren't matched together. |
+| 1.04.27 | 2025-08-19 | Protocol revision 131. The build Boost Link was first made on. |
+| GQuuuuuuX update | 2026-04-17 | Protocol revision 141 (what `exvs-online/pb` is generated from now). Card server `server\Server.exe` (Server-Infinite 1.1.2). Renders with DirectX 12; use Vulkan mode if it blue-screens. Most screens ship in English already; the English set covers the rest. 21 debug strings of the English table aren't in it. Players on different builds aren't matched together. |
 
 If a later build changes the code a patch needs, that patch refuses with "unsupported game
-build" and changes nothing.
+build" and changes nothing. If it changes the protocol, Check my PC says so ("Game protocol");
+`go run ./pb/gen <path to vsac29_Release.exe>` in `exvs-online/` regenerates `pb/` from that exe.
