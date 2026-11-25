@@ -243,7 +243,11 @@
   .toast.err { border-left-color: var(--err); }
   .modal { position: fixed; inset: 0; background: rgba(5,5,8,.82); display: none; align-items: center; justify-content: center; z-index: 10; padding: 16px; }
   .modal.on { display: flex; }
-  .modal .panel { width: 100%; max-width: 620px; margin: 0; max-height: 92vh; overflow: auto; }
+  /* The panel is zoomed by --z, so its height limit is divided by --z to keep it inside the window. */
+  .modal .panel { width: 100%; max-width: 620px; margin: 0; max-height: calc(92vh / var(--z, 1)); overflow: auto; }
+  #checkModal .panel { display: flex; flex-direction: column; overflow: hidden; }
+  #checkModal .checks { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; padding-right: 6px; }
+  .checks .fxbtn { margin-top: 8px; }
   .modal h1 { font: 700 italic 34px "Chakra"; color: var(--yel); margin: 0 0 4px; text-shadow: 3px 3px 0 var(--hot2); }
   .wstep { display: flex; gap: 12px; margin-top: 16px; }
   .wnum { font: 700 italic 28px "Chakra"; color: var(--cyan); width: 30px; flex: none; line-height: 1; }
@@ -262,6 +266,7 @@
   .checks .d { color: var(--muted); font-size: 12px; }
   .checks .fx { color: var(--yel); font-size: 12px; margin-top: 3px; }
   .checks .fx::before { content: "FIX: "; font-weight: 700; }
+  .checks .fx.nopre::before { content: none; }
 </style>
 </head>
 <body>
@@ -890,18 +895,34 @@ async function runCheck() {
     const n = s => items.filter(i => i.status === s).length;
     $('checkSummary').textContent = n('fail') ? n('fail') + ' problem(s) to fix before playing online.' : n('warn') ? 'Looks OK, with ' + n('warn') + ' thing(s) worth a look.' : 'All good. Ready for online play.';
     $('checkList').innerHTML = items.map(i => '<li class="' + esc(i.status) + '"><span class="dot">' + (checkIcons[i.status] || '?') + '</span><div><b>' + esc(i.title) + '</b>' +
-      (i.detail ? '<div class="d">' + esc(i.detail) + '</div>' : '') + ((i.status === 'warn' || i.status === 'fail') && i.fix ? '<div class="fx">' + esc(i.fix) + '</div>' : '') + '</div></li>').join('');
-    $('fwBtn').style.display = r.canFixFirewall ? 'inline-block' : 'none';
+      (i.detail ? '<div class="d">' + esc(i.detail) + '</div>' : '') + fixHtml(i, r.canFixFirewall) + '</div></li>').join('');
+    const inline = $('checkList').querySelector('.fxbtn');
+    if (inline) inline.onclick = fixFirewall;
+    $('fwBtn').style.display = r.canFixFirewall && !inline ? 'inline-block' : 'none';
   } catch (e) { $('checkSummary').textContent = e.message; }
   finally { $('recheckBtn').disabled = false; }
 }
 $('checkBtn').onclick = runCheck;
 $('recheckBtn').onclick = runCheck;
 $('checkClose').onclick = () => $('checkModal').classList.remove('on');
-$('fwBtn').onclick = async () => {
+// The firewall row gets its own Fix firewall button, so it can't end up off screen.
+// The launcher doesn't need to run as admin: the fix asks Windows for permission itself.
+function fixHtml(i, canFixFW) {
+  if (!((i.status === 'warn' || i.status === 'fail') && i.fix)) return '';
+  if (i.id === 'firewall' && canFixFW) {
+    return '<div class="fx nopre">Click Fix firewall. Windows asks for permission once (click Yes). No need to run anything as admin.</div>' +
+      '<button class="btn y fxbtn" type="button"><span>Fix firewall</span></button>';
+  }
+  return '<div class="fx">' + esc(i.fix) + '</div>';
+}
+async function fixFirewall() {
+  const btns = [$('fwBtn'), ...$('checkList').querySelectorAll('.fxbtn')];
+  btns.forEach(b => b.disabled = true);
   toast('Windows will ask for permission. Click Yes.');
-  try { await api('POST', '/api/fix-firewall'); toast('Firewall rules added.'); runCheck(); } catch (e) { toast(e.message, true); }
-};
+  try { await api('POST', '/api/fix-firewall'); toast('Firewall rules added.'); runCheck(); }
+  catch (e) { toast(e.message, true); btns.forEach(b => b.disabled = false); }
+}
+$('fwBtn').onclick = fixFirewall;
 
 // Vulkan mode
 let vulkanOn = false, vulkanState = '';
