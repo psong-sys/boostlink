@@ -429,6 +429,10 @@ func writeSettings(s Settings) error {
 	cfg.Set("config", "Server", server)
 	cfg.Set("config", "serial", s.Game.Serial)
 	cfg.Set("config", "InterfaceName", s.Game.InterfaceName)
+	if s.Game.InterfaceName != "" {
+		// the game refuses to start with both ("Only one of InterfaceName and IpAddress")
+		cfg.Comment("config", "IpAddress")
+	}
 	s.Game = safeScreen(s.Game)
 	cfg.Set("config", "Windowed", boolStr(s.Game.Windowed))
 	setBool(cfg, "config", "BorderlessWindow", s.Game.Borderless)
@@ -461,6 +465,7 @@ func writeSettings(s Settings) error {
 		before := lm.String()
 		if s.Game.InterfaceName != "" {
 			lm.Set("config", "InterfaceName", s.Game.InterfaceName)
+			lm.Comment("config", "IpAddress")
 		}
 		// the Live Monitor talks to the card server too, so in online modes it
 		// has to go through exvs-online like the client does

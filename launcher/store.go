@@ -70,7 +70,8 @@ func setGameAdapter(p Paths, name string) error {
 			}
 			return err
 		}
-		if v, _ := f.Get("config", "InterfaceName"); v == name {
+		ip := f.Comment("config", "IpAddress") // can't have both
+		if v, _ := f.Get("config", "InterfaceName"); v == name && !ip {
 			continue
 		}
 		f.Set("config", "InterfaceName", name)

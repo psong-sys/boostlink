@@ -20,7 +20,7 @@ import (
 //go:embed web
 var webFS embed.FS
 
-const version = "1.9.1"
+const version = "1.9.2"
 
 func main() {
 	play := flag.Bool("play", false, "start the game right away without the settings window")

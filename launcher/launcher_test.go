@@ -338,3 +338,16 @@ func TestPackSerialReplaced(t *testing.T) {
 		t.Error("serial changed again on the next read")
 	}
 }
+
+func TestCommentIpAddress(t *testing.T) {
+	f := ParseIni("[config]\nInterfaceName=Ethernet\nIpAddress=26.1.2.3\n# IpAddress=10.0.0.1\n[keyboard]\nIpAddress=x\n")
+	if !f.Comment("config", "IpAddress") {
+		t.Fatal("nothing commented")
+	}
+	if f.Has("config", "IpAddress") || !f.Has("keyboard", "IpAddress") {
+		t.Fatal(f.String())
+	}
+	if f.Comment("config", "IpAddress") {
+		t.Fatal("second call changed something")
+	}
+}

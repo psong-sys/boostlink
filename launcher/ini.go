@@ -160,3 +160,20 @@ func (f *IniFile) Set(section, key, value string) {
 	}
 	f.lines = append(f.lines[:at], append([]string{key + "=" + value}, f.lines[at:]...)...)
 }
+
+// Comment turns every active key=value line for key in the section into a
+// "# key=value" comment. It reports whether anything changed.
+func (f *IniFile) Comment(section, key string) bool {
+	h, end := f.sectionRange(section)
+	if h < 0 {
+		return false
+	}
+	changed := false
+	for i := h + 1; i < end; i++ {
+		if k, _, ok := splitKV(f.lines[i]); ok && strings.EqualFold(k, key) {
+			f.lines[i] = "# " + strings.TrimLeft(f.lines[i], " \t")
+			changed = true
+		}
+	}
+	return changed
+}
