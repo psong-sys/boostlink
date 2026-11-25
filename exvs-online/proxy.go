@@ -33,6 +33,9 @@ type Proxy struct {
 
 	mu        sync.Mutex
 	pilotName string // from the last PreLoadCard, for the leaderboard
+	// newCardSession is the session the card server gave the last new card
+	// (keyed accessCode/chipId), for RegisterCard requests that arrive without it.
+	newCardSession map[string]string
 }
 
 func NewProxy(cfg ProxyConfig, local *Matcher, tl *trafficLog) (*Proxy, error) {
@@ -131,6 +134,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if c := req.GetCheckCommunication(); c != nil {
 				p.reportCheck(c)
 			}
+			if nb := p.fillRegisterCardSession(req); nb != nil {
+				body = nb
+			}
 		}
 	}
 	var patch func([]byte) []byte
@@ -225,6 +231,14 @@ func (p *Proxy) patchGameResponse(r *http.Request, req *exvs.Request, b []byte) 
 			}
 			resp = orig.(*exvs.Response)
 		}
+	}
+	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && resp.PreLoadCard != nil && resp.PreLoadCard.GetIsNewCard() && resp.PreLoadCard.GetSessionId() != "" {
+		p.mu.Lock()
+		if p.newCardSession == nil {
+			p.newCardSession = map[string]string{}
+		}
+		p.newCardSession[cardKey(req.GetPreLoadCard().GetAccessCode(), req.GetPreLoadCard().GetChipId())] = resp.PreLoadCard.GetSessionId()
+		p.mu.Unlock()
 	}
 	if req.GetType() == exvs.MethodType_MTHD_PRE_LOAD_CARD && resp.PreLoadCard != nil && resp.PreLoadCard.User != nil {
 		p.mu.Lock()
@@ -476,4 +490,36 @@ func firstSuitID(b []byte) uint32 {
 		}
 	}
 	return 0
+}
+
+func cardKey(accessCode, chipID string) string { return accessCode + "/" + chipID }
+
+// fillRegisterCardSession fixes new cards on the new build. Its RegisterCard
+// comes with an empty session_id (the old build sent the one PreLoadCard gave
+// it), and Server-Infinite then answers SUCCESS without registering, so the
+// card stays "new" forever and online versus says it needs a VS.Mobile card.
+// It puts back the session the card server handed out for that card and
+// returns the re-encoded request, or nil when nothing changed.
+func (p *Proxy) fillRegisterCardSession(req *exvs.Request) []byte {
+	rc := req.GetRegisterCard()
+	if req.GetType() != exvs.MethodType_MTHD_REGISTER_CARD || rc == nil || rc.GetSessionId() != "" {
+		return nil
+	}
+	p.mu.Lock()
+	sid := p.newCardSession[cardKey(rc.GetAccessCode(), rc.GetChipId())]
+	p.mu.Unlock()
+	if sid == "" {
+		return nil
+	}
+	rc.SessionId = proto.String(sid)
+	if rc.TutorialPlayFlag == nil {
+		rc.TutorialPlayFlag = proto.Bool(false)
+	}
+	nb, err := proto.MarshalOptions{AllowPartial: true}.Marshal(req)
+	if err != nil {
+		log.Printf("re-encode RegisterCard: %v", err)
+		return nil
+	}
+	p.tl.Msg("GAME> (filled card session)", req)
+	return nb
 }

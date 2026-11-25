@@ -359,7 +359,7 @@
           </div>
           <div class="row">
             <label class="f">MACHINE SERIAL <input type="text" id="serial" spellcheck="false"></label>
-            <div style="flex:1;min-width:170px"><button class="btn" id="uniqueBtn" type="button"><span>Make my IDs unique</span></button></div>
+            <div style="flex:1;min-width:170px"><button class="btn" id="uniqueBtn" type="button"><span>New card IDs</span></button></div>
           </div>
           <div class="note">Everyone in an online match needs different IDs. New card IDs give you a new, empty card. Your old card stays on your card server, and typing the old values back in brings it back.</div>
         </div>
@@ -875,7 +875,12 @@ $('resetServer').onclick = () => { $('hostIp').value = data.detected.defaultServ
 $('hostIp').addEventListener('input', updateMode);
 $('teamCode').addEventListener('input', teamNote);
 $('storeTeam').addEventListener('change', teamNote);
-$('uniqueBtn').onclick = () => { makeUnique(); toast('New IDs made. Save or PLAY to keep them.'); };
+$('uniqueBtn').onclick = () => {
+  // A card that isn't the shared default is already yours alone. New IDs would
+  // swap it for a new, empty card (it stays on the card server under the old IDs).
+  if (!(data.detected || {}).stockCard && !confirm('Your card IDs are already unique. New IDs give you a NEW, EMPTY card: your pilot, stats and favorites stay on the old card, and the game will ask to register the new one.\n\nWrite down ' + $('chipId').value + ' / ' + $('accessCode').value + ' to get it back later.\n\nMake new IDs anyway?')) return;
+  makeUnique(); toast('New IDs made. Save or PLAY to keep them.');
+};
 
 document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => { setDirty(true); updateMode(); });
 $('form').addEventListener('input', () => setDirty(true));
