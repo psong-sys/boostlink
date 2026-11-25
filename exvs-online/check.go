@@ -323,7 +323,8 @@ func (c *checker) Run() *CheckReport {
 		r.add("server", "Game server address", "warn", "config.ini points at "+srv+", which skips matchmaking.", "Start from the launcher in Host or Join mode; it sets 127.0.0.1:28090.")
 	}
 
-	// 7. VPN
+	// 7. VPN. Only shown when one is connected: online play goes through the server, so
+	// "none connected" isn't worth a line.
 	var vpns []string
 	for _, n := range c.adapterNames() {
 		if isVPNName(n) {
@@ -331,9 +332,7 @@ func (c *checker) Run() *CheckReport {
 			vpns = append(vpns, fmt.Sprintf("%s (%s)", n, ip))
 		}
 	}
-	if len(vpns) == 0 {
-		r.add("vpn", "VPN (ZeroTier or Radmin)", "info", "None connected. That's fine: Boost Link plays over the internet through the server.", "")
-	} else {
+	if len(vpns) > 0 {
 		r.add("vpn", "VPN (ZeroTier or Radmin)", "ok", strings.Join(vpns, ", ")+". Hosts share this IP with players.", "")
 	}
 
