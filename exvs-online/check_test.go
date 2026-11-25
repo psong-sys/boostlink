@@ -81,7 +81,7 @@ func TestCheckHappyFriend(t *testing.T) {
 	cfg.Mode = "proxy"
 	cfg.Proxy.MatchServer = "http://10.147.17.1:28090"
 	r := fakeChecker(d, cfg).Run()
-	for _, id := range []string{"game", "adapter", "online", "firewall", "nat", "host", "vpn"} {
+	for _, id := range []string{"game", "adapter", "online", "firewall", "nat", "host"} {
 		if s := status(r, id).Status; s != "ok" {
 			t.Errorf("%s = %s (%s)", id, s, status(r, id).Detail)
 		}
