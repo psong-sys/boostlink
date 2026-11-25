@@ -160,3 +160,14 @@ func TestSaveBackupKeepsOlderBuild(t *testing.T) {
 		t.Fatalf("older backup not kept aside: %v", m)
 	}
 }
+
+func TestGameProtoRevision(t *testing.T) {
+	dir := os.Getenv("EXVS_GAME_DIR") // set it to a game folder to run this
+	exe, err := os.ReadFile(filepath.Join(dir, "vsac29_Release.exe"))
+	if dir == "" || err != nil {
+		t.Skip("set EXVS_GAME_DIR to the game folder")
+	}
+	if got := gameProtoRevision(exe); got != ourProtoRevision {
+		t.Fatalf("game revision %d, ours %d", got, ourProtoRevision)
+	}
+}

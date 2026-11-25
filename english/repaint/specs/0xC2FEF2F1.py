@@ -6,7 +6,7 @@ SPEC={
 14:[
  dict(box=[28,24,864,96],text='CPU BATTLE / TRAINING',size=62,**BTN),
  dict(box=[130,146,538,212],text='VS. ROUTE BATTLE',size=50,**{**BTN,'font':'title','color':[225,228,240]}),
- dict(box=[566,140,852,216],text='Choose a route and conquer\nthe map in CPU battles.\n(Single player only)',**DESC),
+ dict(box=[566,140,852,216],text='Choose a route and conquer\nthe map in CPU battles.',**DESC),
  dict(box=[78,236,520,262],text='Credit : Ends on a stage clear or a loss.',**CRED),
  dict(box=[78,264,665,291],text='Credits : Ends on a stage clear or 3 losses.    *Rewards even on a loss',**CRED),
  dict(box=[176,334,538,402],text='PRACTICE',size=54,**BTN),

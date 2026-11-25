@@ -645,6 +645,7 @@ func (c *checker) checkBuild(r *CheckReport) {
 	if err != nil {
 		return // not something we can read; the game itself will complain
 	}
+	defer c.checkProtocol(r, exe)
 	if dll, err := os.ReadFile(filepath.Join(c.gameDir, "bngrw.dll")); err == nil {
 		if err := checkDLLMatchesExe(dll, exe); err != nil {
 			r.add("build", "Game build", "fail", buildName(p)+". "+err.Error()+".",
@@ -661,4 +662,17 @@ func (c *checker) checkBuild(r *CheckReport) {
 		return
 	}
 	r.add("build", "Game build", "ok", buildName(p)+", result-screen fix applied.", "")
+}
+
+// checkProtocol warns when the game speaks a newer protocol revision than exvs-online was built for.
+func (c *checker) checkProtocol(r *CheckReport, exe []byte) {
+	rev := gameProtoRevision(exe)
+	switch {
+	case rev == 0 || rev == ourProtoRevision:
+	case rev > ourProtoRevision:
+		r.add("protocol", "Game protocol", "warn", fmt.Sprintf("This game build uses protocol revision %d; this exvs-online was made for %d. Matches may work, but stats or rule changes can be missed.", rev, ourProtoRevision),
+			"Update Boost Link from the launcher. If you already have the newest, send check-report.txt to the Boost Link team.")
+	default:
+		r.add("protocol", "Game protocol", "info", fmt.Sprintf("This game build uses protocol revision %d, older than the %d this exvs-online was made for.", rev, ourProtoRevision), "")
+	}
 }
