@@ -14,7 +14,7 @@ import (
 const (
 	maxMMSBody    = 1 << 20  // a matchmaking request is a few hundred bytes
 	maxProxyBody  = 32 << 20 // card-server uploads from the game, with lots of headroom
-	maxEntries    = 512      // queued or matched players kept at once
+	maxEntries    = 2048     // queued or matched players kept at once (matched ones linger ~2 min)
 	maxGroups     = 3        // partners in one queue entry (2v2 needs 1)
 	maxProps      = 32
 	maxStrLen     = 128  // serials, location ids, IP strings

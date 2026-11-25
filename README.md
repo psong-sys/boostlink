@@ -118,7 +118,7 @@ or a private group), use the kit in [`server/`](server). A 1 CPU / 1 GB Linux VP
 | 28090 | TCP | Matchmaking, home page and status page |
 | 3478-3479 | UDP | STUN |
 | 3480 | UDP | Relay (TURN) |
-| 49160-49200 | UDP | Relay traffic |
+| 49160-49999 | UDP | Relay traffic (one port per relayed player) |
 
 `server/install.sh` installs it as a systemd service. `server/harden.sh` adds a firewall,
 automatic security updates and login protection. Players point the launcher at your server
