@@ -123,6 +123,14 @@ type LightLM struct {
 	cabs    map[string]*lmCab
 	stopped chan struct{}
 	once    sync.Once
+	linked  bool
+}
+
+// EverLinked: a game has linked up since Start.
+func (s *LightLM) EverLinked() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.linked
 }
 
 func (s *LightLM) logf(f string, a ...any) {
@@ -295,6 +303,7 @@ func (s *LightLM) link(c *lmCab, r lmRecord) [][]byte {
 		d = append(d, encPing(c.ch, 0, true, nil)...)
 		if !c.accepted {
 			c.accepted = true
+			s.linked = true
 			s.logf("game %d linked (%s)", c.Index, c.Addr)
 			s.queue(c, s.Responder.Connected(c))
 		}
@@ -413,3 +422,18 @@ func (s *LightLM) tickLoop() {
 		}
 	}
 }
+
+// others lists the other linked games (for a store with more than one). Called with
+// s.mu held, from inside a Responder call.
+func (s *LightLM) others(c *lmCab) []*lmCab {
+	var out []*lmCab
+	for _, o := range s.cabs {
+		if o != c && o.accepted && o.ID != 0 {
+			out = append(out, o)
+		}
+	}
+	return out
+}
+
+// sendTo queues a message to another game. Called with s.mu held.
+func (s *LightLM) sendTo(c *lmCab, m lmOut) { s.queue(c, []lmOut{m}) }

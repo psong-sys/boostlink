@@ -82,8 +82,10 @@ func lmDecode(b []byte) (recs []lmRecord, tail []byte, err error) {
 			if len(b) < lmMsgHdrLen {
 				return recs, b, errors.New("short c4 header")
 			}
-			n := int(le32(b, 12))
-			if n < 0 || lmMsgHdrLen+n > len(b) {
+			// only the low 16 bits are the length: the game leaves junk in the
+			// high bytes (and in header bytes 1-3)
+			n := int(binary.LittleEndian.Uint16(b[12:]))
+			if lmMsgHdrLen+n > len(b) {
 				return recs, b, fmt.Errorf("c4 len %d past end", n)
 			}
 			r := b[:lmMsgHdrLen+n]
@@ -94,8 +96,8 @@ func lmDecode(b []byte) (recs []lmRecord, tail []byte, err error) {
 			if len(b) < lmFragHdrLen {
 				return recs, b, errors.New("short c0 header")
 			}
-			n := int(le32(b, 24))
-			if n < 0 || lmFragHdrLen+n > len(b) {
+			n := int(binary.LittleEndian.Uint16(b[24:]))
+			if lmFragHdrLen+n > len(b) {
 				return recs, b, fmt.Errorf("c0 len %d past end", n)
 			}
 			r := b[:lmFragHdrLen+n]

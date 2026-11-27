@@ -36,6 +36,8 @@ type Runner struct {
 	solo   *exec.Cmd   // card server started on its own for the card editor
 	stop   chan struct{}
 	undo   []func() // run after the helpers are stopped (Store Team)
+
+	lightLM *exec.Cmd // the Light Live Monitor, while it runs
 }
 
 var runner = &Runner{st: Status{Stage: "Ready"}}
@@ -252,6 +254,7 @@ func (r *Runner) startHelperWith(name, exe string, args []string, dir string, p 
 }
 
 func (r *Runner) run() error {
+	r.lightLM = nil
 	s, det, err := readSettings()
 	if err != nil {
 		return err
@@ -406,17 +409,45 @@ func (r *Runner) run() error {
 	// 4. the game
 	r.setStep("game", "running", "")
 	r.stage("Game running")
-	game := exec.Command(p.GameExe)
-	game.Dir = p.GameDir
-	if err := game.Start(); err != nil {
-		return fmt.Errorf("starting the game: %w", err)
+	for attempt := 0; ; attempt++ {
+		game := exec.Command(p.GameExe)
+		game.Dir = p.GameDir
+		if err := game.Start(); err != nil {
+			return fmt.Errorf("starting the game: %w", err)
+		}
+		var fillDone chan struct{}
+		if s.Game.Windowed && s.Game.Borderless {
+			fillDone = make(chan struct{})
+			go fillScreen(fillDone, r.logf)
+		}
+		gameDone := make(chan struct{})
+		fellBack := make(chan struct{})
+		if r.lightLM != nil && attempt == 0 {
+			go r.watchLightLM(game, gameDone, fellBack)
+		}
+		_ = game.Wait()
+		close(gameDone)
+		if fillDone != nil {
+			close(fillDone)
+		}
+		select {
+		case <-fellBack:
+			// the game never linked to the Light Live Monitor: real one, same run
+			r.stopLightLM()
+			r.setStep("lm", "running", "switching to the normal one")
+			lc.LiveMonitor = "hide"
+			if err := r.startLiveMonitor(lc, p); err != nil {
+				return err
+			}
+			if r.stopped() {
+				return errors.New("stopped")
+			}
+			r.stage("Game running")
+			continue
+		default:
+		}
+		break
 	}
-	if s.Game.Windowed && s.Game.Borderless {
-		fillDone := make(chan struct{})
-		defer close(fillDone)
-		go fillScreen(fillDone, r.logf)
-	}
-	_ = game.Wait()
 	// The game may hand off to another copy of itself; wait for all of them.
 	for i := 0; ; i++ {
 		time.Sleep(2 * time.Second)
@@ -485,6 +516,9 @@ func (r *Runner) startLiveMonitor(lc LauncherConfig, p Paths) error {
 		r.logf("Live Monitor is already running, using it")
 		r.setStep("lm", "done", "already running")
 		return nil
+	}
+	if lc.LiveMonitor == "light" {
+		return r.startLightLM(p)
 	}
 	r.setStep("lm", "running", "")
 	r.stage("Starting the Live Monitor")

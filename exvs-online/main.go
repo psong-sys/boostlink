@@ -129,6 +129,9 @@ func main() {
 	slStatusAddr := flag.String("status", "127.0.0.1:28094", "with -storelink: where the launcher reads the status")
 	slParent := flag.Int("parent", 0, "with -storelink: stop when this process exits")
 	logFile := flag.String("log", "", "also write the log to this file")
+	lightLM := flag.Bool("light-lm", false, "run the Light Live Monitor (instead of vsac29_Release_LM.exe) until killed")
+	lmAdapter := flag.String("adapter", "", "with -light-lm: the network adapter name (InterfaceName) or its IPv4 address")
+	lmSerial := flag.String("lm-serial", "", "with -light-lm: the 12-digit Live Monitor serial (blank works)")
 	lmDecodeFile := flag.String("lm-decode", "", "print a Live Monitor recording (lm-capture-*.jsonl) and exit")
 	lmDecodeFull := flag.Bool("full", false, "with -lm-decode: print whole messages")
 	flag.Parse()
@@ -136,6 +139,17 @@ func main() {
 		if f, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
 			log.SetOutput(io.MultiWriter(os.Stderr, f))
 		}
+	}
+	if *lightLM {
+		st := ""
+		if isFlagSet("status") {
+			st = *slStatusAddr
+		}
+		if err := runLightLM(*lmAdapter, *gameDir, st, *lmSerial); err != nil {
+			log.Printf("light LM: %v", err)
+			os.Exit(1)
+		}
+		return
 	}
 	if *lmDecodeFile != "" {
 		if err := runLMDecode(*lmDecodeFile, os.Stdout, *lmDecodeFull); err != nil {

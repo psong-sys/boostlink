@@ -34,7 +34,8 @@ type LauncherConfig struct {
 	GameDir   string `json:"gameDir"`   // folder with vsac29_Release.exe and config.ini
 	OnlineExe string `json:"onlineExe"` // exvs-online.exe
 	// LiveMonitor: how to run vsac29_Release_LM.exe, which the client needs
-	// running or it shows LIVEMONITOR DISCONNECT. hide | minimize | show | off
+	// running or it shows LIVEMONITOR DISCONNECT. hide | minimize | show | off,
+	// or light: exvs-online's built-in Light Live Monitor instead of the real one
 	LiveMonitor string   `json:"liveMonitor"`
 	LMSound     bool     `json:"lmSound"`               // false = mute the Live Monitor
 	RecentHosts []string `json:"recentHosts,omitempty"` // last host IPs joined, newest first
@@ -334,7 +335,7 @@ func validate(s Settings) error {
 		return errors.New("Route Battle co-op needs a TEAM CODE: type the same code as your friend (or set co-op to Off)")
 	}
 	switch s.Launcher.LiveMonitor {
-	case "", "hide", "minimize", "show", "off":
+	case "", "hide", "minimize", "show", "off", "light":
 	default:
 		return fmt.Errorf("unknown Live Monitor setting %q", s.Launcher.LiveMonitor)
 	}

@@ -57,9 +57,15 @@ func runLMDecode(path string, w io.Writer, full bool) error {
 			continue
 		}
 		sp, dp := lmPortOf(l.Src), lmPortOf(l.Dst)
+		if sp == lmSessionPort && dp == lmSessionPort && !full {
+			continue // the real LM's link to itself
+		}
 		dir := "cab>lm"
 		if sp == 48000 || (sp >= 49000 && sp <= 49015 && len(b) > 57 && b[56] == 2) {
 			dir = "lm>cab"
+		}
+		if sp == lmSessionPort && dp == lmSessionPort {
+			dir = "lm>lm "
 		}
 		if (sp >= 49000 && sp <= 49015) || (dp >= 49000 && dp <= 49015 && len(b) == 276) {
 			if len(b) == 276 {
