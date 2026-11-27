@@ -13,7 +13,7 @@ It never touches the game's own files. The only files it changes are `config.ini
 
 In Online (and Host) mode, the launcher also switches the game's battle mode to online before starting the Live Monitor. It's the same setting as Live Monitor F3 → GAME PCBs SETTING → Battle mode = Online, stored in `29\testmode_pcb.json` and `29\testmode_lm.json`. It changes only that value in the active setting file, backs both files up to `backups\` first, and logs the old value. Offline mode doesn't touch it.
 
-The Live Monitor setting can hide it, minimize it, show it normally, or not start it. Muting uses Windows' per-app volume, so the Live Monitor also shows as muted in the Windows volume mixer.
+The Live Monitor setting can hide it, minimize it, show it normally, not start it, or use the **Light Live Monitor** instead. Light runs `exvs-online -light-lm`, which answers the game the way the real Live Monitor does, so no second copy of the game runs. If the game hasn't linked to it 25 seconds after starting, the launcher closes the game, starts the real Live Monitor, starts the game again and switches the setting back to "hidden". Muting uses Windows' per-app volume, so the Live Monitor also shows as muted in the Windows volume mixer.
 
 ## What's in the window
 

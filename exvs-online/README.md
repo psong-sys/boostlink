@@ -74,6 +74,13 @@ Monitor on the shop LAN. At start the Live Monitor broadcasts "store hub at <ip>
 to UDP 255.255.255.255:49000-49015, each cabinet announces "<ip>:4800N" once at boot,
 and after that everything is unicast with the private IPs written inside the messages.
 
+`exvs-online -light-lm -adapter <InterfaceName> -game <game folder> [-status 127.0.0.1:28095]` runs
+the Light Live Monitor: a small stand-in for `vsac29_Release_LM.exe` that answers the game's
+discovery, link and Live Monitor messages (boot settings from `29\testmode_lm.json`, card,
+status, test-menu Exit & Save) and relays them between games in one store. The idea comes from
+ServerOmega's public LM stand-in notes; the code and the message layouts are our own, read off
+recordings of the real Live Monitor (`-lm-decode lm-capture.jsonl` prints one).
+
 `exvs-online -storelink -server <match server> -team <code>` (admin) adds a Wintun
 virtual adapter called **Boost Link** and relays IPv4 for 10.77.0.0/24 plus broadcasts
 through the match server's UDP port (same number as `listen`, default 28090/udp;
