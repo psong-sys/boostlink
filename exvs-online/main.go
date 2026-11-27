@@ -129,11 +129,20 @@ func main() {
 	slStatusAddr := flag.String("status", "127.0.0.1:28094", "with -storelink: where the launcher reads the status")
 	slParent := flag.Int("parent", 0, "with -storelink: stop when this process exits")
 	logFile := flag.String("log", "", "also write the log to this file")
+	lmDecodeFile := flag.String("lm-decode", "", "print a Live Monitor recording (lm-capture-*.jsonl) and exit")
+	lmDecodeFull := flag.Bool("full", false, "with -lm-decode: print whole messages")
 	flag.Parse()
 	if *logFile != "" {
 		if f, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
 			log.SetOutput(io.MultiWriter(os.Stderr, f))
 		}
+	}
+	if *lmDecodeFile != "" {
+		if err := runLMDecode(*lmDecodeFile, os.Stdout, *lmDecodeFull); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return
 	}
 	if *storeLink {
 		log.Printf("Boost Link Store Team: server %s", *slServer)
