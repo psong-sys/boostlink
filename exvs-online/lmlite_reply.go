@@ -426,7 +426,12 @@ func (r *lmResponse) terminalTable(c *lmCab, req []byte) []byte {
 	boot := lmBootInfo(r.Settings, time.Now())
 	put32(b, 220, le32(boot, 16))
 	copy(b[232:588], boot[28:384]) // records 0-2; the real LM's leftover memory follows
-	copy(b[780:792], []byte(r.Serial))
+	for _, w := range lmTableWords {
+		put32(b, int(w[0]), w[1])
+	}
+	for _, off := range []int{780, 924, 1704, 2336} { // the LM's serial, in each LM-info copy
+		copy(b[off:off+12], []byte(r.Serial))
+	}
 	return b
 }
 
@@ -441,4 +446,26 @@ func (r *lmResponse) notice() []byte {
 	copy(b[216:], "http://127.0.0.1/file/")
 	putTail(b, lmPtr)
 	return b
+}
+
+// lmTableWords: the non-pointer words of the real LM's ULG 9 reply after its first
+// three settings records (more settings and LM-info copies; read off the 2026-11-27
+// recording). Pointers into the LM's own memory are left out (zero).
+var lmTableWords = [][2]uint32{
+	{636, 0x4}, {676, 0x2}, {684, 0x1}, {688, 0x1}, {692, 0x1}, {696, 0x5}, {700, 0x4},
+	{704, 0xffffffff}, {712, 0x4}, {752, 0x4}, {796, 0xc}, {804, 0xf}, {832, 0x2}, {840, 0x1},
+	{852, 0x5}, {856, 0x4}, {904, 0x1}, {988, 0x2}, {996, 0x1}, {1000, 0x1}, {1004, 0x2},
+	{1020, 0x40}, {1036, 0x8}, {1052, 0x1}, {1068, 0x38}, {1076, 0x4}, {1084, 0x4},
+	{1088, 0x202}, {1100, 0x1}, {1156, 0x10}, {1196, 0x280}, {1236, 0x6}, {1396, 0xc0},
+	{1400, 0x6}, {1404, 0x201}, {1408, 0x1}, {1412, 0x2}, {1416, 0x280}, {1420, 0x80},
+	{1436, 0x6}, {1440, 0x201}, {1444, 0xa4}, {1460, 0x55555555}, {1516, 0x10}, {1540, 0x10010},
+	{1580, 0x6}, {1588, 0x201}, {1596, 0x55555555}, {1636, 0x4}, {1644, 0x4}, {1660, 0x278},
+	{1664, 0x1}, {1672, 0x4}, {1684, 0x4}, {1768, 0x2}, {1776, 0x1}, {1780, 0x1}, {1784, 0x1},
+	{1788, 0x5}, {1792, 0x1}, {2280, 0x4}, {2400, 0x2}, {2408, 0x1}, {2412, 0x1}, {2416, 0x1},
+	{2420, 0x5}, {2424, 0x1}, {2844, 0x1}, {2860, 0x40}, {2876, 0x8}, {2892, 0x201},
+	{2908, 0x38}, {2916, 0x4}, {2924, 0x4}, {2928, 0x203}, {2940, 0x1}, {2972, 0x34},
+	{2988, 0x4}, {2996, 0x10}, {3036, 0x20}, {3100, 0x20}, {3116, 0x34}, {3140, 0x7},
+	{3228, 0x7}, {3244, 0x34}, {3276, 0xc4}, {3280, 0x1}, {3284, 0x201}, {3288, 0x20},
+	{3340, 0x7}, {3344, 0x201}, {3348, 0x34}, {3364, 0x55555555}, {3420, 0x11}, {3484, 0x7},
+	{3500, 0x55555555}, {3532, 0x40}, {3620, 0x20}, {3624, 0x10011}, {3628, 0x40},
 }
