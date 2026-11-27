@@ -68,7 +68,7 @@ func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	if err != nil {
 		log.Printf("light LM: using default settings (%v)", err)
 	}
-	lm := &LightLM{IP: ip, Bcast: bc}
+	lm := &LightLM{IP: ip, Bcast: bc, Verbose: true}
 	resp := &lmResponse{Settings: settings, Serial: serial, lm: lm,
 		Logf: func(f string, a ...any) { log.Printf("light LM: "+f, a...) }}
 	lm.Responder = resp

@@ -106,7 +106,8 @@ type lmCab struct {
 	frags     fragAssembler
 	pending   []*lmPending
 	pingCount uint32
-	pongEcho  []byte
+	cabPing   uint32 // the game's latest ping counter, which our pong echoes
+	gotPing   bool
 	lastHeard time.Time
 }
 
@@ -116,6 +117,7 @@ type LightLM struct {
 	Bind      net.IP // what to bind; nil = 0.0.0.0 like the real LM
 	Bcast     net.IP // the adapter's directed broadcast address, if known
 	Group     uint32
+	Verbose   bool // log every message from a game
 	Responder lmResponder
 	Logf      func(string, ...any)
 
@@ -349,7 +351,7 @@ func (s *LightLM) link(c *lmCab, r lmRecord) [][]byte {
 		c.pending = keep
 	case linkPing:
 		if len(r.Raw) >= 24 && r.Raw[16] == 1 { // a ping: answer with a pong
-			c.pongEcho = append([]byte(nil), r.Raw[17:24]...)
+			c.cabPing, c.gotPing = r.Seq, true
 		}
 	}
 	return nil
@@ -374,7 +376,12 @@ func (s *LightLM) reliable(c *lmCab, r lmRecord) {
 		}
 		delete(c.early, next.Seq)
 		c.recvSeq = next.Seq
-		s.queue(c, s.Responder.Message(c, next.Kind, next.Payload))
+		out := s.Responder.Message(c, next.Kind, next.Payload)
+		if s.Verbose {
+			id, flag, _ := ulgHeader(next.Payload)
+			s.logf("game %d -> kind %d id %d flag %d (%d B), answering %d", c.Index, next.Kind, id, flag, len(next.Payload), len(out))
+		}
+		s.queue(c, out)
 	}
 }
 
@@ -410,9 +417,10 @@ func (s *LightLM) flush(c *lmCab, now time.Time) {
 	}
 	frame = append(frame, encAck(c.ch, c.recvSeq)...)
 	c.pingCount++
+	// ping: our counter, flag 1. pong: the game's counter, flag 0, the rest zero
 	frame = append(frame, encPing(c.ch, c.pingCount, true, nil)...)
-	if c.pongEcho != nil {
-		frame = append(frame, encPing(c.ch, c.pingCount, false, c.pongEcho)...)
+	if c.gotPing {
+		frame = append(frame, encPing(c.ch, c.cabPing, false, nil)...)
 	}
 	s.sess.WriteToUDP(frame, c.Addr)
 }
