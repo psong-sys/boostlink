@@ -124,6 +124,7 @@ type LightLM struct {
 	stopped chan struct{}
 	once    sync.Once
 	linked  bool
+	seen    map[string]bool
 }
 
 // EverLinked: a game has linked up since Start.
@@ -169,7 +170,7 @@ func (s *LightLM) Start() error {
 		return fmt.Errorf("light LM needs an IPv4 address, got %v", s.IP)
 	}
 	if s.Group == 0 {
-		s.Group = 3
+		s.Group = 1 // what the real LM announces after a fresh boot; a game's announce overrides it
 	}
 	s.cabs = map[string]*lmCab{}
 	s.stopped = make(chan struct{})
@@ -228,23 +229,41 @@ func (s *LightLM) discoveryLoop(c *net.UDPConn) {
 			return
 		}
 		a, ok := parseLMAnnounce(buf[:n])
-		if !ok || a.Role != 1 {
-			continue // our own echo, another LM, or noise
+		if !ok {
+			continue
 		}
-		if a.Group != 0 && a.Group != s.Group {
+		if a.Role != 1 {
+			if a.Role == 2 && a.IP != s.ip4() {
+				s.logf("another Live Monitor is announcing from %v: two in one store give error 21-11", net.IP(a.IP[:]))
+			}
+			continue // our own echo, or noise
+		}
+		s.mu.Lock()
+		first := !s.seen[from.String()]
+		if s.seen == nil {
+			s.seen = map[string]bool{}
+		}
+		s.seen[from.String()] = true
+		if a.Group != 0 {
 			s.Group = a.Group
 		}
+		s.mu.Unlock()
+		if first {
+			s.logf("game %d is looking for a Live Monitor (from %s, group %d, session port %d)", a.Index, from, a.Group, a.SessionPort)
+		}
+		// like the real LM: announce to everyone at once, then answer the game directly
+		s.broadcastAnnounce()
 		reply := lmAnnounce(s.ip4(), 2, 0, s.Group, lmSessionPort, true)
 		to := &net.UDPAddr{IP: net.IP(a.IP[:]).To4(), Port: lmDiscoveryPort}
-		if from != nil && from.IP.To4() != nil {
-			to.IP = from.IP
-		}
 		s.disc[0].WriteToUDP(reply, to)
 	}
 }
 
 func (s *LightLM) broadcastAnnounce() {
-	a := lmAnnounce(s.ip4(), 2, 0, s.Group, lmSessionPort, false)
+	s.mu.Lock()
+	g := s.Group
+	s.mu.Unlock()
+	a := lmAnnounce(s.ip4(), 2, 0, g, lmSessionPort, false)
 	bc := net.IPv4bcast
 	for i := 0; i < lmDiscoveryN; i++ {
 		s.disc[0].WriteToUDP(a, &net.UDPAddr{IP: bc, Port: lmDiscoveryPort + i})
