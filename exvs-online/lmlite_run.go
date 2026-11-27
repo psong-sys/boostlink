@@ -86,6 +86,17 @@ func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	lm := &LightLM{IP: ip, Bcast: bc, Verbose: true}
 	resp := &lmResponse{Settings: settings, Serial: serial, lm: lm,
 		Logf: func(f string, a ...any) { log.Printf("light LM: "+f, a...) }}
+	rp := os.Getenv("EXVS_LM_REPLAY")
+	if exe, err := os.Executable(); err == nil && rp == "" && fileExistsLM(filepath.Join(filepath.Dir(exe), "lm-replay.jsonl")) {
+		rp = filepath.Join(filepath.Dir(exe), "lm-replay.jsonl")
+	}
+	if rp != "" {
+		if resp.Replay, err = loadLMReplay(rp); err != nil {
+			log.Printf("light LM: replay file: %v", err)
+		} else {
+			log.Printf("light LM: debug: boot replies from %s (%d recorded)", rp, len(resp.Replay))
+		}
+	}
 	lm.Responder = resp
 	started := time.Now()
 	if err := lm.Start(); err != nil {
@@ -108,3 +119,5 @@ func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	}
 	select {}
 }
+
+func fileExistsLM(p string) bool { _, err := os.Stat(p); return err == nil }

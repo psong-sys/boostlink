@@ -178,7 +178,8 @@ func lmBootInfo(s lmSettings, now time.Time) []byte {
 // lmResponse answers one game the way the real Live Monitor does.
 type lmResponse struct {
 	Settings lmSettings
-	Serial   string // 12-digit LM serial; blank works
+	Serial   string            // 12-digit LM serial
+	Replay   map[uint16][]byte // debug: recorded real replies by ULG id
 	Logf     func(string, ...any)
 
 	lm *LightLM
@@ -324,6 +325,14 @@ func (r *lmResponse) ulg(c *lmCab, p []byte) []lmOut {
 	}
 	if flag == 1 {
 		return nil // 31 (app ack) and other answers
+	}
+	if rp := r.Replay[id]; rp != nil && (id == 10 || id == 16 || id == 9) {
+		r.logf("game %d: answering %d with the recorded reply", c.Index, id)
+		b := withTail(append([]byte(nil), rp...), tailOf(p))
+		if id == 9 {
+			return []lmOut{{kindULG, r.terminalInfo(c)}, {kindULG, b}}
+		}
+		return []lmOut{{kindULG, b}}
 	}
 	switch id {
 	case 10: // boot info
