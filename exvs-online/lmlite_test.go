@@ -8,7 +8,9 @@ import (
 
 type echoResponder struct{ got chan []byte }
 
-func (e *echoResponder) Connected(c *lmCab) []lmOut { return []lmOut{{Kind: 2, Payload: ulgMsg(3, 0, 240)}} }
+func (e *echoResponder) Connected(c *lmCab) []lmOut {
+	return []lmOut{{Kind: 2, Payload: ulgMsg(3, 0, 240)}}
+}
 func (e *echoResponder) Message(c *lmCab, kind byte, p []byte) []lmOut {
 	e.got <- p
 	id, _, _ := ulgHeader(p)

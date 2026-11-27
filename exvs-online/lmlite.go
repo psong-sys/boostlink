@@ -112,7 +112,9 @@ type lmCab struct {
 
 // LightLM is the Live Monitor stand-in.
 type LightLM struct {
-	IP        net.IP
+	IP        net.IP // the adapter's address: announced to games
+	Bind      net.IP // what to bind; nil = 0.0.0.0 like the real LM
+	Bcast     net.IP // the adapter's directed broadcast address, if known
 	Group     uint32
 	Responder lmResponder
 	Logf      func(string, ...any)
@@ -142,10 +144,13 @@ func (s *LightLM) logf(f string, a ...any) {
 	}
 }
 
+// lmListen binds like the real LM: all addresses (0.0.0.0), no address sharing. The
+// game binds the same ports on its adapter's own address, which Windows allows next
+// to a 0.0.0.0 socket; it is how the real LM and the game share 48000/49000 on one PC.
 func lmListen(ip net.IP, port int) (*net.UDPConn, error) {
 	lc := net.ListenConfig{Control: func(network, address string, c syscall.RawConn) error {
 		var serr error
-		err := c.Control(func(fd uintptr) { serr = setReuseBroadcast(fd) })
+		err := c.Control(func(fd uintptr) { serr = setBroadcast(fd) })
 		if err != nil {
 			return err
 		}
@@ -174,23 +179,25 @@ func (s *LightLM) Start() error {
 	}
 	s.cabs = map[string]*lmCab{}
 	s.stopped = make(chan struct{})
-	sess, err := lmListen(s.IP, lmSessionPort)
+	bind := s.Bind
+	if bind == nil {
+		bind = net.IPv4zero
+	}
+	sess, err := lmListen(bind, lmSessionPort)
 	if err != nil {
-		return fmt.Errorf("session port %d: %w", lmSessionPort, err)
+		return fmt.Errorf("session port %d (is the normal Live Monitor still running?): %w", lmSessionPort, err)
 	}
 	s.sess = sess
-	for i := 0; i < lmDiscoveryN; i++ {
-		c, err := lmListen(s.IP, lmDiscoveryPort+i)
-		if err != nil {
-			s.Stop()
-			return fmt.Errorf("discovery port %d: %w", lmDiscoveryPort+i, err)
-		}
-		s.disc = append(s.disc, c)
-		go s.discoveryLoop(c)
+	c, err := lmListen(bind, lmDiscoveryPort)
+	if err != nil {
+		s.Stop()
+		return fmt.Errorf("discovery port %d (is the normal Live Monitor still running?): %w", lmDiscoveryPort, err)
 	}
+	s.disc = append(s.disc, c)
+	go s.discoveryLoop(c)
 	go s.sessionLoop()
 	go s.tickLoop()
-	s.logf("listening on %s (discovery %d-%d, session %d)", s.IP, lmDiscoveryPort, lmDiscoveryPort+lmDiscoveryN-1, lmSessionPort)
+	s.logf("listening on %s:%d and :%d, announcing as %s", bind, lmDiscoveryPort, lmSessionPort, s.IP)
 	return nil
 }
 
@@ -264,9 +271,14 @@ func (s *LightLM) broadcastAnnounce() {
 	g := s.Group
 	s.mu.Unlock()
 	a := lmAnnounce(s.ip4(), 2, 0, g, lmSessionPort, false)
-	bc := net.IPv4bcast
-	for i := 0; i < lmDiscoveryN; i++ {
-		s.disc[0].WriteToUDP(a, &net.UDPAddr{IP: bc, Port: lmDiscoveryPort + i})
+	targets := []net.IP{net.IPv4bcast}
+	if s.Bcast != nil { // the adapter's own broadcast, so it goes out the right card
+		targets = append(targets, s.Bcast)
+	}
+	for _, bc := range targets {
+		for i := 0; i < lmDiscoveryN; i++ {
+			s.disc[0].WriteToUDP(a, &net.UDPAddr{IP: bc, Port: lmDiscoveryPort + i})
+		}
 	}
 }
 

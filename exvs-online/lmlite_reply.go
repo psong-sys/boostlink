@@ -196,7 +196,7 @@ func (r *lmResponse) lmID() uint32 {
 	return 0x00026440 | uint32(ip[3])<<24
 }
 
-func (r *lmResponse) Connected(c *lmCab) []lmOut { return nil }
+func (r *lmResponse) Connected(c *lmCab) []lmOut           { return nil }
 func (r *lmResponse) Tick(c *lmCab, now time.Time) []lmOut { return nil }
 
 func (r *lmResponse) Message(c *lmCab, kind byte, p []byte) []lmOut {

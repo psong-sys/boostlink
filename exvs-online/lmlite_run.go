@@ -15,15 +15,15 @@ import (
 	"time"
 )
 
-// adapterIPv4 finds the IPv4 address of a network adapter by name (Windows' name,
-// e.g. "Ethernet" or "Boost Link"), or returns ip itself if it is an address.
-func adapterIPv4(name string) (net.IP, error) {
+// adapterIPv4 finds the IPv4 address (and directed broadcast) of a network adapter by
+// name (Windows' name, e.g. "Ethernet" or "Boost Link"), or takes an address as is.
+func adapterIPv4(name string) (net.IP, net.IP, error) {
 	if ip := net.ParseIP(name); ip != nil && ip.To4() != nil {
-		return ip.To4(), nil
+		return ip.To4(), nil, nil
 	}
 	ifs, err := net.Interfaces()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	for _, i := range ifs {
 		if !strings.EqualFold(i.Name, name) {
@@ -32,19 +32,28 @@ func adapterIPv4(name string) (net.IP, error) {
 		as, _ := i.Addrs()
 		for _, a := range as {
 			if n, ok := a.(*net.IPNet); ok && n.IP.To4() != nil && !n.IP.IsLinkLocalUnicast() {
-				return n.IP.To4(), nil
+				ip := n.IP.To4()
+				bc := make(net.IP, 4)
+				m := n.Mask
+				if len(m) == 16 {
+					m = m[12:]
+				}
+				for i := range bc {
+					bc[i] = ip[i] | ^m[i]
+				}
+				return ip, bc, nil
 			}
 		}
-		return nil, fmt.Errorf("adapter %q has no IPv4 address yet", name)
+		return nil, nil, fmt.Errorf("adapter %q has no IPv4 address yet", name)
 	}
-	return nil, fmt.Errorf("no adapter called %q", name)
+	return nil, nil, fmt.Errorf("no adapter called %q", name)
 }
 
 func runLightLM(adapter, gameDir, statusAddr, serial string) error {
-	var ip net.IP
+	var ip, bc net.IP
 	var err error
 	for i := 0; i < 30; i++ { // the Boost Link adapter can take a few seconds to get its IP
-		if ip, err = adapterIPv4(adapter); err == nil {
+		if ip, bc, err = adapterIPv4(adapter); err == nil {
 			break
 		}
 		time.Sleep(500 * time.Millisecond)
@@ -59,7 +68,7 @@ func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	if err != nil {
 		log.Printf("light LM: using default settings (%v)", err)
 	}
-	lm := &LightLM{IP: ip}
+	lm := &LightLM{IP: ip, Bcast: bc}
 	resp := &lmResponse{Settings: settings, Serial: serial, lm: lm,
 		Logf: func(f string, a ...any) { log.Printf("light LM: "+f, a...) }}
 	lm.Responder = resp
