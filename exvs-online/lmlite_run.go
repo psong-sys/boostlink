@@ -7,9 +7,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -49,6 +51,16 @@ func adapterIPv4(name string) (net.IP, net.IP, error) {
 	return nil, nil, fmt.Errorf("no adapter called %q", name)
 }
 
+// lmDefaultSerial: a 12-digit LM serial that stays the same on this PC. The real LM
+// sends its PCB serial (12 digits, e.g. 2895xxxxxxxx); the new build retries its boot
+// questions every 5 s and then gives 21-01 when it is blank.
+func lmDefaultSerial() string {
+	h := fnv.New32a()
+	name, _ := os.Hostname()
+	h.Write([]byte("boost-link-lm:" + name))
+	return fmt.Sprintf("2895%08d", h.Sum32()%100000000)
+}
+
 func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	var ip, bc net.IP
 	var err error
@@ -67,6 +79,9 @@ func runLightLM(adapter, gameDir, statusAddr, serial string) error {
 	settings, err := loadLMSettings(filepath.Join(gameDir, "29", "testmode_lm.json"))
 	if err != nil {
 		log.Printf("light LM: using default settings (%v)", err)
+	}
+	if serial == "" {
+		serial = lmDefaultSerial()
 	}
 	lm := &LightLM{IP: ip, Bcast: bc, Verbose: true}
 	resp := &lmResponse{Settings: settings, Serial: serial, lm: lm,
